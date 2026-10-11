@@ -54,3 +54,7 @@ One long page with sticky section links; Cooked today and Add to plan replace th
 ## 2026-10-11: import and export design approved (PP-149)
 
 The review step is always shown, even for one file. "Copy problems for Claude" copies a ready-made message listing each problem and its path. **Import accepts .json files only** for now; export is a .zip, so moving a library means unzipping and importing the files (up to 50 at a time). Export lives on the Household tab.
+
+## 2026-10-11: onboarding design approved (PP-146)
+
+The app is called "Recipe planner" for now (landing page, Google consent screen, invites). After creating a household, a skippable invite step follows; its link is only created on Copy or Share. Joining needs an explicit Join button. Until someone joins, an invite shows only the inviter's name and photo and the household name. One household at a time: joining another means leaving yours first.
