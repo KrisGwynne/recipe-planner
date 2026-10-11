@@ -1,0 +1,9 @@
+# Secrets: never commit env files (except the example)
+.env*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+dist/
+build/
+.next/
