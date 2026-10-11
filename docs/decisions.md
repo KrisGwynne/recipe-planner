@@ -32,3 +32,13 @@ Decisions made after the [handover](handover.md). Where they differ from the han
 **Bottom navigation on the web.** Five tabs (Recipes, Plans, raised Import, Compare, Household), fixed to the bottom with `env(safe-area-inset-bottom)` padding (needs `viewport-fit=cover`) and `dvh` heights so Safari's toolbar doesn't cover it. From tablet width up it becomes a side rail.
 
 **Method steps** stay on the recipe page: every recipe has them (the schema requires at least one), and timers make them useful while cooking.
+
+## 2026-10-11: library design approved (PP-147)
+
+**Default sort** is Name, A to Z.
+
+**"Cook with" (equipment filter)** shows recipes whose `equipment` needs nothing beyond what's ticked (subset), so you can rule out the oven, say. Every other multi-select section matches any ticked option, except "Suitable for" (dietary), where every ticked flag must apply.
+
+**Source.** Already required by the schema (`source.kind`, `source.title`, optional `details` and `url`). Add extracted columns `source_kind` and `source_title` so the library can filter by source (books, magazines and websites by title; all `family` recipes grouped as "Family") and search matches source titles as well as names and ingredients.
+
+**Filter counts** are shown on every option (faceted: what each option would find given the other filters).
