@@ -42,3 +42,5 @@ Decisions made after the [handover](handover.md). Where they differ from the han
 **Source.** Already required by the schema (`source.kind`, `source.title`, optional `details` and `url`). Add extracted columns `source_kind` and `source_title` so the library can filter by source (books, magazines and websites by title; all `family` recipes grouped as "Family") and search matches source titles as well as names and ingredients.
 
 **Filter counts** are shown on every option (faceted: what each option would find given the other filters).
+
+**Consistent source titles.** Appendix C of the handover (the Claude extraction instructions) now asks for the publication's exact name as printed, the same every time, because the Source filter groups by exact title.
