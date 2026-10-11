@@ -1,0 +1,18 @@
+{
+  "name": "recipe-planner",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "schema:types": "node scripts/generate-types.mjs",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "json-schema-to-typescript": "^16.0.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.3"
+  }
+}

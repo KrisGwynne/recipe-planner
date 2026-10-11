@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "char-siu-tofoo-noodles",
+  "name": "Char siu Tofoo noodles",
+  "source": { "kind": "book", "title": "Tofoo cookbook", "details": "\"Delicious Dinners\" chapter, p137" },
+  "serves": 2,
+  "times": { "prep_mins": 15, "cook_mins": 10, "wait_mins": 30, "notes": "Marinate for at least 30 mins, longer if possible." },
+  "difficulty": "easy",
+  "meal_type": ["dinner"],
+  "cuisine": "chinese",
+  "carbs": ["noodles"],
+  "carb_detail": "udon",
+  "proteins": [ { "category": "vegetarian", "item": "tofu", "detail": "Naked Tofoo" } ],
+  "dietary": ["vegetarian", "dairy-free", "nut-free"],
+  "equipment": ["hob"],
+  "storage": { "freezable": null, "good_for_leftovers": null },
+  "spice_level": "mild",
+  "tags": ["stir-fry"],
+  "ingredients": [
+    { "item": "Naked Tofoo", "qty": 280, "unit": "g", "prep": "drained, dried and cut into 1cm-thick strips", "notes": "1 pack", "aisle": "chilled" },
+    { "item": "cornflour", "qty": 2, "unit": "tbsp", "aisle": "dried-goods" },
+    { "item": "vegetable oil", "qty": 2, "unit": "tbsp", "aisle": "oils-sauces" },
+    { "item": "ready-cooked noodles", "qty": 300, "unit": "g", "notes": "such as udon", "aisle": "chilled" },
+    { "item": "choy sum", "qty": 200, "unit": "g", "prep": "washed and sliced", "aisle": "fruit-veg" },
+    { "item": "sesame seeds", "qty": 2, "unit": "tbsp", "prep": "toasted", "aisle": "dried-goods" },
+    { "group": "char siu sauce", "item": "hoisin sauce", "qty": 4, "unit": "tbsp", "aisle": "oils-sauces" },
+    { "group": "char siu sauce", "item": "maple syrup", "qty": 3, "unit": "tbsp", "aisle": "oils-sauces" },
+    { "group": "char siu sauce", "item": "dark soy sauce", "qty": 3, "unit": "tbsp", "aisle": "oils-sauces" },
+    { "group": "char siu sauce", "item": "dry sherry", "qty": 3, "unit": "tbsp", "aisle": "drinks" },
+    { "group": "char siu sauce", "item": "Chinese 5 spice", "qty": 1, "unit": "tsp", "aisle": "herbs-spices" },
+    { "group": "char siu sauce", "item": "toasted sesame oil", "qty": 1, "unit": "tsp", "aisle": "oils-sauces" }
+  ],
+  "method": [
+    { "text": "Mix together all the char siu sauce ingredients. Put the Tofoo in a shallow bowl, add half the sauce, cover and refrigerate for at least 30 mins, longer if possible.", "timer_mins": 30 },
+    { "text": "When ready to cook, toss the marinated Tofoo strips in the cornflour." },
+    { "text": "Heat a deep frying pan over a medium heat and add the oil. When hot, fry the Tofoo strips for 3-4 mins each side until golden, then transfer to a plate lined with kitchen paper.", "timer_mins": 4 },
+    { "text": "Return the pan to the heat, add the noodles and choy sum and stir-fry until combined and warmed through. Add the Tofoo, pour over the remaining sauce and heat through.", "timer_mins": 4 },
+    { "text": "Serve sprinkled with the toasted sesame seeds." }
+  ],
+  "variations": [
+    { "name": "Greens", "description": "Swap the choy sum for spring greens or Tenderstem broccoli." },
+    { "name": "Rice", "description": "Serve with rice instead of the noodles." }
+  ],
+  "nutrition_per_serving": {
+    "source": "estimated",
+    "kcal": 825, "fat_g": 34, "saturates_g": 4, "carbs_g": 92,
+    "sugars_g": 34, "fibre_g": 5, "protein_g": 31, "salt_g": 5.5
+  }
+}

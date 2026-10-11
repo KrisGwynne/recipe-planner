@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "id": "lemony-tuna-tomato-caper-pasta",
+  "name": "Lemony tuna, tomato & caper one-pot pasta",
+  "description": "One-pot pasta where the rigatoni cooks in stock with cherry tomatoes, finished with tuna, capers, lemon and a little mascarpone.",
+  "source": { "kind": "magazine", "title": "BBC Good Food", "details": "September 2021, p63" },
+  "serves": 4,
+  "times": { "prep_mins": 5, "cook_mins": 30, "wait_mins": 0, "notes": "Printed cook time already includes the 5-min rest." },
+  "difficulty": "easy",
+  "meal_type": ["dinner"],
+  "cuisine": "italian",
+  "carbs": ["pasta"],
+  "carb_detail": "rigatoni",
+  "proteins": [ { "category": "fish", "item": "tuna", "detail": "tinned in olive oil" } ],
+  "dietary": ["nut-free"],
+  "equipment": ["hob"],
+  "storage": { "freezable": false, "good_for_leftovers": true, "notes": "Not stated in the recipe; judgement call." },
+  "spice_level": "none",
+  "tags": ["one-pot", "quick"],
+  "ingredients": [
+    { "item": "olive oil", "qty": 2, "unit": "tbsp", "aisle": "oils-sauces" },
+    { "item": "red onion", "qty": 1, "unit": null, "prep": "finely chopped", "aisle": "fruit-veg" },
+    { "item": "cherry tomatoes", "qty": 500, "unit": "g", "prep": "halved", "notes": "350g in step 2, 150g in step 3", "aisle": "fruit-veg" },
+    { "item": "dried pasta", "qty": 400, "unit": "g", "notes": "rigatoni", "aisle": "dried-goods" },
+    { "item": "hot vegetable stock", "qty": 1, "unit": "l", "aisle": "dried-goods" },
+    { "item": "tuna in olive oil", "qty": 2, "unit": "can", "grams": 220, "prep": "drained", "notes": "110g cans", "aisle": "tins-jars" },
+    { "item": "mascarpone", "qty": 3, "unit": "tbsp", "aisle": "dairy-eggs" },
+    { "item": "parmesan", "qty": 30, "unit": "g", "prep": "grated", "aisle": "dairy-eggs" },
+    { "item": "capers", "qty": 2, "unit": "tbsp", "prep": "drained", "notes": "heaped", "aisle": "tins-jars" },
+    { "item": "lemon", "qty": 0.5, "unit": null, "prep": "zested", "aisle": "fruit-veg" },
+    { "item": "parsley", "qty": 1, "unit": "bunch", "prep": "finely chopped", "notes": "small", "aisle": "fruit-veg" }
+  ],
+  "method": [
+    { "text": "Heat the oil in a saucepan over a medium-low heat and fry the onion with a pinch of salt until softened and translucent.", "timer_mins": 7 },
+    { "text": "Add 350g of the cherry tomatoes, the pasta and the stock. Bring to the boil, then simmer uncovered, stirring occasionally, until the tomatoes break down and the pasta is just cooked.", "timer_mins": 15 },
+    { "text": "Add the remaining tomatoes and bubble uncovered over a medium-high heat until the liquid has reduced.", "timer_mins": 5 },
+    { "text": "Gently fold through large flakes of tuna with the mascarpone, parmesan, capers, lemon zest, parsley and seasoning." },
+    { "text": "Cover with a lid and leave to sit before serving in deep bowls.", "timer_mins": 5 }
+  ],
+  "variations": [
+    {
+      "name": "Veggie",
+      "description": "Swap the tuna for extra tomatoes or thinly sliced roasted red peppers. Use a vegetarian hard cheese instead of parmesan for it to be strictly vegetarian.",
+      "proteins": [],
+      "dietary": ["nut-free"]
+    }
+  ],
+  "nutrition_per_serving": {
+    "source": "printed",
+    "kcal": 672, "fat_g": 23, "saturates_g": 9, "carbs_g": 83,
+    "sugars_g": 12, "fibre_g": 9, "protein_g": 29, "salt_g": 1.5
+  }
+}
