@@ -44,3 +44,9 @@ Decisions made after the [handover](handover.md). Where they differ from the han
 **Filter counts** are shown on every option (faceted: what each option would find given the other filters).
 
 **Consistent source titles.** Appendix C of the handover (the Claude extraction instructions) now asks for the publication's exact name as printed, the same every time, because the Source filter groups by exact title.
+
+## 2026-10-11: recipe page design approved (PP-148)
+
+One long page with sticky section links; Cooked today and Add to plan replace the bottom navigation; ingredients and steps can be ticked off; no in-app editing of recipe facts (notes and rating only; can revisit).
+
+**Step timers are deprioritised** to an optional extra done last (PP-178, Low). The recipe page (PP-168) ships without them. When built, the screen stays on automatically while a timer runs.

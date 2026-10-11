@@ -244,7 +244,7 @@
           <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
         </div>
       </div>
-      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Method with timers</p><p class="text-ink-muted mt-1">Tap a step to mark it done (it fades). Steps with a <code>timer_mins</code> get a timer button; several can run at once. Timers whose step is off-screen show in a pill above the action bar (tap to jump to the step), and keep going if you switch apps. When one ends: sound, vibration and the amber "Time's up" state. "Keep screen on" stops the phone sleeping (on by default once a timer starts).</p></figcaption>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Method with timers <span class="ml-1 align-middle text-xs font-semibold uppercase tracking-wider text-warning">Later · PP-178</span></p><p class="text-ink-muted mt-1">Tap a step to mark it done (it fades). Steps with a <code>timer_mins</code> get a timer button; several can run at once. Timers whose step is off-screen show in a pill above the action bar (tap to jump to the step), and keep going if you switch apps. When one ends: sound, vibration and the amber "Time's up" state. "Keep screen on" stops the phone sleeping (on by default once a timer starts).</p></figcaption>
     </figure>
 
     <!-- E. Nutrition, variations, source, storage -->
@@ -370,14 +370,15 @@
 </section>
 
 <section class="pb-10">
-  <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
-  <ol class="mt-3 list-decimal pl-5 space-y-2 text-ink-muted max-w-3xl">
-    <li><b class="text-ink">One long page with section links</b>, rather than tabs that each show one section. Long page means you can scroll from ingredients into the method; OK?</li>
-    <li><b class="text-ink">Bottom actions:</b> "Cooked today" and "Add to plan" replace the main navigation on this page. Right pair?</li>
-    <li><b class="text-ink">Tick-off:</b> tapping ingredients and steps to mark them done. Useful, or clutter?</li>
-    <li><b class="text-ink">No in-app editing</b> of recipe facts (only notes and rating): fixes go through Claude and re-import, as the handover says. Happy with that?</li>
-    <li><b class="text-ink">Keep screen on</b> automatically while a timer runs?</li>
-  </ol>
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 11 October 2026.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>One long page with sticky section links.</li>
+    <li>Bottom actions: Cooked today and Add to plan.</li>
+    <li>Tick off ingredients and steps.</li>
+    <li>No in-app editing of recipe facts; only notes and rating. Can revisit later.</li>
+    <li>Step timers and keep-screen-on (screen D) are an optional extra, done last (PP-178). The screen stays on automatically while a timer runs.</li>
+  </ul>
 </section>
 </main>
 </body>
