@@ -6,12 +6,16 @@
   "scripts": {
     "schema:types": "node scripts/generate-types.mjs",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "designs": "node scripts/build-designs.mjs"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "json-schema-to-typescript": "^16.0.0",
+    "playwright": "^1.64.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
   }

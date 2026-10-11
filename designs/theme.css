@@ -1,0 +1,103 @@
+/*
+ * Design tokens. Shared by the designs in designs/ and (from PP-144) the app,
+ * so a colour or font change here shows up in both.
+ *
+ * Components use the semantic names (bg-surface, text-ink, bg-meat-soft...),
+ * never raw colours, so dark mode is just a different set of values below.
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  /* Surfaces and text */
+  --bg: #fbf8f3;
+  --surface: #ffffff;
+  --surface-2: #f3eee6;
+  --ink: #1f1b16;
+  --ink-muted: #6b6258;
+  --ink-subtle: #8f857a;
+  --line: #e6ded2;
+
+  /* Brand: tomato */
+  --primary: #c2410c;
+  --primary-hover: #9a3412;
+  --primary-soft: #fdebdf;
+  --on-primary: #ffffff;
+
+  /* Protein browsing categories */
+  --meat: #a1325a;
+  --meat-soft: #fbe7ee;
+  --fish: #1d6fa5;
+  --fish-soft: #e3f0fa;
+  --veg: #2f7d32;
+  --veg-soft: #e5f3e3;
+
+  /* Status */
+  --warning: #8a6100;
+  --warning-soft: #fdf3c4;
+  --danger: #b42318;
+  --danger-soft: #fde8e6;
+}
+
+.dark {
+  --bg: #171411;
+  --surface: #211d19;
+  --surface-2: #2b2621;
+  --ink: #f3eee7;
+  --ink-muted: #b3a99d;
+  --ink-subtle: #8a8075;
+  --line: #3a332c;
+
+  --primary: #f07a45;
+  --primary-hover: #f59a6f;
+  --primary-soft: #3b2216;
+  --on-primary: #1a0e07;
+
+  --meat: #f29ab9;
+  --meat-soft: #3a1a27;
+  --fish: #7db8e8;
+  --fish-soft: #16293a;
+  --veg: #8bcb8e;
+  --veg-soft: #1b2e1c;
+
+  --warning: #f0c75e;
+  --warning-soft: #352a0f;
+  --danger: #f28b82;
+  --danger-soft: #3a1d1a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+
+  --color-meat: var(--meat);
+  --color-meat-soft: var(--meat-soft);
+  --color-fish: var(--fish);
+  --color-fish-soft: var(--fish-soft);
+  --color-veg: var(--veg);
+  --color-veg-soft: var(--veg-soft);
+
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+}
+
+@theme {
+  /* Recipe names and page titles get a cookbook serif; everything else is the system UI font. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 1rem;
+  --radius-control: 0.75rem;
+}
