@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Recipe page</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-148</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Recipe page</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">Reading, scaling and cooking a recipe, plus the household's own notes on it. Uses both example recipes: the tuna pasta (printed nutrition) and the Tofoo noodles (estimated nutrition, an ingredient group).</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Layout</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">One scrolling page. A sticky bar of section links (Ingredients, Method, Nutrition, Notes) jumps around without hunting. The bottom navigation is replaced on this page by two actions: <b class="text-ink">Cooked today</b> and <b class="text-ink">Add to plan</b>.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Top of page -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center justify-between">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex">
+            <button class="size-11 rounded-full grid place-items-center text-primary" aria-label="Unfavourite"><svg class="size-6 fill-current stroke-current stroke-2"><use href="#i-heart"/></svg></button>
+            <button class="size-11 rounded-full grid place-items-center" aria-label="More"><svg class="size-6 fill-current"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5">
+          <h1 class="font-display text-[28px] leading-[34px] font-semibold mt-1">Lemony tuna, tomato &amp; caper one-pot pasta</h1>
+          <p class="mt-2 text-sm text-ink-muted inline-flex items-center gap-1.5"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>BBC Good Food · September 2021, p63</p>
+          <p class="mt-3 text-[17px] leading-[26px] text-ink-muted">One-pot pasta where the rigatoni cooks in stock with cherry tomatoes, finished with tuna, capers, lemon and a little mascarpone.</p>
+
+          <div class="mt-4 grid grid-cols-3 rounded-card bg-surface border border-line divide-x divide-line text-center">
+            <div class="py-3"><p class="text-xs text-ink-muted">Prep</p><p class="text-lg font-semibold tabular-nums">5 min</p></div>
+            <div class="py-3"><p class="text-xs text-ink-muted">Cook</p><p class="text-lg font-semibold tabular-nums">30 min</p></div>
+            <div class="py-3 bg-surface-2 rounded-r-card"><p class="text-xs text-ink-muted">Total</p><p class="text-lg font-semibold tabular-nums">35 min</p></div>
+          </div>
+          <p class="mt-1.5 text-xs text-ink-subtle">Printed cook time already includes the 5-min rest.</p>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Pasta · rigatoni</span>
+            <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-fish-soft text-fish text-sm font-semibold"><span class="size-2 rounded-full bg-fish"></span>Fish · Tuna</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Italian</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Easy</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Hob</span>
+            <span class="inline-flex items-center gap-1 h-7 px-2.5 rounded-full border border-line text-sm font-medium"><svg class="size-4 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Nut-free</span>
+          </div>
+
+          <a class="mt-4 flex items-center gap-4 rounded-card bg-surface border border-line p-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-2"><p class="text-xs text-ink-muted">Per serving</p><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></div>
+              <p class="mt-1 tabular-nums"><span class="text-2xl font-semibold">672</span> <span class="text-ink-muted">kcal</span> <span class="ml-2 text-lg font-semibold">29g</span> <span class="text-ink-muted">protein</span></p>
+            </div>
+            <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+          </a>
+
+          <div class="mt-4 rounded-card bg-surface border border-line p-4 flex items-center gap-3">
+            <span class="flex text-primary"><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-none stroke-ink-subtle stroke-[1.5]"><use href="#i-star"/></svg></span>
+            <p class="text-sm text-ink-muted">Cooked 3 times · last on 2 Oct</p>
+          </div>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Top of the page</p><p class="text-ink-muted mt-1">Everything you'd decide on before cooking: source, description, times (total highlighted, with any time notes), badges, a nutrition summary that links down to the full panel, and your rating and cooking history.</p></figcaption>
+    </figure>
+
+    <!-- B. Ingredients scaled -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 border-b-2 border-primary text-primary">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[17px] font-semibold">Ingredients</h2>
+            <div class="flex items-center rounded-full border border-line bg-surface">
+              <button class="size-11 grid place-items-center" aria-label="Fewer"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="min-w-20 text-center font-semibold tabular-nums">2 servings</span>
+              <button class="size-11 grid place-items-center" aria-label="More"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+          <p class="mt-2 text-sm rounded-lg bg-primary-soft text-primary px-3 py-2 flex items-center justify-between">Halved from 4 servings<button class="font-semibold underline underline-offset-2">Reset</button></p>
+          <ul class="mt-2 divide-y divide-line">
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">1 tbsp</span><span>olive oil</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">½</span><span>red onion, <span class="text-ink-muted">finely chopped</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">250 g</span><span>cherry tomatoes, <span class="text-ink-muted">halved</span><span class="block text-sm text-ink-subtle">350g in step 2, 150g in step 3 <i>(for 4)</i></span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">200 g</span><span>dried pasta<span class="block text-sm text-ink-subtle">rigatoni</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">500 ml</span><span>hot vegetable stock</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">1 can</span><span>tuna in olive oil, <span class="text-ink-muted">drained</span><span class="block text-sm text-ink-subtle">110g cans · 110g total</span></span></li>
+            <li class="py-3 flex gap-3 text-ink-subtle"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right line-through">1½ tbsp</span><span class="line-through">mascarpone</span><svg class="ml-auto size-5 fill-none stroke-veg stroke-[2.5] shrink-0"><use href="#i-check"/></svg></li>
+            <li class="py-3 flex gap-3 text-ink-subtle"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right line-through">15 g</span><span class="line-through">parmesan, grated</span><svg class="ml-auto size-5 fill-none stroke-veg stroke-[2.5] shrink-0"><use href="#i-check"/></svg></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">1 tbsp</span><span>capers, <span class="text-ink-muted">drained</span><span class="block text-sm text-ink-subtle">heaped</span></span></li>
+          </ul>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · Ingredients, scaled to 2 servings</p><p class="text-ink-muted mt-1">Quantities scale exactly (qty × 2/4), shown as kitchen fractions (½, 1½). "To taste" items and the notes text don't scale, so notes with amounts say which servings they're written for. Gram totals scale too. Tap an ingredient to tick it off while you gather things.</p></figcaption>
+    </figure>
+
+    <!-- C. Tofoo: group + estimated -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Char siu Tofoo noodles</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 border-b-2 border-primary text-primary">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[17px] font-semibold">Ingredients</h2>
+            <div class="flex items-center rounded-full border border-line bg-surface">
+              <button class="size-11 grid place-items-center" aria-label="Fewer"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="min-w-20 text-center font-semibold tabular-nums">2 servings</span>
+              <button class="size-11 grid place-items-center" aria-label="More"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+          <ul class="mt-2 divide-y divide-line">
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">280 g</span><span>Naked Tofoo, <span class="text-ink-muted">drained, dried and cut into 1cm-thick strips</span><span class="block text-sm text-ink-subtle">1 pack</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">2 tbsp</span><span>cornflour</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">2 tbsp</span><span>vegetable oil</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">300 g</span><span>ready-cooked noodles<span class="block text-sm text-ink-subtle">such as udon</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">200 g</span><span>choy sum, <span class="text-ink-muted">washed and sliced</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">2 tbsp</span><span>sesame seeds, <span class="text-ink-muted">toasted</span></span></li>
+          </ul>
+          <p class="mt-4 text-xs font-semibold uppercase tracking-wider text-ink-muted">Char siu sauce</p>
+          <ul class="mt-1 divide-y divide-line">
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">4 tbsp</span><span>hoisin sauce</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">3 tbsp</span><span>maple syrup</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">3 tbsp</span><span>dark soy sauce</span></li>
+          </ul>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · Ingredient groups</p><p class="text-ink-muted mt-1">Ingredients without a group come first, then each group under its own heading, in the order they appear in the file. At the recipe's own servings there's no "scaled" banner.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Cooking</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- D. Method with timers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 text-ink-muted">Ingredients</a>
+            <a class="py-2 border-b-2 border-primary text-primary">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[17px] font-semibold">Method</h2>
+            <label class="inline-flex items-center gap-2 text-sm text-ink-muted">Keep screen on<span class="w-10 h-6 rounded-full bg-primary relative"><span class="absolute right-0.5 top-0.5 size-5 rounded-full bg-white shadow"></span></span></label>
+          </div>
+          <div class="flex gap-3 opacity-60">
+            <span class="size-8 shrink-0 rounded-full bg-veg-soft text-veg grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            <p class="flex-1 text-[17px] leading-[26px]">Heat the oil in a saucepan over a medium-low heat and fry the onion with a pinch of salt until softened and translucent.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="size-8 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center font-semibold">2</span>
+            <div class="flex-1">
+              <p class="text-[17px] leading-[26px]">Add 350g of the cherry tomatoes, the pasta and the stock. Bring to the boil, then simmer uncovered, stirring occasionally, until the tomatoes break down and the pasta is just cooked.</p>
+              <div class="mt-2 inline-flex items-center gap-1 h-11 pl-4 pr-1 rounded-full bg-primary text-on-primary">
+                <span class="text-lg font-semibold tabular-nums mr-2">12:41</span>
+                <button class="size-9 rounded-full grid place-items-center bg-white/20" aria-label="Pause"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-pause"/></svg></button>
+                <button class="size-9 rounded-full grid place-items-center bg-white/20" aria-label="Stop"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-x"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="size-8 shrink-0 rounded-full bg-surface-2 grid place-items-center font-semibold">3</span>
+            <div class="flex-1">
+              <p class="text-[17px] leading-[26px]">Add the remaining tomatoes and bubble uncovered over a medium-high heat until the liquid has reduced.</p>
+              <button class="mt-2 h-11 px-4 rounded-full border border-primary text-primary font-semibold inline-flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-timer"/></svg>5 min timer</button>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="size-8 shrink-0 rounded-full bg-surface-2 grid place-items-center font-semibold">4</span>
+            <p class="flex-1 text-[17px] leading-[26px]">Gently fold through large flakes of tuna with the mascarpone, parmesan, capers, lemon zest, parsley and seasoning.</p>
+          </div>
+        </div>
+        <!-- Floating timer when scrolled away -->
+        <div class="absolute left-4 right-4 bottom-24 rounded-full bg-ink text-bg h-12 px-4 flex items-center gap-3 shadow-xl">
+          <svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-timer"/></svg>
+          <span class="text-sm">Step 5 · resting</span><span class="font-semibold tabular-nums">4:10</span>
+          <span class="ml-auto text-sm opacity-70">Show</span>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Method with timers</p><p class="text-ink-muted mt-1">Tap a step to mark it done (it fades). Steps with a <code>timer_mins</code> get a timer button; several can run at once. Timers whose step is off-screen show in a pill above the action bar (tap to jump to the step), and keep going if you switch apps. When one ends: sound, vibration and the amber "Time's up" state. "Keep screen on" stops the phone sleeping (on by default once a timer starts).</p></figcaption>
+    </figure>
+
+    <!-- E. Nutrition, variations, source, storage -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Char siu Tofoo noodles</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 text-ink-muted">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 border-b-2 border-primary text-primary">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-5">
+          <div>
+            <div class="flex items-center justify-between">
+              <h2 class="text-[17px] font-semibold">Nutrition per serving</h2>
+              <span class="inline-flex items-center h-7 px-2.5 rounded-full border border-dashed border-ink-subtle text-ink-muted text-sm font-medium">~ Estimated</span>
+            </div>
+            <p class="mt-1 text-sm text-ink-muted">Not printed in the book; estimated by Claude when the recipe was imported.</p>
+            <div class="mt-3 rounded-card bg-surface border border-dashed border-ink-subtle p-4">
+              <p class="tabular-nums"><span class="text-3xl font-semibold text-ink-muted">~825</span> <span class="text-ink-muted">kcal</span></p>
+              <div class="mt-3 flex h-3 rounded-full overflow-hidden">
+                <span class="bg-veg" style="width:15%"></span><span class="bg-primary" style="width:46%"></span><span class="bg-warning" style="width:39%"></span>
+              </div>
+              <div class="mt-2 flex justify-between text-xs text-ink-muted"><span><span class="inline-block size-2 rounded-full bg-veg mr-1"></span>Protein 15%</span><span><span class="inline-block size-2 rounded-full bg-primary mr-1"></span>Carbs 46%</span><span><span class="inline-block size-2 rounded-full bg-warning mr-1"></span>Fat 39%</span></div>
+              <table class="mt-4 w-full text-sm tabular-nums">
+                <tbody class="divide-y divide-line">
+                  <tr><td class="py-1.5">Protein</td><td class="text-right font-semibold">~31 g</td></tr>
+                  <tr><td class="py-1.5">Carbs</td><td class="text-right font-semibold">~92 g</td></tr>
+                  <tr><td class="py-1.5 pl-3 text-ink-muted">of which sugars</td><td class="text-right">~34 g</td></tr>
+                  <tr><td class="py-1.5">Fat</td><td class="text-right font-semibold">~34 g</td></tr>
+                  <tr><td class="py-1.5 pl-3 text-ink-muted">of which saturates</td><td class="text-right">~4 g</td></tr>
+                  <tr><td class="py-1.5">Fibre</td><td class="text-right font-semibold">~5 g</td></tr>
+                  <tr><td class="py-1.5">Salt</td><td class="text-right font-semibold">~5.5 g</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-1.5 text-xs text-ink-subtle">Energy split: share of calories from protein, carbs and fat (4, 4 and 9 kcal per gram).</p>
+          </div>
+          <div>
+            <h2 class="text-[17px] font-semibold">Variations</h2>
+            <ul class="mt-2 space-y-2">
+              <li class="rounded-control bg-surface border border-line p-3"><p class="font-semibold">Greens</p><p class="text-sm text-ink-muted">Swap the choy sum for spring greens or Tenderstem broccoli.</p></li>
+              <li class="rounded-control bg-surface border border-line p-3"><p class="font-semibold">Rice</p><p class="text-sm text-ink-muted">Serve with rice instead of the noodles.</p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · Nutrition and variations</p><p class="text-ink-muted mt-1">The full UK-label set. Estimated nutrition keeps the dashed outline and ~ on every number. A variation that changes the protein or dietary flags shows them (e.g. the tuna pasta's "Veggie" variation: <i>no meat or fish · Nut-free</i>).</p></figcaption>
+    </figure>
+
+    <!-- F. Notes, source, storage -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 text-ink-muted">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 border-b-2 border-primary text-primary">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-5">
+          <div>
+            <h2 class="text-[17px] font-semibold">Our notes</h2>
+            <div class="mt-2 rounded-control bg-surface border border-line p-3">
+              <p class="text-[17px] leading-[26px]">Double the capers. Works with orzo if we're out of rigatoni, cook 2 min less.</p>
+              <p class="mt-2 text-xs text-ink-subtle">Edited by Kris · 2 Oct</p>
+            </div>
+            <div class="mt-3 flex items-center justify-between">
+              <span class="text-sm text-ink-muted">Your rating</span>
+              <span class="flex text-primary"><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-none stroke-ink-subtle stroke-[1.5]"><use href="#i-star"/></svg></span>
+            </div>
+            <p class="mt-2 text-sm text-ink-muted">Cooked 3 times: 2 Oct, 14 Sep, 21 Aug</p>
+          </div>
+          <div>
+            <h2 class="text-[17px] font-semibold">From the recipe</h2>
+            <dl class="mt-2 rounded-control bg-surface border border-line divide-y divide-line text-sm">
+              <div class="p-3 flex gap-3"><dt class="w-20 shrink-0 text-ink-muted">Source</dt><dd>BBC Good Food<span class="block text-ink-muted">Magazine · September 2021, p63</span></dd></div>
+              <div class="p-3 flex gap-3"><dt class="w-20 shrink-0 text-ink-muted">Storage</dt><dd>Not freezable · Good for leftovers<span class="block text-ink-muted">Not stated in the recipe; judgement call.</span></dd></div>
+              <div class="p-3 flex gap-3"><dt class="w-20 shrink-0 text-ink-muted">Tags</dt><dd>one-pot · quick</dd></div>
+            </dl>
+          </div>
+        </div>
+        <!-- Toast -->
+        <div class="absolute left-4 right-4 bottom-24 flex items-center gap-3 rounded-full bg-ink text-bg px-5 h-12 shadow-lg">
+          <svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg><span class="font-medium">Marked as cooked today</span><button class="ml-auto font-semibold underline underline-offset-2">Undo</button>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control bg-veg-soft text-veg font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · Notes, history and recipe details</p><p class="text-ink-muted mt-1">"Our notes" and the rating are shared by the household; notes show who last edited them. Tapping "Cooked today" adds today to the history (once per day) with an Undo. Recipe-file details (source, storage, tags) sit below, read-only. A source URL becomes a link.</p></figcaption>
+    </figure>
+
+    <!-- G. More menu -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <ul class="mt-3 divide-y divide-line">
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare with…</li>
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-download"/></svg>Download recipe file (.json)</li>
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg>Replace with a new version…</li>
+            <li class="flex items-center gap-3 min-h-13 py-3 text-danger"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Delete recipe</li>
+          </ul>
+          <button class="mt-3 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · More (⋯)</p><p class="text-ink-muted mt-1">Less frequent actions. "Replace with a new version" opens import with this recipe's id expected, showing what changed. There's no edit button: the recipe file is the source of truth, so changes are made in Claude and re-imported.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
+  <ol class="mt-3 list-decimal pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li><b class="text-ink">One long page with section links</b>, rather than tabs that each show one section. Long page means you can scroll from ingredients into the method; OK?</li>
+    <li><b class="text-ink">Bottom actions:</b> "Cooked today" and "Add to plan" replace the main navigation on this page. Right pair?</li>
+    <li><b class="text-ink">Tick-off:</b> tapping ingredients and steps to mark them done. Useful, or clutter?</li>
+    <li><b class="text-ink">No in-app editing</b> of recipe facts (only notes and rating): fixes go through Claude and re-import, as the handover says. Happy with that?</li>
+    <li><b class="text-ink">Keep screen on</b> automatically while a timer runs?</li>
+  </ol>
+</section>
+</main>
+</body>
+</html>
