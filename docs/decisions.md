@@ -61,10 +61,12 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 
 ## 2026-10-11: order of work and current state
 
-**First milestone:** PP-140 to PP-144 (setup), then the first designs (PP-145 foundations, PP-146 onboarding, PP-147 library, PP-148 recipe page, PP-149 import), then code: PP-153 to PP-155 (sign-in, households, data-access layer), PP-160 to PP-162 (recipes table, validation, import screen) and PP-166 (list view). Goal: a new Google user can sign in, create a household and import a recipe. Then library and recipe page (PP-167 to PP-169), meal plans, invites and household settings, compare, export/delete/rate limiting, launch. Remaining designs are done just before their epics. Step timers (PP-178) last.
+**First milestone:** PP-140 to PP-144 (setup), then the first designs (PP-145 foundations, PP-146 onboarding, PP-147 library, PP-148 recipe page, PP-149 import), then code: PP-153 to PP-156 (sign-in, households, data-access layer, invite links), PP-160 to PP-162 (recipes table, validation, import screen) and PP-166 (list view). Goal: a new Google user can sign in, create a household and import a recipe. Then library and recipe page (PP-167 to PP-169), meal plans, invites and household settings, compare, export/delete/rate limiting, launch. Remaining designs are done just before their epics. Step timers (PP-178) last.
 
 **State at end of 2026-10-11:** PP-140 is done locally (In Progress in Jira until pushed). All five first-milestone designs are approved (PP-145 to PP-149 Done). Next: PP-141 (scaffold the Next.js app locally; skip the GitHub repo and CI until Kris sets them up).
 
-**Open question for Kris:** bring invites (PP-156) into the first milestone? The approved onboarding has an invite step straight after creating a household, which needs invite links. Recommended: yes.
+**Invites brought forward** (Kris, 2026-10-11): PP-156 is part of the first milestone, after PP-154, so the invite step after creating a household works from the start.
 
 **Hosting on hold.** Kris will set up GitHub, Vercel and Neon later. Until then, work stays on local stacked branches and branch-by-branch review is skipped.
+
+**Registry entry is stale, deliberately.** `~/Projects/registry.yaml` still describes `recipe-planner` as "scaffold only, stack not chosen". Kris chose to update it later, with PP-142 (hosting); it's also noted in `~/Projects/TODO.md`.
