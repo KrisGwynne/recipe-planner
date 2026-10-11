@@ -45,9 +45,17 @@
       <h1 class="font-display text-3xl font-semibold mt-1">Foundations</h1>
       <p class="text-ink-muted mt-2 max-w-2xl">Colours, type and the basic pieces every screen is built from. Phone-first: component demos are shown at 390px, the width of a typical phone.</p>
     </div>
-    <button id="theme" class="inline-flex items-center gap-2 h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium" onclick="document.documentElement.classList.toggle('dark')">
-      <span class="dark:hidden">Show dark mode</span><span class="hidden dark:inline">Show light mode</span>
-    </button>
+    <button id="theme" class="inline-flex items-center gap-2 h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      // Follows the device setting; the button flips to the other mode.
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
   </div>
 </header>
 
@@ -67,7 +75,7 @@
   <!-- Colour -->
   <section>
     <h2 class="font-display text-2xl font-semibold">Colour</h2>
-    <p class="text-ink-muted mt-1">Warm paper background with a tomato accent. Meat, fish and veg each get a colour, used only for those badges and filters.</p>
+    <p class="text-ink-muted mt-1">Warm paper background with a tomato accent. Meat, fish, veg and vegan each get a colour, used only for those badges and filters.</p>
 
     <h3 class="font-semibold mt-6 mb-3">Surfaces and text</h3>
     <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
@@ -81,11 +89,12 @@
     </div>
 
     <h3 class="font-semibold mt-6 mb-3">Accent, categories and status</h3>
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
       <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-primary"></div><div class="h-8 bg-primary-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">primary <span class="text-ink-subtle font-normal">· tomato</span></p></div>
       <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-meat"></div><div class="h-8 bg-meat-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">meat</p></div>
       <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-fish"></div><div class="h-8 bg-fish-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">fish</p></div>
       <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-veg"></div><div class="h-8 bg-veg-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">veg</p></div>
+      <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-vegan"></div><div class="h-8 bg-vegan-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">vegan</p></div>
       <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-warning"></div><div class="h-8 bg-warning-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">warning</p></div>
       <div class="rounded-xl overflow-hidden border border-line"><div class="h-12 bg-danger"></div><div class="h-8 bg-danger-soft"></div><p class="text-sm font-medium px-3 py-2 bg-surface">danger</p></div>
     </div>
@@ -115,7 +124,7 @@
         <button class="w-full h-12 rounded-control border border-line bg-surface hover:bg-surface-2 font-semibold">Add to meal plan</button>
         <div class="flex gap-3">
           <button class="flex-1 h-11 rounded-control text-primary font-semibold hover:bg-primary-soft">Cancel</button>
-          <button class="flex-1 h-11 rounded-control bg-danger text-white dark:text-bg font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Delete</button>
+          <button class="flex-1 h-11 rounded-control bg-danger text-on-danger font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Delete</button>
         </div>
         <button class="w-full h-12 rounded-control bg-primary text-on-primary font-semibold opacity-40 cursor-not-allowed" disabled>Import (disabled)</button>
         <div class="flex gap-3 pt-1">
@@ -170,14 +179,16 @@
     <p class="text-ink-muted mt-1">Small, rounded, never tappable (filters use chips instead).</p>
     <div class="mt-5 rounded-card bg-surface border border-line divide-y divide-line">
       <div class="p-5 grid sm:grid-cols-[10rem_1fr] gap-3 items-center">
-        <p class="text-sm text-ink-muted">Protein type</p>
+        <p class="text-sm text-ink-muted">Category</p>
         <div class="flex flex-wrap gap-2">
           <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-meat-soft text-meat text-sm font-semibold"><span class="size-2 rounded-full bg-meat"></span>Meat</span>
           <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-fish-soft text-fish text-sm font-semibold"><span class="size-2 rounded-full bg-fish"></span>Fish</span>
           <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-veg-soft text-veg text-sm font-semibold"><span class="size-2 rounded-full bg-veg"></span>Veg</span>
+          <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-vegan-soft text-vegan text-sm font-semibold"><span class="size-2 rounded-full bg-vegan"></span>Vegan</span>
           <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-fish-soft text-fish text-sm font-semibold"><span class="size-2 rounded-full bg-fish"></span>Fish · Tuna</span>
           <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-surface-2 text-ink-muted text-sm font-medium border border-line">+ veggie option</span>
         </div>
+        <p class="sm:col-start-2 text-xs text-ink-subtle">A recipe shows one category. Vegan replaces Veg when the recipe's dietary flags include vegan (so every Vegan recipe is also found by the Veg filter).</p>
       </div>
       <div class="p-5 grid sm:grid-cols-[10rem_1fr] gap-3 items-center">
         <p class="text-sm text-ink-muted">Carbs</p>
@@ -223,11 +234,12 @@
     <h2 class="font-display text-2xl font-semibold">Filter chips</h2>
     <div class="mt-5 w-[390px] max-w-full rounded-card bg-surface border border-line p-5 space-y-5">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-2">Meat / Fish / Veg</p>
+        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-2">Meat / Fish / Veg / Vegan</p>
         <div class="flex flex-wrap gap-2">
           <button class="h-10 px-4 rounded-full border border-line bg-surface-2 font-medium">Meat</button>
           <button class="h-10 px-4 rounded-full bg-ink text-bg font-semibold inline-flex items-center gap-1.5"><svg class="size-4 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Fish</button>
           <button class="h-10 px-4 rounded-full border border-line bg-surface-2 font-medium">Veg</button>
+          <button class="h-10 px-4 rounded-full border border-line bg-surface-2 font-medium">Vegan</button>
         </div>
       </div>
       <div>
@@ -321,7 +333,7 @@
             <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
           </a>
         </div>
-        <p class="text-xs text-ink-subtle">The coloured bar on the left is the meat / fish / veg category.</p>
+        <p class="text-xs text-ink-subtle">The coloured bar on the left is the meat / fish / veg / vegan category.</p>
       </div>
     </div>
   </section>
@@ -393,7 +405,7 @@
           <p class="mt-1 text-ink">Makes 4 servings; 2 are planned.</p>
         </div>
         <div class="flex items-center gap-3 rounded-full bg-ink text-bg px-5 h-12 shadow-lg w-fit">
-          <svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg><span class="font-medium">3 recipes imported</span><button class="ml-2 text-primary-soft font-semibold dark:text-primary">Undo</button>
+          <svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg><span class="font-medium">3 recipes imported</span><button class="ml-2 font-semibold underline underline-offset-2">Undo</button>
         </div>
       </div>
 
@@ -411,7 +423,7 @@
             <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
             <p class="font-display text-xl font-semibold mt-4">Delete this recipe?</p>
             <p class="text-ink-muted mt-1">It's in 2 meal plans: <b class="text-ink font-medium">This week</b> and <b class="text-ink font-medium">Next week</b>. It'll be removed from both.</p>
-            <button class="mt-5 w-full h-12 rounded-control bg-danger text-white dark:text-bg font-semibold">Delete recipe</button>
+            <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Delete recipe</button>
             <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
           </div>
         </div>
@@ -471,20 +483,22 @@
       <div class="max-w-sm space-y-3 text-sm">
         <p class="font-semibold text-base">Bottom navigation</p>
         <p class="text-ink-muted">Five tabs: <b class="text-ink">Recipes</b>, <b class="text-ink">Plans</b>, <b class="text-ink">Import</b> (raised, as the main way new things come in), <b class="text-ink">Compare</b> and <b class="text-ink">Household</b>.</p>
+        <p class="text-ink-muted">On the web: the bar is fixed to the bottom and padded for the iPhone home indicator; it stays visible as Safari's toolbar shrinks. From tablet width up it becomes a side rail, and the Import button moves into it.</p>
         <p class="text-ink-muted">Alternative if Compare turns out to be rarely used: move it into the recipe list (select recipes → Compare) and give the tab slot to a shopping list later.</p>
       </div>
     </div>
   </section>
 
   <section class="pb-10">
-    <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
-    <ol class="mt-3 list-decimal pl-5 space-y-2 text-ink-muted max-w-3xl">
-      <li><b class="text-ink">Colour:</b> tomato accent with warm paper background. Happy with it, or would you prefer something else (e.g. herb green, or a cooler neutral)?</li>
-      <li><b class="text-ink">Serif for recipe names:</b> keep the cookbook feel, or all sans-serif?</li>
-      <li><b class="text-ink">Dark mode:</b> worth supporting from the start (following the phone's setting)? It's cheap now since everything uses tokens.</li>
-      <li><b class="text-ink">Bottom navigation:</b> are those five tabs right, with Import raised in the middle?</li>
-      <li><b class="text-ink">Printed vs estimated:</b> is the dashed outline and ~ prefix clear enough?</li>
-    </ol>
+    <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+    <p class="text-sm text-ink-muted mt-1">Approved by Kris on 11 October 2026.</p>
+    <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+      <li>Tomato accent, warm background, serif recipe names: kept.</li>
+      <li>Dark mode follows the phone's setting.</li>
+      <li>Five bottom tabs as shown, with web-specific handling (safe area, side rail on wider screens).</li>
+      <li>Printed vs estimated: dashed outline and ~ prefix.</li>
+      <li>New: a Vegan category alongside Meat / Fish / Veg, taken from the recipe's dietary flags.</li>
+    </ul>
   </section>
 </main>
 </body>
