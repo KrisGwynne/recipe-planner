@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Onboarding</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-146</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Landing, sign-in and households</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">From a signed-out visitor to someone with a household: the landing page, signing in with Google, creating a household, and joining one from an invite link. The app is called <b class="text-ink">Recipe planner</b> here as a placeholder.</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Getting started</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Landing -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-14">
+          <span class="size-14 rounded-2xl bg-primary text-on-primary grid place-items-center shadow-lg"><svg class="size-8 fill-none stroke-current stroke-2"><use href="#i-book"/></svg></span>
+          <h1 class="font-display text-[34px] leading-[40px] font-semibold mt-6">Your recipe book, on your phone.</h1>
+          <p class="mt-3 text-[17px] leading-[26px] text-ink-muted">Keep your household's recipes in one place, plan the week's meals, and see what you're eating.</p>
+          <ul class="mt-6 space-y-3">
+            <li class="flex gap-3"><span class="size-9 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-search"/></svg></span><span class="pt-1.5">Find a recipe by carbs, protein, time or book</span></li>
+            <li class="flex gap-3"><span class="size-9 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg></span><span class="pt-1.5">Plan meals and see daily calories and protein</span></li>
+            <li class="flex gap-3"><span class="size-9 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-users"/></svg></span><span class="pt-1.5">Share it all with the people you cook with</span></li>
+          </ul>
+        </div>
+        <div class="px-6 pb-8">
+          <button class="w-full h-12 rounded-control bg-surface border border-line shadow-sm font-semibold inline-flex items-center justify-center gap-3"><svg class="size-5"><use href="#i-google"/></svg>Continue with Google</button>
+          <p class="mt-4 text-center text-xs text-ink-subtle">By continuing you agree to the <a class="underline">terms</a> and <a class="underline">privacy policy</a>.</p>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Landing (signed out)</p><p class="text-ink-muted mt-1">One screen, one button. Google is the only way in, so the same button signs up and signs in. Terms and privacy are linked here as Google's verification requires. On a computer it's the same content centred.</p></figcaption>
+    </figure>
+
+    <!-- B. Create household -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-14">
+          <span class="size-14 rounded-full bg-surface-2 border border-line text-ink grid place-items-center text-xl font-semibold">K</span>
+          <h1 class="font-display text-[28px] leading-[34px] font-semibold mt-5">Welcome, Kris</h1>
+          <p class="mt-2 text-[17px] leading-[26px] text-ink-muted">Recipes and meal plans live in a household, so everyone you cook with sees the same things. Start one now; you can invite people next.</p>
+          <label class="block mt-6">
+            <span class="font-semibold">Household name</span>
+            <input class="mt-2 w-full h-12 px-4 rounded-control bg-surface border-2 border-primary text-[17px]" value="The Gwynnes">
+            <span class="mt-1.5 block text-sm text-ink-subtle">Only members see this. You can change it later.</span>
+          </label>
+          <div class="mt-8 rounded-control bg-surface-2 px-4 py-3 text-sm flex gap-3">
+            <svg class="size-5 shrink-0 fill-none stroke-ink-muted stroke-2"><use href="#i-link"/></svg>
+            <span><span class="font-semibold">Joining someone else's?</span> <span class="text-ink-muted">Open the invite link they sent you instead.</span></span>
+          </div>
+        </div>
+        <div class="px-6 pb-8">
+          <button class="w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Create household</button>
+          <button class="mt-2 w-full h-11 text-sm font-medium text-ink-muted">Sign out</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · Create a household</p><p class="text-ink-muted mt-1">Shown after first sign-in, and to anyone signed in with no household (e.g. after leaving one). Their Google name and photo are used; the circle shows their initial if there's no photo. Creating it makes them the owner and takes them to the empty library.</p></figcaption>
+    </figure>
+
+    <!-- C. Next step: invite -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-14">
+          <span class="size-14 rounded-full bg-veg-soft text-veg grid place-items-center"><svg class="size-7 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg></span>
+          <h1 class="font-display text-[28px] leading-[34px] font-semibold mt-5">The Gwynnes is ready</h1>
+          <p class="mt-2 text-[17px] leading-[26px] text-ink-muted">Invite the people you cook with. They'll need a Google account.</p>
+          <div class="mt-6 rounded-card bg-surface border border-line p-4">
+            <p class="text-sm font-semibold">Invite link</p>
+            <p class="mt-2 h-11 px-3 rounded-control bg-surface-2 font-mono text-sm flex items-center text-ink-muted truncate">recipes.example/invite/k7Qm2xP…</p>
+            <div class="mt-3 grid grid-cols-2 gap-2">
+              <button class="h-11 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-copy"/></svg>Copy</button>
+              <button class="h-11 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg>Share</button>
+            </div>
+            <p class="mt-3 text-xs text-ink-subtle">Works once, for one person, and expires in 7 days. Manage links in Household settings.</p>
+          </div>
+        </div>
+        <div class="px-6 pb-8">
+          <button class="w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Done, go to recipes</button>
+          <button class="mt-2 w-full h-11 text-sm font-medium text-ink-muted">Skip for now</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · Invite someone (optional)</p><p class="text-ink-muted mt-1">Straight after creating the household, since that's when you'll want to. "Share" opens the phone's share sheet (Messages, WhatsApp…). The link is only made if you tap Copy or Share, so skipping leaves no unused links lying around.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Joining from an invite</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- D. Invite, signed out -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[720px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-16 text-center">
+          <div class="flex justify-center -space-x-3">
+            <span class="size-14 rounded-full bg-surface-2 border border-line text-ink grid place-items-center text-xl font-semibold ring-4 ring-bg">K</span>
+          </div>
+          <p class="mt-5 text-ink-muted">Kris Gwynne invited you to join</p>
+          <h1 class="font-display text-[30px] leading-9 font-semibold mt-1">The Gwynnes</h1>
+          <p class="mt-3 text-[17px] leading-[26px] text-ink-muted">Share recipes and meal plans in Recipe planner. Sign in with Google to accept.</p>
+        </div>
+        <div class="px-6 pb-8">
+          <button class="w-full h-12 rounded-control bg-surface border border-line shadow-sm font-semibold inline-flex items-center justify-center gap-3"><svg class="size-5"><use href="#i-google"/></svg>Continue with Google</button>
+          <p class="mt-4 text-center text-xs text-ink-subtle">By continuing you agree to the <a class="underline">terms</a> and <a class="underline">privacy policy</a>.</p>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Invite link, signed out</p><p class="text-ink-muted mt-1">Says who invited you and to what, before asking you to sign in. After Google, you come back to E. Until you join, only the inviter's name and photo and the household name are shown, whoever holds the link.</p></figcaption>
+    </figure>
+
+    <!-- E. Invite, signed in -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[720px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-16 text-center">
+          <div class="flex justify-center -space-x-3">
+            <span class="size-14 rounded-full bg-surface-2 border border-line text-ink grid place-items-center text-xl font-semibold ring-4 ring-bg">K</span>
+          </div>
+          <p class="mt-5 text-ink-muted">Kris Gwynne invited you to join</p>
+          <h1 class="font-display text-[30px] leading-9 font-semibold mt-1">The Gwynnes</h1>
+          
+          <p class="mt-6 text-sm text-ink-muted rounded-control bg-surface-2 px-4 py-3 text-left">As a member you can import recipes, edit notes and plan meals. Kris manages members and invites.</p>
+        </div>
+        <div class="px-6 pb-8">
+          <button class="w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Join The Gwynnes</button>
+          <p class="mt-3 text-center text-sm text-ink-muted">Signed in as alex@gmail.com · <a class="font-semibold text-primary">Not you?</a></p>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · Invite link, signed in</p><p class="text-ink-muted mt-1">An explicit Join button rather than joining on page load, so a forwarded link or the wrong Google account can't add someone by accident. "Not you?" signs out and back in.</p></figcaption>
+    </figure>
+
+    <!-- F. Invite problems -->
+    <figure class="w-[390px] max-w-full space-y-4">
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">This invite has expired</p>
+        <p class="mt-1 text-ink-muted">Invite links last 7 days. Ask Kris for a new one.</p>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">This invite has already been used</p>
+        <p class="mt-1 text-ink-muted">Each link works once. If that wasn't you, ask Kris for a new one.</p>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">This invite was cancelled</p>
+        <p class="mt-1 text-ink-muted">Kris turned this link off. Ask them for a new one if you still need it.</p>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">You're already in a household</p>
+        <p class="mt-1 text-ink-muted">You can be in one household at a time. To join The Gwynnes, leave The Smiths first in Household settings. Its recipes stay with its other members.</p>
+        <button class="mt-3 h-11 px-4 rounded-control border border-line font-semibold">Go to Household settings</button>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">You're already a member</p>
+        <p class="mt-1 text-ink-muted">You're in The Gwynnes. <a class="font-semibold text-primary">Go to recipes</a></p>
+      </div>
+      <figcaption class="text-sm"><p class="font-semibold text-base">F · When an invite can't be used</p><p class="text-ink-muted mt-1">Each shown as a full page with a button to the app (or to sign-in). A made-up or mistyped link shows "This invite link isn't valid". The messages never reveal details of a household you're not in beyond the inviter's name.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Errors</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+    <figure class="w-[390px] max-w-full">
+      <div class="rounded-card bg-surface border border-line p-6 text-center">
+        <span class="mx-auto size-14 rounded-full bg-danger-soft text-danger grid place-items-center"><svg class="size-7 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg></span>
+        <p class="font-display text-xl font-semibold mt-4">Sign-in didn't work</p>
+        <p class="mt-1 text-ink-muted">Google didn't complete the sign-in, or it was cancelled. Nothing has changed.</p>
+        <button class="mt-5 w-full h-12 rounded-control bg-surface border border-line shadow-sm font-semibold inline-flex items-center justify-center gap-3"><svg class="size-5"><use href="#i-google"/></svg>Try again</button>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · Sign-in error</p><p class="text-ink-muted mt-1">The auth error page. Plain language, one way forward, no error codes (they go to the server log).</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
+  <ol class="mt-3 list-decimal pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li><b class="text-ink">App name:</b> "Recipe planner" is a placeholder. Want to name it now? (It appears on the landing page, Google's consent screen and invite messages.)</li>
+    <li><b class="text-ink">Invite step after creating a household (C):</b> worth it, or straight to the library?</li>
+    <li><b class="text-ink">Already in a household (F):</b> v1 says one household per user, so joining another means leaving yours first. OK?</li>
+  </ol>
+</section>
+</main>
+</body>
+</html>
