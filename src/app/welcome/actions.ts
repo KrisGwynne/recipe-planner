@@ -2,8 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { requireUser } from "@/auth";
-import { getDb } from "@/db";
-import { AlreadyInHouseholdError, createHousehold, householdName } from "@/households";
+import { AlreadyInHouseholdError, createHousehold, householdName } from "@/data";
 
 export type CreateHouseholdState = { name: string; error?: string };
 
@@ -18,7 +17,7 @@ export async function createHouseholdAction(
   if (!parsed.success) return { name: raw, error: parsed.error.issues[0].message };
 
   try {
-    await createHousehold(getDb(), user.id, parsed.data);
+    await createHousehold(user.id, parsed.data);
   } catch (error) {
     // Already in one (another tab, or a double tap): carry on into the app.
     if (!(error instanceof AlreadyInHouseholdError)) throw error;

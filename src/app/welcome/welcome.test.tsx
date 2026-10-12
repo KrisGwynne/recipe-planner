@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
 import { users } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
-import { createHousehold, getMembership } from "@/households";
+import { createHousehold, getMembership } from "@/data";
 
 const mocks = vi.hoisted(() => ({
   db: undefined as unknown as Db,
@@ -51,7 +51,7 @@ describe("welcome page", () => {
   });
 
   it("sends someone who already has a household to the app", async () => {
-    await createHousehold(mocks.db, "kris", "Our kitchen");
+    await createHousehold("kris", "Our kitchen");
     await expect(WelcomePage()).rejects.toThrow("redirect /recipes");
   });
 
@@ -66,7 +66,7 @@ describe("welcome page", () => {
 describe("createHouseholdAction", () => {
   it("creates the household with the user as owner, then opens the library", async () => {
     await expect(createHouseholdAction({ name: "" }, form(" Our kitchen "))).rejects.toThrow("redirect /recipes");
-    expect(await getMembership(mocks.db, "kris")).toMatchObject({ name: "Our kitchen", role: "owner" });
+    expect(await getMembership("kris")).toMatchObject({ name: "Our kitchen", role: "owner" });
   });
 
   it("keeps what was typed when the name is invalid", async () => {
@@ -74,12 +74,12 @@ describe("createHouseholdAction", () => {
       name: "x".repeat(51),
       error: "Keep the name to 50 characters or fewer",
     });
-    expect(await getMembership(mocks.db, "kris")).toBeNull();
+    expect(await getMembership("kris")).toBeNull();
   });
 
   it("carries on into the app if a household already exists", async () => {
-    await createHousehold(mocks.db, "kris", "Our kitchen");
+    await createHousehold("kris", "Our kitchen");
     await expect(createHouseholdAction({ name: "" }, form("Another"))).rejects.toThrow("redirect /recipes");
-    expect(await getMembership(mocks.db, "kris")).toMatchObject({ name: "Our kitchen" });
+    expect(await getMembership("kris")).toMatchObject({ name: "Our kitchen" });
   });
 });

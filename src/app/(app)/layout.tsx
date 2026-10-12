@@ -1,5 +1,5 @@
 import { Nav } from "@/components/nav";
-import { requireHousehold } from "@/households/session";
+import { requireHousehold } from "@/data";
 
 /**
  * The app shell: page content plus the main navigation. Every page in it
