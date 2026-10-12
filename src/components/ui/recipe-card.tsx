@@ -19,7 +19,26 @@ export type RecipeSummary = {
   carbs: string[];
   /** A variation without meat or fish: "+ Veggie option" (library design A). */
   veggieOption?: boolean;
+  /** Search words to mark in the name (library design C). */
+  highlight?: string[];
+  /** When only an ingredient matched the search, which one (design C). */
+  matchedIngredient?: string;
 };
+
+/** Text with each search word marked (library design C). */
+export function Highlighted({ text, words = [] }: { text: string; words?: string[] }) {
+  if (words.length === 0) return text;
+  const pattern = new RegExp(`(${words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+  return text.split(pattern).map((part, i) =>
+    i % 2 === 1 ? (
+      <mark key={i} className="bg-primary-soft text-ink rounded px-0.5">
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
+}
 
 /**
  * Typographic recipe card (no photos). The whole card is a link; the
@@ -40,7 +59,7 @@ export function RecipeCard({
       <div className="flex items-start gap-3">
         <h3 className="flex-1 font-display text-xl font-semibold leading-snug">
           <Link href={recipe.href} className="outline-none after:absolute after:inset-0 after:rounded-card">
-            {recipe.name}
+            <Highlighted text={recipe.name} words={recipe.highlight} />
           </Link>
         </h3>
         {onToggleFavourite && (
@@ -90,6 +109,12 @@ export function RecipeCard({
         <NutritionBadge source={recipe.nutritionSource} />
       </div>
       {recipe.veggieOption && <p className="mt-2 text-sm text-veg font-medium">+ Veggie option</p>}
+      {recipe.matchedIngredient && (
+        <p className="mt-2 text-sm rounded-lg bg-surface-2 px-3 py-2">
+          <span className="text-ink-muted">Ingredient:</span>{" "}
+          <Highlighted text={recipe.matchedIngredient} words={recipe.highlight} />
+        </p>
+      )}
     </article>
   );
 }
@@ -98,13 +123,14 @@ export function RecipeCard({
  * Denser list row for long libraries (library design B). The left bar is the
  * category colour: meat & fish is split, meat above fish.
  */
-export function RecipeRow({ recipe }: { recipe: RecipeSummary }) {
+export function RecipeRow({ recipe, emphasis }: { recipe: RecipeSummary; emphasis?: "time" | "kcal" | "protein" }) {
   const estimated = recipe.nutritionSource === "estimated";
-  const facts = [
-    formatMinutes(recipe.totalMins),
-    approx(`${recipe.kcal} kcal`, estimated),
-    approx(`${recipe.proteinG}g protein`, estimated),
-    ...(recipe.carbs.length === 0 ? ["No carbs"] : recipe.carbs),
+  // The number being sorted on is bold (library design B).
+  const facts: [string, boolean][] = [
+    [formatMinutes(recipe.totalMins), emphasis === "time"],
+    [approx(`${recipe.kcal} kcal`, estimated), emphasis === "kcal"],
+    [approx(`${recipe.proteinG}g protein`, estimated), emphasis === "protein"],
+    ...(recipe.carbs.length === 0 ? ["No carbs"] : recipe.carbs).map((c): [string, boolean] => [c, false]),
   ];
   return (
     <Link
@@ -117,9 +143,28 @@ export function RecipeRow({ recipe }: { recipe: RecipeSummary }) {
         ))}
       </span>
       <span className="flex-1 min-w-0">
-        <span className="block font-semibold truncate">{recipe.name}</span>
+        <span className="block font-semibold truncate">
+          <Highlighted text={recipe.name} words={recipe.highlight} />
+        </span>
         <span className="sr-only">{categoryLabels[recipe.category]}</span>
-        <span className="block text-sm text-ink-muted tabular-nums truncate">{facts.join(" · ")}</span>
+        <span className="block text-sm text-ink-muted tabular-nums truncate">
+          {facts.flatMap(([fact, bold], i) => [
+            i > 0 ? " · " : "",
+            bold ? (
+              <b key={i} className="text-ink font-semibold">
+                {fact}
+              </b>
+            ) : (
+              fact
+            ),
+          ])}
+        </span>
+        {recipe.matchedIngredient && (
+          <span className="block text-sm truncate">
+            <span className="text-ink-muted">Ingredient:</span>{" "}
+            <Highlighted text={recipe.matchedIngredient} words={recipe.highlight} />
+          </span>
+        )}
       </span>
     </Link>
   );

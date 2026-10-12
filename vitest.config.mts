@@ -16,13 +16,13 @@ export default defineConfig({
     hookTimeout: 30_000,
     // Component tests (.tsx) run in jsdom; everything else in Node.
     projects: [
-      { extends: true, test: { name: "node", include: ["**/*.test.ts"], exclude: ["node_modules/**"], environment: "node" } },
+      { extends: true, test: { name: "node", include: ["**/*.test.ts"], exclude: ["node_modules/**", ".claude/**"], environment: "node" } },
       {
         extends: true,
         test: {
           name: "dom",
           include: ["**/*.test.tsx"],
-          exclude: ["node_modules/**"],
+          exclude: ["node_modules/**", ".claude/**"],
           environment: "jsdom",
           setupFiles: ["./vitest.setup.ts"],
         },

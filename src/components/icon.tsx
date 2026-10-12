@@ -22,6 +22,7 @@ const paths = {
   ),
   "chart": <path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3" />,
   "check": <path d="M20 6 9 17l-5-5" />,
+  "chevron-down": <path d="m6 9 6 6 6-6" />,
   "chevron-right": <path d="m9 18 6-6-6-6" />,
   "clock": (
     <>
@@ -60,6 +61,7 @@ const paths = {
       <path d="m21 21-4.3-4.3" />
     </>
   ),
+  "sort": <path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16" />,
   "sliders": <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />,
   "trash": <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />,
   "upload": <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />,

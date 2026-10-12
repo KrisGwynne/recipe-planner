@@ -98,6 +98,16 @@ describe("reading", () => {
     expect(await getRecipesBySlugs(h.a, [])).toEqual([]);
   });
 
+  it("lists what filters and search need from the file", async () => {
+    await saveRecipe(h.a, tunaPasta);
+    const [row] = await listRecipes(h.a);
+    expect(row.equipment).toEqual(["hob"]);
+    expect(row.freezable).toBe(false);
+    expect(row.ingredients).toHaveLength(tunaPasta.ingredients.length);
+    expect(row.ingredients[5]).toEqual({ item: "tuna in olive oil", prep: "drained" });
+    expect(row.ingredients[0]).toEqual({ item: "olive oil", prep: null });
+  });
+
   it("lists the household's recipes A to Z, ignoring case", async () => {
     await saveRecipe(h.a, tunaPasta);
     await saveRecipe(h.a, tofooNoodles);
