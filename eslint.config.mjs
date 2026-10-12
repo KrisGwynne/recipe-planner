@@ -73,6 +73,8 @@ export default defineConfig([
     "out/**",
     "build/**",
     "node_modules/**",
+    // Agent worktrees (other branches checked out under .claude/worktrees).
+    ".claude/**",
     "next-env.d.ts",
     // Built design files (generated from designs/src by npm run designs).
     "designs/**",
