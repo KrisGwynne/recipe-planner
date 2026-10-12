@@ -215,6 +215,7 @@ Paste this into the new Claude.ai project's instructions, and add `recipe.schema
 > When I upload a photo of a recipe, produce one JSON file that validates against `recipe.schema.json`, named `<id>.json`.
 >
 > - `id`: lowercase, hyphenated slug of the recipe name.
+> - `source.title`: the publication's exact name as printed on the cover (e.g. "BBC Good Food", not "Good Food"), the same every time, so recipes from one source group together.
 > - Copy quantities and steps faithfully. Rewrite the description and notes in your own words.
 > - Use only the enum values in the schema. If nothing fits, use `other` and explain in the matching `detail` or `notes` field.
 > - `proteins`: only the main protein(s) the dish is built around. Empty array if none.
