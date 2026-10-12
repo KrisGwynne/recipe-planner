@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { requireUser, signOut } from "@/auth";
 import { Avatar } from "@/components/avatar";
-import { getDb } from "@/db";
-import { getMembership } from "@/households";
+import { getMembership } from "@/data";
 import { CreateHouseholdForm } from "./create-household-form";
 
 export const metadata: Metadata = { title: "Welcome" };
@@ -17,7 +16,7 @@ function firstName(name: string | null | undefined): string | undefined {
 // sign-in, or after leaving one). People with a household go to the app.
 export default async function WelcomePage() {
   const user = await requireUser();
-  if (await getMembership(getDb(), user.id)) redirect("/recipes");
+  if (await getMembership(user.id)) redirect("/recipes");
   const first = firstName(user.name);
 
   return (

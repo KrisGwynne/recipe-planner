@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 
 const requireHousehold = vi.hoisted(() => vi.fn());
-vi.mock("@/households/session", () => ({ requireHousehold }));
+vi.mock("@/data", () => ({ requireHousehold }));
 vi.mock("@/auth", () => ({ signOut: vi.fn() }));
 vi.mock("next/navigation", () => ({ usePathname: () => "/recipes" }));
 

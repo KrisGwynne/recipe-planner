@@ -2,7 +2,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
 import { users } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
-import { createHousehold } from "./index";
+import { twoHouseholds } from "./test-fixtures";
 
 const mocks = vi.hoisted(() => ({
   db: undefined as unknown as Db,
@@ -19,17 +19,25 @@ const { requireHousehold } = await import("./session");
 
 beforeEach(async () => {
   mocks.db = await createTestDb();
-  await mocks.db.insert(users).values({ id: "kris", name: "Kris" });
-  mocks.requireUser.mockResolvedValue({ id: "kris", name: "Kris" });
 });
 
 it("sends someone without a household to the create-household step", async () => {
+  await mocks.db.insert(users).values({ id: "new", name: "New" });
+  mocks.requireUser.mockResolvedValue({ id: "new" });
   await expect(requireHousehold()).rejects.toThrow("redirect /welcome");
 });
 
-it("returns the user and their household", async () => {
-  await createHousehold(mocks.db, "kris", "Our kitchen");
-  const { user, household } = await requireHousehold();
-  expect(user.id).toBe("kris");
-  expect(household).toMatchObject({ name: "Our kitchen", role: "owner" });
+it("gives each user the context for their own household", async () => {
+  const { a, aMember, b } = await twoHouseholds(mocks.db);
+
+  mocks.requireUser.mockResolvedValue({ id: "kris" });
+  const kris = await requireHousehold();
+  expect(kris.ctx).toEqual(a);
+  expect(kris.household).toMatchObject({ householdId: a.householdId, name: "Household A", role: "owner" });
+
+  mocks.requireUser.mockResolvedValue({ id: "sam" });
+  expect((await requireHousehold()).ctx).toEqual(aMember);
+
+  mocks.requireUser.mockResolvedValue({ id: "alex" });
+  expect((await requireHousehold()).ctx).toEqual(b);
 });
