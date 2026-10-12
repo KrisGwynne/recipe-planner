@@ -1,9 +1,6 @@
-// Placeholder until the app shell (PP-144) and sign-in (PP-153).
+import { redirect } from "next/navigation";
+
+// Until sign-in (PP-153) brings a landing page, the app opens on the library.
 export default function Home() {
-  return (
-    <main className="mx-auto max-w-md px-5 py-16">
-      <h1 className="font-display text-3xl font-semibold">Recipe planner</h1>
-      <p className="mt-2 text-ink-muted">Plan recipes and meals with your household.</p>
-    </main>
-  );
+  redirect("/recipes");
 }

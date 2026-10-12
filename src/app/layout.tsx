@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Recipe planner",
+  title: { default: "Recipe planner", template: "%s · Recipe planner" },
   description: "Plan recipes and meals with your household.",
 };
 
