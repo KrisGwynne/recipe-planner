@@ -5,15 +5,22 @@ import { migrate } from "drizzle-orm/pglite/migrator";
 import * as schema from "./schema";
 import type { Db } from "./index";
 
-// Tests make a fresh database each time; the previous one is closed first so
-// a test worker holds one at a time (each takes tens of MB).
+// Starting Postgres and migrating takes seconds, so each test worker does it
+// once and every test gets a clone of that database (a fraction of a
+// second). The previous clone is closed first, so a worker holds two at most.
+let template: Promise<PGlite> | undefined;
 let previous: PGlite | undefined;
 
-export async function createTestDb(): Promise<Db> {
-  await previous?.close();
+async function migratedTemplate(): Promise<PGlite> {
   const client = new PGlite();
+  await migrate(drizzle(client), { migrationsFolder: "drizzle" });
+  return client;
+}
+
+export async function createTestDb(): Promise<Db> {
+  template ??= migratedTemplate();
+  await previous?.close();
+  const client = await (await template).clone();
   previous = client;
-  const db = drizzle(client, { schema });
-  await migrate(db, { migrationsFolder: "drizzle" });
-  return db;
+  return drizzle(client, { schema });
 }
