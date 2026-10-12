@@ -1,0 +1,4 @@
+/* Entry point for building the design files; see scripts/build-designs.mjs. */
+@import "tailwindcss" source(none);
+@source "./src";
+@import "./theme.css";

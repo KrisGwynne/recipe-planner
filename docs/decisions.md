@@ -19,6 +19,16 @@ Decisions made after the [handover](handover.md). Where they differ from the han
 - One household per user in v1, no switcher. The data model stays many-to-many.
 - Session length is the Auth.js default (30 days), as in the holiday planner.
 
-**Design before code.** Every UI ticket needs an approved design in `designs/` first. Designs are self-contained HTML files (Tailwind via CDN) showing 390px phone screens, reviewed by Kris rendered in chat.
+**Design before code.** Every UI ticket needs an approved design in `designs/` first. Designs are self-contained HTML files showing 390px phone screens, written with Tailwind in `designs/src/` and built with `npm run designs` (CSS inlined, works offline). Kris reviews them by opening the file in a browser; this session type can't show files inline in chat.
 
 **Jira.** Tickets live in project PP with the `Recipe Planner` component; epics PP-132 to PP-139.
+
+## 2026-10-11: foundations design approved (PP-145)
+
+**Vegan category.** The Meat / Fish / Veg browsing filter gets a fourth option, Vegan. It's derived with a fixed rule, no inference: a recipe is Vegan when `protein_type` is `vegetarian` and `dietary` contains `vegan`. Vegan recipes are also found by the Veg filter. On cards the Vegan badge replaces the Veg badge. No new column: it filters on the existing `dietary` array.
+
+**Dark mode** follows the phone's setting. Tokens use CSS `light-dark()`, so components never need `dark:` variants; a `light`/`dark` class on `<html>` can override the setting later if a toggle is wanted.
+
+**Bottom navigation on the web.** Five tabs (Recipes, Plans, raised Import, Compare, Household), fixed to the bottom with `env(safe-area-inset-bottom)` padding (needs `viewport-fit=cover`) and `dvh` heights so Safari's toolbar doesn't cover it. From tablet width up it becomes a side rail.
+
+**Method steps** stay on the recipe page: every recipe has them (the schema requires at least one), and timers make them useful while cooking.

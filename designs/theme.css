@@ -1,0 +1,87 @@
+/*
+ * Design tokens. Shared by the designs in designs/ and (from PP-144) the app,
+ * so a colour or font change here shows up in both.
+ *
+ * Components use the semantic names (bg-surface, text-ink, bg-meat-soft...),
+ * never raw colours. Each colour is light-dark(light value, dark value):
+ * the page follows the phone's light/dark setting, and a `light` or `dark`
+ * class on <html> overrides it. No dark: variants needed in components.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* Surfaces and text */
+  --bg: light-dark(#fbf8f3, #171411);
+  --surface: light-dark(#ffffff, #211d19);
+  --surface-2: light-dark(#f3eee6, #2b2621);
+  --ink: light-dark(#1f1b16, #f3eee7);
+  --ink-muted: light-dark(#6b6258, #b3a99d);
+  --ink-subtle: light-dark(#8f857a, #8a8075);
+  --line: light-dark(#e6ded2, #3a332c);
+
+  /* Brand: tomato */
+  --primary: light-dark(#c2410c, #f07a45);
+  --primary-hover: light-dark(#9a3412, #f59a6f);
+  --primary-soft: light-dark(#fdebdf, #3b2216);
+  --on-primary: light-dark(#ffffff, #1a0e07);
+
+  /* Browsing categories: meat / fish / veg (protein_type) and vegan (dietary) */
+  --meat: light-dark(#a1325a, #f29ab9);
+  --meat-soft: light-dark(#fbe7ee, #3a1a27);
+  --fish: light-dark(#1d6fa5, #7db8e8);
+  --fish-soft: light-dark(#e3f0fa, #16293a);
+  --veg: light-dark(#2f7d32, #8bcb8e);
+  --veg-soft: light-dark(#e5f3e3, #1b2e1c);
+  --vegan: light-dark(#0f766e, #6fd3c3);
+  --vegan-soft: light-dark(#ddf3ef, #10302c);
+
+  /* Status */
+  --warning: light-dark(#8a6100, #f0c75e);
+  --warning-soft: light-dark(#fdf3c4, #352a0f);
+  --danger: light-dark(#b42318, #f28b82);
+  --danger-soft: light-dark(#fde8e6, #3a1d1a);
+  --on-danger: light-dark(#ffffff, #1f0b09);
+}
+
+:root.light { color-scheme: light; }
+:root.dark { color-scheme: dark; }
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-line: var(--line);
+
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+
+  --color-meat: var(--meat);
+  --color-meat-soft: var(--meat-soft);
+  --color-fish: var(--fish);
+  --color-fish-soft: var(--fish-soft);
+  --color-veg: var(--veg);
+  --color-veg-soft: var(--veg-soft);
+  --color-vegan: var(--vegan);
+  --color-vegan-soft: var(--vegan-soft);
+
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-on-danger: var(--on-danger);
+}
+
+@theme {
+  /* Recipe names and page titles get a cookbook serif; everything else is the system UI font. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 1rem;
+  --radius-control: 0.75rem;
+}

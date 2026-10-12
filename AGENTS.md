@@ -14,6 +14,8 @@ Shared conventions (secrets, git, devices) are in `~/Projects/AGENTS.md`.
 
 - `npm install`
 - `npm run test:run`: run tests once (`npm test` to watch)
+- `npm run designs`: build `designs/src/*.html` into self-contained `designs/*.html` (Tailwind compiled and inlined). Edit the sources, never the built files. Tokens live in `designs/theme.css`, shared with the app.
+- `node scripts/screenshot.mjs <html> <out-prefix> [width] [dark]`: screenshot a design to check it (first run `npx playwright install --only-shell chromium`).
 - `npm run schema:types`: regenerate `src/types/recipe.ts` from the schema after changing it. Never edit that file by hand; a test fails if it's out of date.
 
 The Next.js app isn't set up yet (PP-141); add its commands here when it is.
