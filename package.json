@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "schema:types": "node scripts/generate-types.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node scripts/migrate.mjs",
     "test": "vitest",
     "test:run": "vitest run",
     "designs": "node scripts/build-designs.mjs",
@@ -15,6 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@testing-library/jest-dom": "^7.0.1",
@@ -25,6 +28,7 @@
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "babel-plugin-react-compiler": "^1.0.0",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^10.12.0",
     "eslint-config-next": "^16.4.0",
     "jsdom": "^29.1.1",
@@ -35,7 +39,11 @@
     "vitest": "^5.0.3"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.11.3",
+    "@neondatabase/serverless": "^1.2.0",
+    "drizzle-orm": "^0.45.4",
     "next": "^16.4.0",
+    "next-auth": "5.0.0-beta.32",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "zod": "^4.6.5"
