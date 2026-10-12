@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Icon } from "@/components/icon";
+import { buttonClasses } from "@/components/ui/button";
 import { Badge, CategoryBadge, NutritionBadge, categoryLabels, categoryOf, dietaryLabels } from "@/components/ui/badge";
 import { cx } from "@/lib/cx";
 import { approx, formatMinutes } from "@/lib/format";
@@ -114,7 +115,17 @@ export function UnchangedNote({ items }: { items: Extract<ReviewItem, { status: 
 
 // --- C. A new recipe ---
 
-export function NewRecipe({ recipe, header, footer }: { recipe: Recipe; header: ReactNode; footer: ReactNode }) {
+export function NewRecipe({
+  recipe,
+  header,
+  footer,
+  onFull,
+}: {
+  recipe: Recipe;
+  header: ReactNode;
+  footer: ReactNode;
+  onFull: () => void;
+}) {
   const n = recipe.nutrition_per_serving;
   const estimated = n.source === "estimated";
   const { prep_mins, cook_mins, wait_mins } = recipe.times;
@@ -169,6 +180,9 @@ export function NewRecipe({ recipe, header, footer }: { recipe: Recipe; header: 
         <p className="mt-3 text-sm text-ink-muted">
           Worth a quick check that Claude read the photo right: the category, carbs and dietary flags drive the filters.
         </p>
+        <button type="button" onClick={onFull} className={buttonClasses("secondary", "mt-3 w-full h-11")}>
+          See the full recipe
+        </button>
       </main>
       {footer}
     </>
