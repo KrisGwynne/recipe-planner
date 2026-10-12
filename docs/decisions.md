@@ -140,3 +140,15 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **The invite page checks, in order:** a link that doesn't exist; already a member of this household; expired, used or cancelled; in another household. Then screen D (signed out) or E (signed in). "Not you?" signs out and opens Google's account chooser for this flow only.
 
 **Managing and cancelling links has no screen yet** (Kris, 2026-10-12): `listInvites` and `revokeInvite` are built and tested, and the UI comes with household settings (PP-152 design, PP-157). Until then screen C leaves out "Manage links in Household settings", and "Go to Household settings" (already in a household) opens the Household placeholder.
+
+## 2026-10-12: recipes table and derived values (PP-160)
+
+**Enum-like recipe columns are text**, not Postgres enums (Kris, 2026-10-12): the schema can add enum values without a new version (handover section 9), and a Postgres enum would need a migration each time. The TypeScript types still restrict them.
+
+**Indexes are per household only** (Kris, 2026-10-12): unique on (household_id, slug), and (household_id, lower(name)) for the A to Z sort. Every query reads one household's recipes, so indexing each filter column only slows writes. This replaces "indexed" for the source columns (PP-147 decision) until there's a reason.
+
+**Members and owners can both save and delete recipes** (handover section 2). Saving is one statement that creates the recipe or updates the household's recipe with the same slug, keeping its row id and creator. Validation against the schema comes with import (PP-161). The warning before deleting a recipe that's in a meal plan comes with meal plans.
+
+**Derived values** live in `src/recipes/derive.ts` (pure, usable on screens). A variation without a `proteins` list keeps the main recipe's, so it doesn't make a veggie option. `browsingCategory` returns `meat | fish | meat-and-fish | vegetarian | vegan`; how "meat & fish" shows on cards and filters is settled with the library (PP-166/167).
+
+**Tests share one migrated in-memory database per worker.** Each PGlite is about 0.5 GB, so tests run on at most 4 workers and each test gets a clone of a database migrated once per worker.
