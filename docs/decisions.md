@@ -106,3 +106,13 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 **Invite links are public**, following the approved onboarding design (D) rather than PP-153's description: the invite page says who invited you before asking you to sign in (PP-156).
 
 **Sign out** sits on the Household placeholder page, styled as on the create-household screen, until household settings are designed (PP-152). The terms and privacy links 404 until PP-159.
+
+## 2026-10-12: households and the create-household step (PP-154)
+
+**The invite step (onboarding screen C) is built with invites (PP-156)**, not here: it needs the invites table and link tokens. Until then, creating a household goes straight to the empty library.
+
+**`/welcome`** is the create-household step (screen B), outside the app shell. The `(app)` layout sends signed-in people without a household there; people with one who open it go to `/recipes`.
+
+**One household per user is enforced by the database**: a unique index on `household_members.user_id`. The tables stay many-to-many, so a later migration can drop the index if a household switcher comes. Household and owner are created in one SQL statement (the Neon HTTP driver has no transactions), so a household is never left without its owner.
+
+**Household names** are 1 to 50 characters after trimming. The field starts empty, with the placeholder "e.g. Our kitchen".
