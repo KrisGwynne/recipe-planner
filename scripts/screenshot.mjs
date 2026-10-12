@@ -1,7 +1,7 @@
 // Screenshots an HTML file in chunks, for checking designs without a desktop browser.
 //   node scripts/screenshot.mjs designs/foundations.html /tmp/shots/f [width=390] [dark]
 // Writes <prefix>-0.png, <prefix>-1.png, ... each up to 1100px tall.
-// Needs a browser once per machine: npx playwright install --only-shell chromium
+// Needs a browser once per machine: pnpm exec playwright install --only-shell chromium
 import { resolve } from "node:path";
 import { chromium } from "playwright";
 

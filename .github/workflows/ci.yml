@@ -9,23 +9,23 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      # Installs pnpm (version from packageManager in package.json), Node 24
+      # (keep in step with .nvmrc) and runs a frozen `pnpm install`.
+      - uses: pnpm/setup@c9883cc79df532ad1a7b81bf9ab944ceb090d65c # v2.0.0
         with:
-          node-version-file: .nvmrc
-          cache: npm
-
-      - run: npm ci
+          runtime: node@24
+          cache: true
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Type check
-        run: npm run typecheck
+        run: pnpm typecheck
 
       - name: Test
-        run: npm run test:run
+        run: pnpm test:run
 
       - name: Build
-        run: npm run build
+        run: pnpm build

@@ -1,5 +1,5 @@
 // Generates src/types/recipe.ts from schema/recipe.schema.json.
-// Run `npm run schema:types` after changing the schema; a test fails if the
+// Run `pnpm schema:types` after changing the schema; a test fails if the
 // committed types are out of date.
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -32,7 +32,7 @@ export async function generateRecipeTypes() {
   }
   return compile(schema, "Recipe", {
     bannerComment:
-      "/* Generated from schema/recipe.schema.json by `npm run schema:types`. Do not edit. */",
+      "/* Generated from schema/recipe.schema.json by `pnpm schema:types`. Do not edit. */",
     additionalProperties: false,
     // Plain arrays rather than tuples; the minimum lengths are enforced by Ajv.
     ignoreMinAndMaxItems: true,
