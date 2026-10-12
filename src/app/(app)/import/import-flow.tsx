@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
 import { Icon } from "@/components/icon";
+import { RecipeView } from "@/components/recipe/recipe-view";
 import { buttonClasses } from "@/components/ui/button";
 import { cx } from "@/lib/cx";
 import {
@@ -101,7 +102,31 @@ export function ImportFlow({ review, save }: Actions) {
     return <Done results={results} notImported={notImported} onMore={startAgain} />;
   }
   if (view === "file" && items[index]) {
-    return <FileDetail item={items[index]} />;
+    const item = items[index];
+    // "See the full recipe": the recipe page, from the file, before it's saved.
+    if (params.get("full") === "1" && (item.status === "new" || item.status === "update")) {
+      return (
+        <RecipeView
+          recipe={item.recipe}
+          header={
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              aria-label="Back"
+              className="size-11 rounded-full grid place-items-center hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-primary"
+            >
+              <Icon name="arrow-left" className="size-6" />
+            </button>
+          }
+          banner={
+            <p className="mt-1 inline-flex h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold items-center">
+              Preview · not saved yet
+            </p>
+          }
+        />
+      );
+    }
+    return <FileDetail item={item} index={index} />;
   }
   if ((view === "review" || view === "file") && items.length > 0) {
     return (
@@ -318,8 +343,16 @@ function Section({ title, danger = false, children }: { title: string; danger?: 
 
 // --- C, D, E. One file ---
 
-function FileDetail({ item }: { item: ReviewItem }) {
-  if (item.status === "new") return <NewRecipe recipe={item.recipe} footer={<BackToList />} header={<Header pill="new" />} />;
+function FileDetail({ item, index }: { item: ReviewItem; index: number }) {
+  if (item.status === "new")
+    return (
+      <NewRecipe
+        recipe={item.recipe}
+        footer={<BackToList />}
+        header={<Header pill="new" />}
+        onFull={() => window.history.pushState(null, "", `?view=file&i=${index}&full=1`)}
+      />
+    );
   if (item.status === "update")
     return <UpdateDetail recipe={item.recipe} changes={item.changes} footer={<BackToList />} header={<Header pill="update" />} />;
   if (item.status === "problems")
@@ -416,7 +449,11 @@ function Done({
         {saved.length > 0 && (
           <ul className="mt-5 text-left rounded-card bg-surface border border-line divide-y divide-line">
             {saved.map((r) => (
-              <li key={r.file} className="px-4 py-3 flex items-center gap-3">
+              <li key={r.file}>
+                <Link
+                  href={`/recipes/${r.slug}`}
+                  className="px-4 py-3 flex items-center gap-3 hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                >
                 <span
                   className={cx(
                     "inline-flex h-6 px-2 rounded-full text-xs font-semibold items-center",
@@ -426,6 +463,8 @@ function Done({
                   {r.created ? "New" : "Updated"}
                 </span>
                 <span className="flex-1 font-medium truncate">{r.name}</span>
+                <Icon name="chevron-right" className="size-5 text-ink-subtle" />
+                </Link>
               </li>
             ))}
           </ul>

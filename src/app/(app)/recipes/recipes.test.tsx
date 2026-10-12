@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
 import { useSyncExternalStore } from "react";
 import type { LibraryRecipe } from "@/recipes/library-filter";
 
@@ -35,6 +36,7 @@ vi.mock("next/navigation", () => {
       throw new Error("NEXT_NOT_FOUND");
     },
     usePathname: () => "/recipes",
+    useRouter: () => ({ back: vi.fn(), push: vi.fn() }),
     useSearchParams: () => new URLSearchParams(useSyncExternalStore(subscribe, () => window.location.search)),
   };
 });
@@ -131,15 +133,25 @@ describe("the recipe library", () => {
   });
 });
 
-describe("the recipe page placeholder", () => {
+describe("the recipe page", () => {
   const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
+  const tuna = JSON.parse(readFileSync("examples/lemony-tuna-tomato-caper-pasta.json", "utf8"));
 
   it("shows the household's recipe by slug", async () => {
-    mocks.getRecipeBySlug.mockResolvedValue({ name: "Tuna pasta" });
-    render(await RecipePage(params("tuna-pasta")));
-    expect(mocks.getRecipeBySlug).toHaveBeenCalledWith(ctx, "tuna-pasta");
-    expect(screen.getByRole("heading", { level: 1, name: "Tuna pasta" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Back to recipes" })).toHaveAttribute("href", "/recipes");
+    mocks.getRecipeBySlug.mockResolvedValue({ name: tuna.name, data: tuna });
+    render(await RecipePage(params(tuna.id)));
+    expect(mocks.getRecipeBySlug).toHaveBeenCalledWith(ctx, tuna.id);
+    expect(screen.getByRole("heading", { level: 1, name: tuna.name })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeInTheDocument();
+  });
+
+  it("offers the recipe file and a new version from the ⋯ menu", async () => {
+    mocks.getRecipeBySlug.mockResolvedValue({ name: tuna.name, data: tuna });
+    render(await RecipePage(params(tuna.id)));
+    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    const menu = screen.getByRole("dialog");
+    expect(within(menu).getByRole("button", { name: "Download recipe file (.json)" })).toBeInTheDocument();
+    expect(within(menu).getByRole("link", { name: /Replace with a new version/ })).toHaveAttribute("href", "/import");
   });
 
   it("is not found when the household has no such recipe", async () => {

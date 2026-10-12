@@ -38,7 +38,7 @@ const saved = new Map<string, Recipe>([[tuna().id, tuna()]]);
 const review = vi.fn(async (files: ImportFile[]) => files.map((f) => checkFile(f, saved)));
 const save = vi.fn(
   async (files: ImportFile[]): Promise<ImportResult[]> =>
-    files.map((f, i) => ({ file: f.name, saved: true, id: `id-${i}`, name: JSON.parse(f.text!).name, created: !f.name.includes("tuna") })),
+    files.map((f, i) => ({ file: f.name, saved: true, id: `id-${i}`, slug: JSON.parse(f.text!).id, name: JSON.parse(f.text!).name, created: !f.name.includes("tuna") })),
 );
 
 const changedTuna = () => {
@@ -89,6 +89,7 @@ describe("import flow", () => {
     expect(save).toHaveBeenCalledTimes(1);
     expect(save.mock.calls[0][0].map((f) => f.name)).toEqual(["char-siu-tofoo-noodles.json"]);
     expect(screen.getByText(/1 file wasn't imported: Smoked mackerel bake/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Char siu Tofoo noodles/ })).toHaveAttribute("href", "/recipes/char-siu-tofoo-noodles");
     expect(screen.getByRole("link", { name: "Go to recipes" })).toHaveAttribute("href", "/recipes");
   });
 
@@ -100,6 +101,17 @@ describe("import flow", () => {
     expect(screen.getByText("15 prep · 10 cook · 30 waiting = 55 min")).toBeInTheDocument();
     expect(screen.getByText("Vegetarian · Dairy-free · Nut-free")).toBeInTheDocument();
     expect(screen.getByText("Greens, Rice")).toBeInTheDocument();
+  });
+
+  it("previews the full recipe page before saving (C)", async () => {
+    render(<ImportFlow review={review} save={save} />);
+    pick([{ name: "char-siu-tofoo-noodles.json", text: tofooText }]);
+    fireEvent.click(await screen.findByRole("button", { name: "Char siu Tofoo noodles" }));
+    fireEvent.click(await screen.findByRole("button", { name: "See the full recipe" }));
+    expect(await screen.findByText("Preview · not saved yet")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Char siu Tofoo noodles" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Ingredients" })).toBeInTheDocument();
+    expect(save).not.toHaveBeenCalled();
   });
 
   it("an update's changes (D)", async () => {

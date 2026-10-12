@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { Icon } from "@/components/icon";
 
 /**
  * A bottom sheet (library design D, E and G): a dialog over the page that
  * closes with the cross, Escape or a tap outside. `full` makes it full height.
+ * It's rendered into <body>, so a parent with a backdrop blur or transform
+ * (like the recipe page's sticky bar) can't trap the fixed overlay inside it.
  */
 export function Sheet({
   title,
@@ -35,7 +38,7 @@ export function Sheet({
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex flex-col justify-end">
       <div className="absolute inset-0 bg-ink/40" onClick={onClose} aria-hidden="true" />
       <div
@@ -71,6 +74,7 @@ export function Sheet({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

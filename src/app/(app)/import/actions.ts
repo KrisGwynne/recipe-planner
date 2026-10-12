@@ -23,7 +23,7 @@ export async function reviewImportAction(files: ImportFile[]): Promise<ReviewIte
 }
 
 export type ImportResult =
-  | { file: string; saved: true; id: string; name: string; created: boolean }
+  | { file: string; saved: true; id: string; slug: string; name: string; created: boolean }
   | { file: string; saved: false; name: string | null; problems: Problem[] };
 
 /**
@@ -42,7 +42,7 @@ export async function importRecipesAction(files: ImportFile[]): Promise<ImportRe
     }
     if (item.status !== "new") continue; // With nothing saved to compare, a valid file is always "new".
     const { id, created } = await saveRecipe(ctx, item.recipe);
-    results.push({ file: file.name, saved: true, id, name: item.recipe.name, created });
+    results.push({ file: file.name, saved: true, id, slug: item.recipe.id, name: item.recipe.name, created });
   }
   revalidatePath("/recipes");
   return results;
