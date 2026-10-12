@@ -1,0 +1,419 @@
+<!-- Built from designs/src/recipe.html by `npm run designs`. Edit the source, not this file. -->
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Recipe page</title>
+<style>/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-space-y-reverse:0;--tw-divide-x-reverse:0;--tw-border-style:solid;--tw-divide-y-reverse:0;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-outline-style:solid;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-backdrop-blur:initial;--tw-backdrop-brightness:initial;--tw-backdrop-contrast:initial;--tw-backdrop-grayscale:initial;--tw-backdrop-hue-rotate:initial;--tw-backdrop-invert:initial;--tw-backdrop-opacity:initial;--tw-backdrop-saturate:initial;--tw-backdrop-sepia:initial}}}@layer theme{:root,:host{--font-sans:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-white:#fff;--spacing:.25rem;--container-sm:24rem;--container-2xl:42rem;--container-3xl:48rem;--container-6xl:72rem;--text-xs:.75rem;--text-xs--line-height:calc(1 / .75);--text-sm:.875rem;--text-sm--line-height:calc(1.25 / .875);--text-base:1rem;--text-base--line-height:calc(1.5 / 1);--text-lg:1.125rem;--text-lg--line-height:calc(1.75 / 1.125);--text-xl:1.25rem;--text-xl--line-height:calc(1.75 / 1.25);--text-2xl:1.5rem;--text-2xl--line-height:calc(2 / 1.5);--text-3xl:1.875rem;--text-3xl--line-height:calc(2.25 / 1.875);--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--tracking-wider:.05em;--leading-tight:1.25;--leading-snug:1.375;--radius-lg:.5rem;--radius-xl:.75rem;--radius-2xl:1rem;--radius-3xl:1.5rem;--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono);--font-display:"Iowan Old Style", "Palatino Linotype", Palatino, Georgia, ui-serif, serif;--radius-card:1rem;--radius-control:.75rem}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab, red, red)){::placeholder{color:color-mix(in oklab, currentcolor 50%, transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.collapse{visibility:collapse}.visible{visibility:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.sticky{position:sticky}.top-0\.5{top:calc(var(--spacing) * .5)}.top-2{top:calc(var(--spacing) * 2)}.top-2\.5{top:calc(var(--spacing) * 2.5)}.top-3\.5{top:calc(var(--spacing) * 3.5)}.right-0\.5{right:calc(var(--spacing) * .5)}.right-2{right:calc(var(--spacing) * 2)}.right-4{right:calc(var(--spacing) * 4)}.bottom-24{bottom:calc(var(--spacing) * 24)}.left-0\.5{left:calc(var(--spacing) * .5)}.left-4{left:calc(var(--spacing) * 4)}.mx-auto{margin-inline:auto}.-mt-2{margin-top:calc(var(--spacing) * -2)}.-mt-5{margin-top:calc(var(--spacing) * -5)}.mt-0\.5{margin-top:calc(var(--spacing) * .5)}.mt-1{margin-top:var(--spacing)}.mt-1\.5{margin-top:calc(var(--spacing) * 1.5)}.mt-2{margin-top:calc(var(--spacing) * 2)}.mt-3{margin-top:calc(var(--spacing) * 3)}.mt-4{margin-top:calc(var(--spacing) * 4)}.mt-5{margin-top:calc(var(--spacing) * 5)}.mt-6{margin-top:calc(var(--spacing) * 6)}.mt-10{margin-top:calc(var(--spacing) * 10)}.mt-auto{margin-top:auto}.-mr-2{margin-right:calc(var(--spacing) * -2)}.-mr-5{margin-right:calc(var(--spacing) * -5)}.mr-1{margin-right:var(--spacing)}.mr-2{margin-right:calc(var(--spacing) * 2)}.mr-auto{margin-right:auto}.mb-2{margin-bottom:calc(var(--spacing) * 2)}.mb-3{margin-bottom:calc(var(--spacing) * 3)}.-ml-1{margin-left:calc(var(--spacing) * -1)}.ml-1{margin-left:var(--spacing)}.ml-2{margin-left:calc(var(--spacing) * 2)}.ml-auto{margin-left:auto}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.size-2{width:calc(var(--spacing) * 2);height:calc(var(--spacing) * 2)}.size-3{width:calc(var(--spacing) * 3);height:calc(var(--spacing) * 3)}.size-3\.5{width:calc(var(--spacing) * 3.5);height:calc(var(--spacing) * 3.5)}.size-4{width:calc(var(--spacing) * 4);height:calc(var(--spacing) * 4)}.size-5{width:calc(var(--spacing) * 5);height:calc(var(--spacing) * 5)}.size-6{width:calc(var(--spacing) * 6);height:calc(var(--spacing) * 6)}.size-7{width:calc(var(--spacing) * 7);height:calc(var(--spacing) * 7)}.size-8{width:calc(var(--spacing) * 8);height:calc(var(--spacing) * 8)}.size-9{width:calc(var(--spacing) * 9);height:calc(var(--spacing) * 9)}.size-11{width:calc(var(--spacing) * 11);height:calc(var(--spacing) * 11)}.size-12{width:calc(var(--spacing) * 12);height:calc(var(--spacing) * 12)}.size-14{width:calc(var(--spacing) * 14);height:calc(var(--spacing) * 14)}.size-16{width:calc(var(--spacing) * 16);height:calc(var(--spacing) * 16)}.size-\[18px\]{width:18px;height:18px}.h-1\.5{height:calc(var(--spacing) * 1.5)}.h-3{height:calc(var(--spacing) * 3)}.h-6{height:calc(var(--spacing) * 6)}.h-7{height:calc(var(--spacing) * 7)}.h-8{height:calc(var(--spacing) * 8)}.h-9{height:calc(var(--spacing) * 9)}.h-10{height:calc(var(--spacing) * 10)}.h-11{height:calc(var(--spacing) * 11)}.h-12{height:calc(var(--spacing) * 12)}.h-16{height:calc(var(--spacing) * 16)}.h-24{height:calc(var(--spacing) * 24)}.h-\[260px\]{height:260px}.h-\[560px\]{height:560px}.h-\[620px\]{height:620px}.h-\[640px\]{height:640px}.h-\[780px\]{height:780px}.h-\[800px\]{height:800px}.min-h-11{min-height:calc(var(--spacing) * 11)}.min-h-12{min-height:calc(var(--spacing) * 12)}.min-h-13{min-height:calc(var(--spacing) * 13)}.min-h-16{min-height:calc(var(--spacing) * 16)}.w-1{width:var(--spacing)}.w-10{width:calc(var(--spacing) * 10)}.w-12{width:calc(var(--spacing) * 12)}.w-20{width:calc(var(--spacing) * 20)}.w-64{width:calc(var(--spacing) * 64)}.w-72{width:calc(var(--spacing) * 72)}.w-\[4\.5rem\]{width:4.5rem}.w-\[390px\]{width:390px}.w-\[1100px\]{width:1100px}.w-fit{width:fit-content}.w-full{width:100%}.max-w-2xl{max-width:var(--container-2xl)}.max-w-3xl{max-width:var(--container-3xl)}.max-w-6xl{max-width:var(--container-6xl)}.max-w-\[1300px\]{max-width:1300px}.max-w-full{max-width:100%}.max-w-sm{max-width:var(--container-sm)}.min-w-0{min-width:0}.min-w-20{min-width:calc(var(--spacing) * 20)}.flex-1{flex:1}.shrink-0{flex-shrink:0}.cursor-not-allowed{cursor:not-allowed}.list-disc{list-style-type:disc}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-center{place-items:center}.items-baseline{align-items:baseline}.items-center{align-items:center}.items-end{align-items:flex-end}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-end{justify-content:flex-end}.gap-0\.5{gap:calc(var(--spacing) * .5)}.gap-1{gap:var(--spacing)}.gap-1\.5{gap:calc(var(--spacing) * 1.5)}.gap-2{gap:calc(var(--spacing) * 2)}.gap-3{gap:calc(var(--spacing) * 3)}.gap-4{gap:calc(var(--spacing) * 4)}.gap-5{gap:calc(var(--spacing) * 5)}.gap-6{gap:calc(var(--spacing) * 6)}.gap-8{gap:calc(var(--spacing) * 8)}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-3>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 3) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-5>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 5) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 5) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-6>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 6) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 6) * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-14>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing) * 14) * var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing) * 14) * calc(1 - var(--tw-space-y-reverse)))}.gap-x-4{column-gap:calc(var(--spacing) * 4)}.gap-y-1{row-gap:var(--spacing)}.gap-y-2{row-gap:calc(var(--spacing) * 2)}:where(.divide-x>:not(:last-child)){--tw-divide-x-reverse:0;border-inline-style:var(--tw-border-style);border-inline-start-width:calc(1px * var(--tw-divide-x-reverse));border-inline-end-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))}:where(.divide-y>:not(:last-child)){--tw-divide-y-reverse:0;border-bottom-style:var(--tw-border-style);border-top-style:var(--tw-border-style);border-top-width:calc(1px * var(--tw-divide-y-reverse));border-bottom-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))}:where(.divide-line>:not(:last-child)){border-color:var(--line)}.self-stretch{align-self:stretch}.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:var(--radius-2xl)}.rounded-\[2\.5rem\]{border-radius:2.5rem}.rounded-card{border-radius:var(--radius-card)}.rounded-control{border-radius:var(--radius-control)}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius-lg)}.rounded-xl{border-radius:var(--radius-xl)}.rounded-t-3xl{border-top-left-radius:var(--radius-3xl);border-top-right-radius:var(--radius-3xl)}.rounded-r-card{border-top-right-radius:var(--radius-card);border-bottom-right-radius:var(--radius-card)}.border{border-style:var(--tw-border-style);border-width:1px}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-\[10px\]{border-style:var(--tw-border-style);border-width:10px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-b-2{border-bottom-style:var(--tw-border-style);border-bottom-width:2px}.border-dashed{--tw-border-style:dashed;border-style:dashed}.border-danger,.border-danger\/40{border-color:var(--danger)}@supports (color:color-mix(in lab, red, red)){.border-danger\/40{border-color:color-mix(in oklab, var(--danger) 40%, transparent)}}.border-ink{border-color:var(--ink)}.border-ink-subtle{border-color:var(--ink-subtle)}.border-line{border-color:var(--line)}.border-primary{border-color:var(--primary)}.border-veg{border-color:var(--veg)}.border-warning\/40{border-color:var(--warning)}@supports (color:color-mix(in lab, red, red)){.border-warning\/40{border-color:color-mix(in oklab, var(--warning) 40%, transparent)}}.bg-bg,.bg-bg\/95{background-color:var(--bg)}@supports (color:color-mix(in lab, red, red)){.bg-bg\/95{background-color:color-mix(in oklab, var(--bg) 95%, transparent)}}.bg-danger{background-color:var(--danger)}.bg-danger-soft{background-color:var(--danger-soft)}.bg-fish{background-color:var(--fish)}.bg-fish-soft{background-color:var(--fish-soft)}.bg-ink{background-color:var(--ink)}.bg-ink-muted{background-color:var(--ink-muted)}.bg-ink-subtle{background-color:var(--ink-subtle)}.bg-ink\/40{background-color:var(--ink)}@supports (color:color-mix(in lab, red, red)){.bg-ink\/40{background-color:color-mix(in oklab, var(--ink) 40%, transparent)}}.bg-line{background-color:var(--line)}.bg-meat{background-color:var(--meat)}.bg-meat-soft{background-color:var(--meat-soft)}.bg-primary{background-color:var(--primary)}.bg-primary-soft{background-color:var(--primary-soft)}.bg-surface{background-color:var(--surface)}.bg-surface-2{background-color:var(--surface-2)}.bg-surface\/95{background-color:var(--surface)}@supports (color:color-mix(in lab, red, red)){.bg-surface\/95{background-color:color-mix(in oklab, var(--surface) 95%, transparent)}}.bg-veg{background-color:var(--veg)}.bg-veg-soft{background-color:var(--veg-soft)}.bg-vegan{background-color:var(--vegan)}.bg-vegan-soft{background-color:var(--vegan-soft)}.bg-warning{background-color:var(--warning)}.bg-warning-soft{background-color:var(--warning-soft)}.bg-white{background-color:var(--color-white)}.bg-white\/20{background-color:#fff3}@supports (color:color-mix(in lab, red, red)){.bg-white\/20{background-color:color-mix(in oklab, var(--color-white) 20%, transparent)}}.fill-current{fill:currentColor}.fill-none{fill:none}.stroke-current{stroke:currentColor}.stroke-ink{stroke:var(--ink)}.stroke-ink-muted{stroke:var(--ink-muted)}.stroke-ink-subtle{stroke:var(--ink-subtle)}.stroke-veg{stroke:var(--veg)}.stroke-2{stroke-width:2px}.stroke-\[1\.5\]{stroke-width:1.5px}.stroke-\[2\.5\]{stroke-width:2.5px}.stroke-\[3\]{stroke-width:3px}.p-0\.5{padding:calc(var(--spacing) * .5)}.p-1{padding:var(--spacing)}.p-1\.5{padding:calc(var(--spacing) * 1.5)}.p-3{padding:calc(var(--spacing) * 3)}.p-4{padding:calc(var(--spacing) * 4)}.p-5{padding:calc(var(--spacing) * 5)}.p-6{padding:calc(var(--spacing) * 6)}.p-8{padding:calc(var(--spacing) * 8)}.px-0\.5{padding-inline:calc(var(--spacing) * .5)}.px-1{padding-inline:var(--spacing)}.px-2{padding-inline:calc(var(--spacing) * 2)}.px-2\.5{padding-inline:calc(var(--spacing) * 2.5)}.px-3{padding-inline:calc(var(--spacing) * 3)}.px-3\.5{padding-inline:calc(var(--spacing) * 3.5)}.px-4{padding-inline:calc(var(--spacing) * 4)}.px-5{padding-inline:calc(var(--spacing) * 5)}.px-6{padding-inline:calc(var(--spacing) * 6)}.px-8{padding-inline:calc(var(--spacing) * 8)}.py-1{padding-block:var(--spacing)}.py-1\.5{padding-block:calc(var(--spacing) * 1.5)}.py-2{padding-block:calc(var(--spacing) * 2)}.py-3{padding-block:calc(var(--spacing) * 3)}.py-4{padding-block:calc(var(--spacing) * 4)}.py-6{padding-block:calc(var(--spacing) * 6)}.py-8{padding-block:calc(var(--spacing) * 8)}.pt-1{padding-top:var(--spacing)}.pt-1\.5{padding-top:calc(var(--spacing) * 1.5)}.pt-3{padding-top:calc(var(--spacing) * 3)}.pt-4{padding-top:calc(var(--spacing) * 4)}.pt-5{padding-top:calc(var(--spacing) * 5)}.pt-12{padding-top:calc(var(--spacing) * 12)}.pt-16{padding-top:calc(var(--spacing) * 16)}.pr-1{padding-right:var(--spacing)}.pr-4{padding-right:calc(var(--spacing) * 4)}.pr-5{padding-right:calc(var(--spacing) * 5)}.pr-11{padding-right:calc(var(--spacing) * 11)}.pb-1{padding-bottom:var(--spacing)}.pb-2{padding-bottom:calc(var(--spacing) * 2)}.pb-3{padding-bottom:calc(var(--spacing) * 3)}.pb-5{padding-bottom:calc(var(--spacing) * 5)}.pb-6{padding-bottom:calc(var(--spacing) * 6)}.pb-10{padding-bottom:calc(var(--spacing) * 10)}.pl-3{padding-left:calc(var(--spacing) * 3)}.pl-4{padding-left:calc(var(--spacing) * 4)}.pl-5{padding-left:calc(var(--spacing) * 5)}.pl-12{padding-left:calc(var(--spacing) * 12)}.text-center{text-align:center}.text-right{text-align:right}.align-middle{vertical-align:middle}.font-display{font-family:var(--font-display)}.font-mono{font-family:var(--font-mono)}.font-sans{font-family:var(--font-sans)}.text-2xl{font-size:var(--text-2xl);line-height:var(--tw-leading,var(--text-2xl--line-height))}.text-3xl{font-size:var(--text-3xl);line-height:var(--tw-leading,var(--text-3xl--line-height))}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xl{font-size:var(--text-xl);line-height:var(--tw-leading,var(--text-xl--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.text-\[11px\]{font-size:11px}.text-\[17px\]{font-size:17px}.text-\[22px\]{font-size:22px}.text-\[28px\]{font-size:28px}.leading-7{--tw-leading:calc(var(--spacing) * 7);line-height:calc(var(--spacing) * 7)}.leading-\[26px\]{--tw-leading:26px;line-height:26px}.leading-\[34px\]{--tw-leading:34px;line-height:34px}.leading-snug{--tw-leading:var(--leading-snug);line-height:var(--leading-snug)}.leading-tight{--tw-leading:var(--leading-tight);line-height:var(--leading-tight)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-wider{--tw-tracking:var(--tracking-wider);letter-spacing:var(--tracking-wider)}.text-bg{color:var(--bg)}.text-danger{color:var(--danger)}.text-fish{color:var(--fish)}.text-ink{color:var(--ink)}.text-ink-muted{color:var(--ink-muted)}.text-ink-subtle{color:var(--ink-subtle)}.text-meat{color:var(--meat)}.text-on-danger{color:var(--on-danger)}.text-on-primary{color:var(--on-primary)}.text-primary{color:var(--primary)}.text-veg{color:var(--veg)}.text-vegan{color:var(--vegan)}.text-warning{color:var(--warning)}.uppercase{text-transform:uppercase}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,) var(--tw-slashed-zero,) var(--tw-numeric-figure,) var(--tw-numeric-spacing,) var(--tw-numeric-fraction,)}.line-through{text-decoration-line:line-through}.underline{text-decoration-line:underline}.underline-offset-2{text-underline-offset:2px}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-40{opacity:.4}.opacity-60{opacity:.6}.opacity-70{opacity:.7}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-\[0_1px_2px_rgb\(0_0_0\/0\.04\)\]{--tw-shadow:0 1px 2px var(--tw-shadow-color,#0000000a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a), 0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px var(--tw-shadow-color,#0000001a), 0 8px 10px -6px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-4{--tw-ring-shadow:var(--tw-ring-inset,) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color,currentcolor);box-shadow:var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow)}.ring-bg{--tw-ring-color:var(--bg)}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);backdrop-filter:var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,)}.placeholder\:text-ink-subtle::placeholder{color:var(--ink-subtle)}@media (hover:hover){.hover\:bg-primary-hover:hover{background-color:var(--primary-hover)}.hover\:bg-primary-soft:hover{background-color:var(--primary-soft)}.hover\:bg-surface-2:hover{background-color:var(--surface-2)}}.focus\:outline-2:focus{outline-style:var(--tw-outline-style);outline-width:2px}.focus\:outline-primary:focus{outline-color:var(--primary)}@media (min-width:40rem){.sm\:col-start-2{grid-column-start:2}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:grid-cols-\[10rem_1fr\]{grid-template-columns:10rem 1fr}}@media (min-width:64rem){.lg\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.lg\:grid-cols-7{grid-template-columns:repeat(7,minmax(0,1fr))}}}:root{color-scheme:light dark;--bg:light-dark(#fbf8f3,#171411);--surface:light-dark(#fff,#211d19);--surface-2:light-dark(#f3eee6,#2b2621);--ink:light-dark(#1f1b16,#f3eee7);--ink-muted:light-dark(#6b6258,#b3a99d);--ink-subtle:light-dark(#8f857a,#8a8075);--line:light-dark(#e6ded2,#3a332c);--primary:light-dark(#c2410c,#f07a45);--primary-hover:light-dark(#9a3412,#f59a6f);--primary-soft:light-dark(#fdebdf,#3b2216);--on-primary:light-dark(#fff,#1a0e07);--meat:light-dark(#a1325a,#f29ab9);--meat-soft:light-dark(#fbe7ee,#3a1a27);--fish:light-dark(#1d6fa5,#7db8e8);--fish-soft:light-dark(#e3f0fa,#16293a);--veg:light-dark(#2f7d32,#8bcb8e);--veg-soft:light-dark(#e5f3e3,#1b2e1c);--vegan:light-dark(#0f766e,#6fd3c3);--vegan-soft:light-dark(#ddf3ef,#10302c);--warning:light-dark(#8a6100,#f0c75e);--warning-soft:light-dark(#fdf3c4,#352a0f);--danger:light-dark(#b42318,#f28b82);--danger-soft:light-dark(#fde8e6,#3a1d1a);--on-danger:light-dark(#fff,#1f0b09)}:root.light{color-scheme:light}:root.dark{color-scheme:dark}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-divide-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-divide-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-backdrop-blur{syntax:"*";inherits:false}@property --tw-backdrop-brightness{syntax:"*";inherits:false}@property --tw-backdrop-contrast{syntax:"*";inherits:false}@property --tw-backdrop-grayscale{syntax:"*";inherits:false}@property --tw-backdrop-hue-rotate{syntax:"*";inherits:false}@property --tw-backdrop-invert{syntax:"*";inherits:false}@property --tw-backdrop-opacity{syntax:"*";inherits:false}@property --tw-backdrop-saturate{syntax:"*";inherits:false}@property --tw-backdrop-sepia{syntax:"*";inherits:false}</style>
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- Icon sprite (Lucide shapes) -->
+<svg width="0" height="0" class="absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-3"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-timer" viewBox="0 0 24 24"><path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-sort" viewBox="0 0 24 24"><path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16"/></symbol>
+    <symbol id="i-snow" viewBox="0 0 24 24"><path d="M2 12h20M12 2v20M20 16l-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  </defs>
+</svg>
+
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-148</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Recipe page</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">Reading, scaling and cooking a recipe, plus the household's own notes on it. Uses both example recipes: the tuna pasta (printed nutrition) and the Tofoo noodles (estimated nutrition, an ingredient group).</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Layout</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">One scrolling page. A sticky bar of section links (Ingredients, Method, Nutrition, Notes) jumps around without hunting. The bottom navigation is replaced on this page by two actions: <b class="text-ink">Cooked today</b> and <b class="text-ink">Add to plan</b>.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Top of page -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center justify-between">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex">
+            <button class="size-11 rounded-full grid place-items-center text-primary" aria-label="Unfavourite"><svg class="size-6 fill-current stroke-current stroke-2"><use href="#i-heart"/></svg></button>
+            <button class="size-11 rounded-full grid place-items-center" aria-label="More"><svg class="size-6 fill-current"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5">
+          <h1 class="font-display text-[28px] leading-[34px] font-semibold mt-1">Lemony tuna, tomato &amp; caper one-pot pasta</h1>
+          <p class="mt-2 text-sm text-ink-muted inline-flex items-center gap-1.5"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>BBC Good Food · September 2021, p63</p>
+          <p class="mt-3 text-[17px] leading-[26px] text-ink-muted">One-pot pasta where the rigatoni cooks in stock with cherry tomatoes, finished with tuna, capers, lemon and a little mascarpone.</p>
+
+          <div class="mt-4 grid grid-cols-3 rounded-card bg-surface border border-line divide-x divide-line text-center">
+            <div class="py-3"><p class="text-xs text-ink-muted">Prep</p><p class="text-lg font-semibold tabular-nums">5 min</p></div>
+            <div class="py-3"><p class="text-xs text-ink-muted">Cook</p><p class="text-lg font-semibold tabular-nums">30 min</p></div>
+            <div class="py-3 bg-surface-2 rounded-r-card"><p class="text-xs text-ink-muted">Total</p><p class="text-lg font-semibold tabular-nums">35 min</p></div>
+          </div>
+          <p class="mt-1.5 text-xs text-ink-subtle">Printed cook time already includes the 5-min rest.</p>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Pasta · rigatoni</span>
+            <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-fish-soft text-fish text-sm font-semibold"><span class="size-2 rounded-full bg-fish"></span>Fish · Tuna</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Italian</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Easy</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Hob</span>
+            <span class="inline-flex items-center gap-1 h-7 px-2.5 rounded-full border border-line text-sm font-medium"><svg class="size-4 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Nut-free</span>
+          </div>
+
+          <a class="mt-4 flex items-center gap-4 rounded-card bg-surface border border-line p-4">
+            <div class="flex-1">
+              <div class="flex items-center gap-2"><p class="text-xs text-ink-muted">Per serving</p><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></div>
+              <p class="mt-1 tabular-nums"><span class="text-2xl font-semibold">672</span> <span class="text-ink-muted">kcal</span> <span class="ml-2 text-lg font-semibold">29g</span> <span class="text-ink-muted">protein</span></p>
+            </div>
+            <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+          </a>
+
+          <div class="mt-4 rounded-card bg-surface border border-line p-4 flex items-center gap-3">
+            <span class="flex text-primary"><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-current"><use href="#i-star"/></svg><svg class="size-5 fill-none stroke-ink-subtle stroke-[1.5]"><use href="#i-star"/></svg></span>
+            <p class="text-sm text-ink-muted">Cooked 3 times · last on 2 Oct</p>
+          </div>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Top of the page</p><p class="text-ink-muted mt-1">Everything you'd decide on before cooking: source, description, times (total highlighted, with any time notes), badges, a nutrition summary that links down to the full panel, and your rating and cooking history.</p></figcaption>
+    </figure>
+
+    <!-- B. Ingredients scaled -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 border-b-2 border-primary text-primary">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[17px] font-semibold">Ingredients</h2>
+            <div class="flex items-center rounded-full border border-line bg-surface">
+              <button class="size-11 grid place-items-center" aria-label="Fewer"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="min-w-20 text-center font-semibold tabular-nums">2 servings</span>
+              <button class="size-11 grid place-items-center" aria-label="More"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+          <p class="mt-2 text-sm rounded-lg bg-primary-soft text-primary px-3 py-2 flex items-center justify-between">Halved from 4 servings<button class="font-semibold underline underline-offset-2">Reset</button></p>
+          <ul class="mt-2 divide-y divide-line">
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">1 tbsp</span><span>olive oil</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">½</span><span>red onion, <span class="text-ink-muted">finely chopped</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">250 g</span><span>cherry tomatoes, <span class="text-ink-muted">halved</span><span class="block text-sm text-ink-subtle">350g in step 2, 150g in step 3 <i>(for 4)</i></span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">200 g</span><span>dried pasta<span class="block text-sm text-ink-subtle">rigatoni</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">500 ml</span><span>hot vegetable stock</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">1 can</span><span>tuna in olive oil, <span class="text-ink-muted">drained</span><span class="block text-sm text-ink-subtle">110g cans · 110g total</span></span></li>
+            <li class="py-3 flex gap-3 text-ink-subtle"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right line-through">1½ tbsp</span><span class="line-through">mascarpone</span><svg class="ml-auto size-5 fill-none stroke-veg stroke-[2.5] shrink-0"><use href="#i-check"/></svg></li>
+            <li class="py-3 flex gap-3 text-ink-subtle"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right line-through">15 g</span><span class="line-through">parmesan, grated</span><svg class="ml-auto size-5 fill-none stroke-veg stroke-[2.5] shrink-0"><use href="#i-check"/></svg></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">1 tbsp</span><span>capers, <span class="text-ink-muted">drained</span><span class="block text-sm text-ink-subtle">heaped</span></span></li>
+          </ul>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · Ingredients, scaled to 2 servings</p><p class="text-ink-muted mt-1">Quantities scale exactly (qty × 2/4), shown as kitchen fractions (½, 1½). "To taste" items and the notes text don't scale, so notes with amounts say which servings they're written for. Gram totals scale too. Tap an ingredient to tick it off while you gather things.</p></figcaption>
+    </figure>
+
+    <!-- C. Tofoo: group + estimated -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Char siu Tofoo noodles</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 border-b-2 border-primary text-primary">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[17px] font-semibold">Ingredients</h2>
+            <div class="flex items-center rounded-full border border-line bg-surface">
+              <button class="size-11 grid place-items-center" aria-label="Fewer"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="min-w-20 text-center font-semibold tabular-nums">2 servings</span>
+              <button class="size-11 grid place-items-center" aria-label="More"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+          <ul class="mt-2 divide-y divide-line">
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">280 g</span><span>Naked Tofoo, <span class="text-ink-muted">drained, dried and cut into 1cm-thick strips</span><span class="block text-sm text-ink-subtle">1 pack</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">2 tbsp</span><span>cornflour</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">2 tbsp</span><span>vegetable oil</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">300 g</span><span>ready-cooked noodles<span class="block text-sm text-ink-subtle">such as udon</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">200 g</span><span>choy sum, <span class="text-ink-muted">washed and sliced</span></span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">2 tbsp</span><span>sesame seeds, <span class="text-ink-muted">toasted</span></span></li>
+          </ul>
+          <p class="mt-4 text-xs font-semibold uppercase tracking-wider text-ink-muted">Char siu sauce</p>
+          <ul class="mt-1 divide-y divide-line">
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">4 tbsp</span><span>hoisin sauce</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">3 tbsp</span><span>maple syrup</span></li>
+            <li class="py-3 flex gap-3"><span class="w-[4.5rem] shrink-0 font-semibold tabular-nums text-right">3 tbsp</span><span>dark soy sauce</span></li>
+          </ul>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · Ingredient groups</p><p class="text-ink-muted mt-1">Ingredients without a group come first, then each group under its own heading, in the order they appear in the file. At the recipe's own servings there's no "scaled" banner.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Cooking</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- D. Method with timers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 text-ink-muted">Ingredients</a>
+            <a class="py-2 border-b-2 border-primary text-primary">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-[17px] font-semibold">Method</h2>
+            <label class="inline-flex items-center gap-2 text-sm text-ink-muted">Keep screen on<span class="w-10 h-6 rounded-full bg-primary relative"><span class="absolute right-0.5 top-0.5 size-5 rounded-full bg-white shadow"></span></span></label>
+          </div>
+          <div class="flex gap-3 opacity-60">
+            <span class="size-8 shrink-0 rounded-full bg-veg-soft text-veg grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            <p class="flex-1 text-[17px] leading-[26px]">Heat the oil in a saucepan over a medium-low heat and fry the onion with a pinch of salt until softened and translucent.</p>
+          </div>
+          <div class="flex gap-3">
+            <span class="size-8 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center font-semibold">2</span>
+            <div class="flex-1">
+              <p class="text-[17px] leading-[26px]">Add 350g of the cherry tomatoes, the pasta and the stock. Bring to the boil, then simmer uncovered, stirring occasionally, until the tomatoes break down and the pasta is just cooked.</p>
+              <div class="mt-2 inline-flex items-center gap-1 h-11 pl-4 pr-1 rounded-full bg-primary text-on-primary">
+                <span class="text-lg font-semibold tabular-nums mr-2">12:41</span>
+                <button class="size-9 rounded-full grid place-items-center bg-white/20" aria-label="Pause"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-pause"/></svg></button>
+                <button class="size-9 rounded-full grid place-items-center bg-white/20" aria-label="Stop"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-x"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="size-8 shrink-0 rounded-full bg-surface-2 grid place-items-center font-semibold">3</span>
+            <div class="flex-1">
+              <p class="text-[17px] leading-[26px]">Add the remaining tomatoes and bubble uncovered over a medium-high heat until the liquid has reduced.</p>
+              <button class="mt-2 h-11 px-4 rounded-full border border-primary text-primary font-semibold inline-flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-timer"/></svg>5 min timer</button>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="size-8 shrink-0 rounded-full bg-surface-2 grid place-items-center font-semibold">4</span>
+            <p class="flex-1 text-[17px] leading-[26px]">Gently fold through large flakes of tuna with the mascarpone, parmesan, capers, lemon zest, parsley and seasoning.</p>
+          </div>
+        </div>
+        <!-- Floating timer when scrolled away -->
+        <div class="absolute left-4 right-4 bottom-24 rounded-full bg-ink text-bg h-12 px-4 flex items-center gap-3 shadow-xl">
+          <svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-timer"/></svg>
+          <span class="text-sm">Step 5 · resting</span><span class="font-semibold tabular-nums">4:10</span>
+          <span class="ml-auto text-sm opacity-70">Show</span>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Method with timers <span class="ml-1 align-middle text-xs font-semibold uppercase tracking-wider text-warning">Later · PP-178</span></p><p class="text-ink-muted mt-1">Tap a step to mark it done (it fades). Steps with a <code>timer_mins</code> get a timer button; several can run at once. Timers whose step is off-screen show in a pill above the action bar (tap to jump to the step), and keep going if you switch apps. When one ends: sound, vibration and the amber "Time's up" state. "Keep screen on" stops the phone sleeping (on by default once a timer starts).</p></figcaption>
+    </figure>
+
+    <!-- E. Nutrition, variations, source, storage -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Char siu Tofoo noodles</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 text-ink-muted">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 border-b-2 border-primary text-primary">Nutrition</a>
+            <a class="py-2 text-ink-muted">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-5">
+          <div>
+            <div class="flex items-center justify-between">
+              <h2 class="text-[17px] font-semibold">Nutrition per serving</h2>
+              <span class="inline-flex items-center h-7 px-2.5 rounded-full border border-dashed border-ink-subtle text-ink-muted text-sm font-medium">~ Estimated</span>
+            </div>
+            <p class="mt-1 text-sm text-ink-muted">Not printed in the book; estimated by Claude when the recipe was imported.</p>
+            <div class="mt-3 rounded-card bg-surface border border-dashed border-ink-subtle p-4">
+              <p class="tabular-nums"><span class="text-3xl font-semibold text-ink-muted">~825</span> <span class="text-ink-muted">kcal</span></p>
+              <div class="mt-3 flex h-3 rounded-full overflow-hidden">
+                <span class="bg-veg" style="width:15%"></span><span class="bg-primary" style="width:46%"></span><span class="bg-warning" style="width:39%"></span>
+              </div>
+              <div class="mt-2 flex justify-between text-xs text-ink-muted"><span><span class="inline-block size-2 rounded-full bg-veg mr-1"></span>Protein 15%</span><span><span class="inline-block size-2 rounded-full bg-primary mr-1"></span>Carbs 46%</span><span><span class="inline-block size-2 rounded-full bg-warning mr-1"></span>Fat 39%</span></div>
+              <table class="mt-4 w-full text-sm tabular-nums">
+                <tbody class="divide-y divide-line">
+                  <tr><td class="py-1.5">Protein</td><td class="text-right font-semibold">~31 g</td></tr>
+                  <tr><td class="py-1.5">Carbs</td><td class="text-right font-semibold">~92 g</td></tr>
+                  <tr><td class="py-1.5 pl-3 text-ink-muted">of which sugars</td><td class="text-right">~34 g</td></tr>
+                  <tr><td class="py-1.5">Fat</td><td class="text-right font-semibold">~34 g</td></tr>
+                  <tr><td class="py-1.5 pl-3 text-ink-muted">of which saturates</td><td class="text-right">~4 g</td></tr>
+                  <tr><td class="py-1.5">Fibre</td><td class="text-right font-semibold">~5 g</td></tr>
+                  <tr><td class="py-1.5">Salt</td><td class="text-right font-semibold">~5.5 g</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-1.5 text-xs text-ink-subtle">Energy split: share of calories from protein, carbs and fat (4, 4 and 9 kcal per gram).</p>
+          </div>
+          <div>
+            <h2 class="text-[17px] font-semibold">Variations</h2>
+            <ul class="mt-2 space-y-2">
+              <li class="rounded-control bg-surface border border-line p-3"><p class="font-semibold">Greens</p><p class="text-sm text-ink-muted">Swap the choy sum for spring greens or Tenderstem broccoli.</p></li>
+              <li class="rounded-control bg-surface border border-line p-3"><p class="font-semibold">Rice</p><p class="text-sm text-ink-muted">Serve with rice instead of the noodles.</p></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · Nutrition and variations</p><p class="text-ink-muted mt-1">The full UK-label set. Estimated nutrition keeps the dashed outline and ~ on every number. A variation that changes the protein or dietary flags shows them (e.g. the tuna pasta's "Veggie" variation: <i>no meat or fish · Nut-free</i>).</p></figcaption>
+    </figure>
+
+    <!-- F. Notes, source, storage -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="bg-bg/95 border-b border-line">
+          <div class="px-3 pt-3 flex items-center gap-1">
+            <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+            <p class="flex-1 font-display font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          </div>
+          <div class="px-5 pb-2 flex gap-5 text-sm font-semibold">
+            <a class="py-2 text-ink-muted">Ingredients</a>
+            <a class="py-2 text-ink-muted">Method</a>
+            <a class="py-2 text-ink-muted">Nutrition</a>
+            <a class="py-2 border-b-2 border-primary text-primary">Notes</a>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-5">
+          <div>
+            <h2 class="text-[17px] font-semibold">Our notes</h2>
+            <div class="mt-2 rounded-control bg-surface border border-line p-3">
+              <p class="text-[17px] leading-[26px]">Double the capers. Works with orzo if we're out of rigatoni, cook 2 min less.</p>
+              <p class="mt-2 text-xs text-ink-subtle">Edited by Kris · 2 Oct</p>
+            </div>
+            <div class="mt-3 flex items-center justify-between">
+              <span class="text-sm text-ink-muted">Your rating</span>
+              <span class="flex text-primary"><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-current"><use href="#i-star"/></svg><svg class="size-8 fill-none stroke-ink-subtle stroke-[1.5]"><use href="#i-star"/></svg></span>
+            </div>
+            <p class="mt-2 text-sm text-ink-muted">Cooked 3 times: 2 Oct, 14 Sep, 21 Aug</p>
+          </div>
+          <div>
+            <h2 class="text-[17px] font-semibold">From the recipe</h2>
+            <dl class="mt-2 rounded-control bg-surface border border-line divide-y divide-line text-sm">
+              <div class="p-3 flex gap-3"><dt class="w-20 shrink-0 text-ink-muted">Source</dt><dd>BBC Good Food<span class="block text-ink-muted">Magazine · September 2021, p63</span></dd></div>
+              <div class="p-3 flex gap-3"><dt class="w-20 shrink-0 text-ink-muted">Storage</dt><dd>Not freezable · Good for leftovers<span class="block text-ink-muted">Not stated in the recipe; judgement call.</span></dd></div>
+              <div class="p-3 flex gap-3"><dt class="w-20 shrink-0 text-ink-muted">Tags</dt><dd>one-pot · quick</dd></div>
+            </dl>
+          </div>
+        </div>
+        <!-- Toast -->
+        <div class="absolute left-4 right-4 bottom-24 flex items-center gap-3 rounded-full bg-ink text-bg px-5 h-12 shadow-lg">
+          <svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg><span class="font-medium">Marked as cooked today</span><button class="ml-auto font-semibold underline underline-offset-2">Undo</button>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control bg-veg-soft text-veg font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Cooked today</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Add to plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · Notes, history and recipe details</p><p class="text-ink-muted mt-1">"Our notes" and the rating are shared by the household; notes show who last edited them. Tapping "Cooked today" adds today to the history (once per day) with an Undo. Recipe-file details (source, storage, tags) sit below, read-only. A source URL becomes a link.</p></figcaption>
+    </figure>
+
+    <!-- G. More menu -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <ul class="mt-3 divide-y divide-line">
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare with…</li>
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-download"/></svg>Download recipe file (.json)</li>
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg>Replace with a new version…</li>
+            <li class="flex items-center gap-3 min-h-13 py-3 text-danger"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Delete recipe</li>
+          </ul>
+          <button class="mt-3 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · More (⋯)</p><p class="text-ink-muted mt-1">Less frequent actions. "Replace with a new version" opens import with this recipe's id expected, showing what changed. There's no edit button: the recipe file is the source of truth, so changes are made in Claude and re-imported.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 11 October 2026.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>One long page with sticky section links.</li>
+    <li>Bottom actions: Cooked today and Add to plan.</li>
+    <li>Tick off ingredients and steps.</li>
+    <li>No in-app editing of recipe facts; only notes and rating. Can revisit later.</li>
+    <li>Step timers and keep-screen-on (screen D) are an optional extra, done last (PP-178). The screen stays on automatically while a timer runs.</li>
+  </ul>
+</section>
+</main>
+</body>
+</html>
