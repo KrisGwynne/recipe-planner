@@ -41,32 +41,36 @@ export function categoryOf(category: BrowsingCategory): Category {
 export const categoryLabels: Record<Category, string> = {
   meat: "Meat",
   fish: "Fish",
-  // Meat colours until the library settles how it shows (PP-166).
   "meat-and-fish": "Meat & fish",
   veg: "Veg",
   vegan: "Vegan",
 };
 
-// Written out in full so Tailwind finds the class names.
-const categoryClasses: Record<Category, { badge: string; dot: string }> = {
-  meat: { badge: "bg-meat-soft text-meat", dot: "bg-meat" },
-  fish: { badge: "bg-fish-soft text-fish", dot: "bg-fish" },
-  "meat-and-fish": { badge: "bg-meat-soft text-meat", dot: "bg-meat" },
-  veg: { badge: "bg-veg-soft text-veg", dot: "bg-veg" },
-  vegan: { badge: "bg-vegan-soft text-vegan", dot: "bg-vegan" },
+// Written out in full so Tailwind finds the class names. Meat & fish is
+// neutral with both colours' dots (Kris, 2026-10-12, PP-166).
+const categoryClasses: Record<Category, { badge: string; dots: string[] }> = {
+  meat: { badge: "bg-meat-soft text-meat", dots: ["bg-meat"] },
+  fish: { badge: "bg-fish-soft text-fish", dots: ["bg-fish"] },
+  "meat-and-fish": { badge: "bg-surface-2 text-ink", dots: ["bg-meat", "bg-fish"] },
+  veg: { badge: "bg-veg-soft text-veg", dots: ["bg-veg"] },
+  vegan: { badge: "bg-vegan-soft text-vegan", dots: ["bg-vegan"] },
 };
 
-/** Category accent for a bar or dot, e.g. the list row's left edge. */
-export function categoryDotClass(category: Category): string {
-  return categoryClasses[category].dot;
+/** Category accents for a bar or dot, e.g. the list row's left edge: one colour, or meat then fish. */
+export function categoryDotClasses(category: Category): string[] {
+  return categoryClasses[category].dots;
 }
 
 /** "Fish", or "Fish · Tuna" with a detail. */
 export function CategoryBadge({ category, detail }: { category: Category; detail?: string }) {
-  const { badge, dot } = categoryClasses[category];
+  const { badge, dots } = categoryClasses[category];
   return (
     <span className={cx(pill, "gap-1.5 font-semibold", badge)}>
-      <span className={cx("size-2 rounded-full", dot)} aria-hidden="true" />
+      <span className="inline-flex gap-0.5" aria-hidden="true">
+        {dots.map((dot) => (
+          <span key={dot} className={cx("size-2 rounded-full", dot)} />
+        ))}
+      </span>
       {categoryLabels[category]}
       {detail && ` · ${detail}`}
     </span>

@@ -171,6 +171,18 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 
 **How it works.** The browser reads the files and sends them to a server action that checks each one (`src/recipes/check-files.ts`) and compares it with the household's recipe of the same id, saving nothing. Import sends the chosen files again and the server checks them again before saving. Files go in requests of up to 3 MB, under Vercel's 4.5 MB request limit, and the server action body limit is 4 MB. Each step is in the URL (`?view=review`, `?view=file&i=…`, `?view=done`) so the phone's back gesture steps back; the files stay in memory, so a reload starts again. On review, detail and done screens the action bar covers the tab bar on phones, as on the recipe page.
 
+## 2026-10-12: recipe list and card views (PP-166)
+
+**Meat & fish** (Kris, 2026-10-12): a recipe with both shows a "Meat & fish" badge on the neutral `bg-surface-2`, with a meat dot then a fish dot; in the list view the left bar is split, meat above fish. In the filters (PP-167) it appears under both Meat and Fish. This replaces PP-162's meat-coloured stopgap.
+
+**Cards link to `/recipes/<slug>`** (the recipe's stable JSON id) (Kris, 2026-10-12). Until the recipe page (PP-168), that's a placeholder with the recipe's name; another household's slug is a 404.
+
+**The chosen view is remembered in a cookie** (`recipes-view`, `cards` or `list`, one year) (Kris, 2026-10-12), so the server renders the right view first time, with no flash of the other.
+
+**Empty library** (screen I) uses the design's title and copy; "How do I make recipe JSON?" is left out until the Claude project setup (PP-175) (Kris, 2026-10-12).
+
+**Gaps the design left** (Kris, 2026-10-12): the category detail names every meat and fish item ("Meat · Chicken, pork"; vegetarian items and "other" aren't named, and Veg/Vegan badges have no detail). The header shows only "N recipes" and the view switch until sort comes (PP-167). While the library loads, three card outlines show. On wide screens the list is capped at `max-w-3xl`; cards flow into 2 then 3 columns. "+ Veggie option" is a green line under the badges (library design A) rather than foundations' outlined badge, and list rows have no chevron (design B).
+
 ## 2026-10-12: hosting leftovers (PP-142)
 
 **Migrations run on production deploys** (Kris, 2026-10-12). Vercel's build command (`vercel.json`) runs `node scripts/migrate.mjs --production-only` before `pnpm build`; it only migrates when `VERCEL_ENV` is `production`, does nothing when every migration is already applied, and a failed migration fails the deploy. Previews never migrate, since they share production's database: a PR that adds a migration still needs one `pnpm db:migrate` by hand so its preview works, and the production deploy is the safety net if that's forgotten. **No GitHub Action** for migrations: this replaces PP-142's "Migrations run from the GitHub Action" criterion, and keeps the database credential out of GitHub.
@@ -180,4 +192,3 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Not `no-referrer` for invite links.** `strict-origin-when-cross-origin` already keeps `/invite/<token>` from other sites, and `no-referrer` would make browsers send `Origin: null` on the app's own form posts, which Next's server-action check rejects (Join would break).
 
 **Registry entry updated** in `~/Projects/registry.yaml` (a PR in the Projects repo): runs on Vercel at https://recipe-planner-alpha.vercel.app, status active.
-

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { cx } from "@/lib/cx";
 import { approx, formatMinutes } from "@/lib/format";
 import { Icon } from "@/components/icon";
-import { Badge, CategoryBadge, NutritionBadge, categoryDotClass, categoryLabels, type Category } from "./badge";
+import { Badge, CategoryBadge, NutritionBadge, categoryDotClasses, categoryLabels, type Category } from "./badge";
 
 /** What a card or list row shows: name first, then the numbers people choose by, then badges. */
 export type RecipeSummary = {
@@ -15,8 +15,10 @@ export type RecipeSummary = {
   category: Category;
   /** e.g. "Tuna", shown as "Fish · Tuna". */
   categoryDetail?: string;
-  /** Carb labels, e.g. ["Pasta"]. */
+  /** Carb labels, e.g. ["Pasta"]. Empty: "No carbs". */
   carbs: string[];
+  /** A variation without meat or fish: "+ Veggie option" (library design A). */
+  veggieOption?: boolean;
 };
 
 /**
@@ -34,7 +36,7 @@ export function RecipeCard({
 }) {
   const estimated = recipe.nutritionSource === "estimated";
   return (
-    <article className="relative rounded-card bg-surface border border-line p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04)] has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-primary">
+    <article className="relative h-full rounded-card bg-surface border border-line p-4 shadow-[0_1px_2px_rgb(0_0_0/0.04)] has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-primary">
       <div className="flex items-start gap-3">
         <h3 className="flex-1 font-display text-xl font-semibold leading-snug">
           <Link href={recipe.href} className="outline-none after:absolute after:inset-0 after:rounded-card">
@@ -79,37 +81,46 @@ export function RecipeCard({
         </span>
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
-        {recipe.carbs.map((carb) => (
-          <Badge key={carb}>{carb}</Badge>
-        ))}
+        {recipe.carbs.length === 0 ? (
+          <Badge variant="muted">No carbs</Badge>
+        ) : (
+          recipe.carbs.map((carb) => <Badge key={carb}>{carb}</Badge>)
+        )}
         <CategoryBadge category={recipe.category} detail={recipe.categoryDetail} />
         <NutritionBadge source={recipe.nutritionSource} />
       </div>
+      {recipe.veggieOption && <p className="mt-2 text-sm text-veg font-medium">+ Veggie option</p>}
     </article>
   );
 }
 
-/** Denser list row for long libraries. The left bar is the category colour. */
+/**
+ * Denser list row for long libraries (library design B). The left bar is the
+ * category colour: meat & fish is split, meat above fish.
+ */
 export function RecipeRow({ recipe }: { recipe: RecipeSummary }) {
   const estimated = recipe.nutritionSource === "estimated";
   const facts = [
     formatMinutes(recipe.totalMins),
     approx(`${recipe.kcal} kcal`, estimated),
     approx(`${recipe.proteinG}g protein`, estimated),
-    ...recipe.carbs,
+    ...(recipe.carbs.length === 0 ? ["No carbs"] : recipe.carbs),
   ];
   return (
     <Link
       href={recipe.href}
-      className="flex items-center gap-3 px-4 py-3 min-h-16 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+      className="flex items-center gap-3 px-4 py-3 min-h-16 hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
     >
-      <span className={cx("w-1 self-stretch rounded-full", categoryDotClass(recipe.category))} aria-hidden="true" />
+      <span className="w-1 self-stretch flex flex-col rounded-full overflow-hidden" aria-hidden="true">
+        {categoryDotClasses(recipe.category).map((dot) => (
+          <span key={dot} className={cx("flex-1", dot)} />
+        ))}
+      </span>
       <span className="flex-1 min-w-0">
         <span className="block font-semibold truncate">{recipe.name}</span>
         <span className="sr-only">{categoryLabels[recipe.category]}</span>
-        <span className="block text-sm text-ink-muted tabular-nums">{facts.join(" · ")}</span>
+        <span className="block text-sm text-ink-muted tabular-nums truncate">{facts.join(" · ")}</span>
       </span>
-      <Icon name="chevron-right" className="size-5 text-ink-subtle" />
     </Link>
   );
 }

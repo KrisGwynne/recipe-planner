@@ -46,6 +46,17 @@ describe("RecipeCard", () => {
     expect(screen.getByText("~ Estimated")).toBeInTheDocument();
   });
 
+  it("shows No carbs and the veggie option", () => {
+    render(<RecipeCard recipe={{ ...tuna, carbs: [], veggieOption: true }} />);
+    expect(screen.getByText("No carbs")).toHaveClass("text-ink-muted");
+    expect(screen.getByText("+ Veggie option")).toBeInTheDocument();
+  });
+
+  it("leaves out the veggie option line when there isn't one", () => {
+    render(<RecipeCard recipe={tuna} />);
+    expect(screen.queryByText("+ Veggie option")).not.toBeInTheDocument();
+  });
+
   it("has no favourite button unless it can be toggled", () => {
     render(<RecipeCard recipe={tuna} />);
     expect(screen.queryByRole("button", { name: "Favourite" })).not.toBeInTheDocument();
@@ -67,6 +78,18 @@ describe("RecipeRow", () => {
     const row = screen.getByRole("link");
     expect(row).toHaveAttribute("href", "/recipes/char-siu-tofoo");
     expect(screen.getByText("55 min · ~825 kcal · ~31g protein · Noodles")).toBeInTheDocument();
+  });
+
+  it("says No carbs in the facts", () => {
+    render(<RecipeRow recipe={{ ...tofoo, carbs: [] }} />);
+    expect(screen.getByText("55 min · ~825 kcal · ~31g protein · No carbs")).toBeInTheDocument();
+  });
+
+  it("splits the bar for meat and fish, meat above fish", () => {
+    render(<RecipeRow recipe={{ ...tuna, category: "meat-and-fish" }} />);
+    const bar = screen.getByRole("link").querySelector("[aria-hidden=true]");
+    expect([...bar!.children].map((part) => part.className)).toEqual(["flex-1 bg-meat", "flex-1 bg-fish"]);
+    expect(screen.getByRole("link")).toHaveTextContent("Meat & fish");
   });
 
   it("names the category for screen readers, not just by colour", () => {
