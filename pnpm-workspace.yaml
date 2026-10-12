@@ -1,11 +1,12 @@
 # pnpm settings for this project (pnpm 12 reads them from here, not .npmrc).
 # See also .pnpmfile.cjs, which gives typescript-eslint the TypeScript 6 API.
 
-# Dependency install scripts must be reviewed. Both of these ship prebuilt
-# binaries as optional dependencies, so their scripts (source-build
-# fallbacks) aren't needed.
+# Dependency install scripts must be reviewed. These ship prebuilt binaries
+# as optional dependencies, so their scripts (source-build or download
+# fallbacks) aren't needed. esbuild comes with drizzle-kit.
 allowBuilds:
   "@parcel/watcher": false
+  esbuild: false
   unrs-resolver: false
 
 peerDependencyRules:
