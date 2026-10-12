@@ -70,3 +70,13 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 **Hosting on hold.** Kris will set up GitHub, Vercel and Neon later. Until then, work stays on local stacked branches and branch-by-branch review is skipped.
 
 **Registry entry is stale, deliberately.** `~/Projects/registry.yaml` still describes `recipe-planner` as "scaffold only, stack not chosen". Kris chose to update it later, with PP-142 (hosting); it's also noted in `~/Projects/TODO.md`.
+
+## 2026-10-12: app scaffold (PP-141)
+
+**GitHub is set up** (`KrisGwynne/recipe-planner`). The local stack was pushed as one PR per ticket (#1 to #6), each based on the one below. CI runs lint, type check, tests and build on every PR. Vercel and Neon remain on hold (PP-142).
+
+**TypeScript 7 for type checking, the 6.0 API for tools.** typescript-eslint doesn't support TypeScript 7, which has no programmatic API yet, so `typescript` is an npm alias for `@typescript/typescript6` (Microsoft's recommended setup) and `tsc` comes from TypeScript 7. Remove the alias when typescript-eslint supports 7.x.
+
+**React Compiler on**, as in the holiday planner. No Storybook (as decided), and no service worker yet.
+
+**ESLint 10** rather than the holiday planner's 9; eslint-config-next 16 supports it.

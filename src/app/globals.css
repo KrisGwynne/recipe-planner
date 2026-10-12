@@ -1,0 +1,8 @@
+/* Only scan src/ for classes; designs/ builds its own CSS. */
+@import "tailwindcss" source("..");
+/* Design tokens, shared with the designs in designs/. */
+@import "../../designs/theme.css";
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+}
