@@ -4,7 +4,7 @@ import type { Db } from "@/db";
 import { recipes } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
 import type { Recipe } from "@/types/recipe";
-import { deleteRecipe, getRecipe, getRecipeBySlug, listRecipes, saveRecipe } from "./recipes";
+import { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipes, saveRecipe } from "./recipes";
 import { twoHouseholds, type TwoHouseholds } from "./test-fixtures";
 
 const mocks = vi.hoisted(() => ({ db: undefined as unknown as Db }));
@@ -90,6 +90,14 @@ describe("reading", () => {
     expect(await getRecipe(h.a, "not-a-uuid")).toBeNull();
   });
 
+  it("finds several by slug, with their files", async () => {
+    const { id } = await saveRecipe(h.a, tunaPasta);
+    expect(await getRecipesBySlugs(h.a, [tunaPasta.id, "no-such-recipe"])).toEqual([
+      { id, slug: tunaPasta.id, data: tunaPasta },
+    ]);
+    expect(await getRecipesBySlugs(h.a, [])).toEqual([]);
+  });
+
   it("lists the household's recipes A to Z, ignoring case", async () => {
     await saveRecipe(h.a, tunaPasta);
     await saveRecipe(h.a, tofooNoodles);
@@ -125,6 +133,7 @@ describe("isolation", () => {
   it("household A can't read B's recipe by id or slug", async () => {
     expect(await getRecipe(h.a, bRecipe)).toBeNull();
     expect(await getRecipeBySlug(h.a, tunaPasta.id)).toBeNull();
+    expect(await getRecipesBySlugs(h.a, [tunaPasta.id])).toEqual([]);
   });
 
   it("household A's list doesn't include B's recipes", async () => {

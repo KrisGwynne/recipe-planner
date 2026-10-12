@@ -75,16 +75,6 @@ export function validateRecipe(value: unknown): ValidationResult {
   return { ok: false, problems: explain(validateSchema.errors ?? [], value) };
 }
 
-/** The "Copy problems for Claude" message: every problem, ready to paste into the Claude project. */
-export function problemsForClaude(fileName: string, problems: Problem[]): string {
-  const lines = problems.map((p, i) => `${i + 1}. ${p.title}${p.path ? ` (${p.path})` : ""}: ${p.detail}`);
-  return [
-    `The recipe file "${fileName}" didn't import into Recipe planner. Please fix these problems, keeping to the schema, and give me the whole file again:`,
-    "",
-    ...lines,
-  ].join("\n");
-}
-
 // --- Explaining Ajv's errors ---
 
 type Segments = (string | number)[];

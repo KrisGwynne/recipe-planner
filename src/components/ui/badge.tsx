@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { BrowsingCategory } from "@/recipes/derive";
 import type { DietaryFlag } from "@/types/recipe";
 import { cx } from "@/lib/cx";
 import { Icon } from "@/components/icon";
@@ -30,11 +31,18 @@ export function Badge({
 }
 
 /** The browsing category: meat / fish / veg (protein_type) or vegan (dietary). */
-export type Category = "meat" | "fish" | "veg" | "vegan";
+export type Category = "meat" | "fish" | "meat-and-fish" | "veg" | "vegan";
+
+/** The badge for a recipe's browsingCategory (src/recipes/derive.ts). */
+export function categoryOf(category: BrowsingCategory): Category {
+  return category === "vegetarian" ? "veg" : category;
+}
 
 export const categoryLabels: Record<Category, string> = {
   meat: "Meat",
   fish: "Fish",
+  // Meat colours until the library settles how it shows (PP-166).
+  "meat-and-fish": "Meat & fish",
   veg: "Veg",
   vegan: "Vegan",
 };
@@ -43,6 +51,7 @@ export const categoryLabels: Record<Category, string> = {
 const categoryClasses: Record<Category, { badge: string; dot: string }> = {
   meat: { badge: "bg-meat-soft text-meat", dot: "bg-meat" },
   fish: { badge: "bg-fish-soft text-fish", dot: "bg-fish" },
+  "meat-and-fish": { badge: "bg-meat-soft text-meat", dot: "bg-meat" },
   veg: { badge: "bg-veg-soft text-veg", dot: "bg-veg" },
   vegan: { badge: "bg-vegan-soft text-vegan", dot: "bg-vegan" },
 };
