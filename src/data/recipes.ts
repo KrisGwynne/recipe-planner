@@ -59,7 +59,7 @@ export async function getRecipesBySlugs(ctx: HouseholdContext, slugs: string[]) 
     .where(and(eq(recipes.householdId, ctx.householdId), inArray(recipes.slug, slugs)));
 }
 
-/** Every recipe in the household, A to Z, with the columns cards and filters use (not `data`). */
+/** Every recipe in the household, A to Z, with what cards, filters and search use (not the whole file). */
 export async function listRecipes(ctx: HouseholdContext) {
   return getDb()
     .select({
@@ -83,6 +83,13 @@ export async function listRecipes(ctx: HouseholdContext) {
       sourceKind: recipes.sourceKind,
       sourceTitle: recipes.sourceTitle,
       createdAt: recipes.createdAt,
+      // Read from the file for filtering and search (PP-167).
+      equipment: sql<string[]>`array(select jsonb_array_elements_text(${recipes.data}->'equipment'))`,
+      freezable: sql<boolean | null>`(${recipes.data}->'storage'->>'freezable')::boolean`,
+      ingredients: sql<{ item: string; prep: string | null }[]>`coalesce((
+        select jsonb_agg(jsonb_build_object('item', i->>'item', 'prep', i->>'prep'))
+        from jsonb_array_elements(${recipes.data}->'ingredients') i
+      ), '[]'::jsonb)`,
     })
     .from(recipes)
     .where(eq(recipes.householdId, ctx.householdId))
