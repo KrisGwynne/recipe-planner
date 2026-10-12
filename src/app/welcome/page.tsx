@@ -3,14 +3,10 @@ import { redirect } from "next/navigation";
 import { requireUser, signOut } from "@/auth";
 import { Avatar } from "@/components/avatar";
 import { getMembership } from "@/data";
+import { firstName } from "@/lib/format";
 import { CreateHouseholdForm } from "./create-household-form";
 
 export const metadata: Metadata = { title: "Welcome" };
-
-/** "Kris" from "Kris Gwynne"; nothing if Google gave no name. */
-function firstName(name: string | null | undefined): string | undefined {
-  return name?.trim().split(/\s+/)[0] || undefined;
-}
 
 // Onboarding design B: for anyone signed in without a household (after first
 // sign-in, or after leaving one). People with a household go to the app.

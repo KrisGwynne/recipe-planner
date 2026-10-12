@@ -64,8 +64,8 @@ describe("welcome page", () => {
 });
 
 describe("createHouseholdAction", () => {
-  it("creates the household with the user as owner, then opens the library", async () => {
-    await expect(createHouseholdAction({ name: "" }, form(" Our kitchen "))).rejects.toThrow("redirect /recipes");
+  it("creates the household with the user as owner, then offers an invite link", async () => {
+    await expect(createHouseholdAction({ name: "" }, form(" Our kitchen "))).rejects.toThrow("redirect /welcome/invite");
     expect(await getMembership("kris")).toMatchObject({ name: "Our kitchen", role: "owner" });
   });
 

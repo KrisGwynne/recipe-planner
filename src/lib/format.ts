@@ -10,3 +10,8 @@ export function formatMinutes(mins: number): string {
 export function approx(value: string, estimated: boolean): string {
   return estimated ? `~${value}` : value;
 }
+
+/** "Kris" from "Kris Gwynne"; undefined if there's no name. */
+export function firstName(name: string | null | undefined): string | undefined {
+  return name?.trim().split(/\s+/)[0] || undefined;
+}
