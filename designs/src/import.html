@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Import and export</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-149</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Import and export</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">Getting recipe files in (upload or paste), checking them, and getting them out again. The app never fixes a file: a file with problems is rejected with errors you can paste back into Claude.</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Bringing recipes in</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">Three steps: pick files or paste, review what will happen to each one, then import. Nothing is saved until you press Import.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Start -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-5 pt-5 flex-1">
+          <h1 class="font-display text-[28px] font-semibold">Import recipes</h1>
+          <p class="mt-1 text-ink-muted">Add recipe files made by your Claude project.</p>
+
+          <button class="mt-5 w-full rounded-card border-2 border-dashed border-line bg-surface py-8 px-5 text-center">
+            <span class="mx-auto size-14 rounded-full bg-primary-soft text-primary grid place-items-center"><svg class="size-7 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg></span>
+            <span class="block mt-3 font-semibold text-lg">Choose recipe files</span>
+            <span class="block mt-1 text-sm text-ink-muted">.json files, up to 50 at once</span>
+          </button>
+
+          <div class="my-5 flex items-center gap-3 text-sm text-ink-subtle"><span class="flex-1 h-px bg-line"></span>or<span class="flex-1 h-px bg-line"></span></div>
+
+          <label class="block">
+            <span class="font-semibold">Paste a recipe</span>
+            <textarea class="mt-2 w-full h-36 p-3 rounded-control bg-surface border border-line font-mono text-sm placeholder:text-ink-subtle" placeholder='Paste the JSON from Claude here, starting with {'></textarea>
+          </label>
+          <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold opacity-40">Check recipe</button>
+
+          <a class="mt-6 flex items-center justify-between rounded-control bg-surface-2 px-4 py-3 text-sm">
+            <span><span class="font-semibold">New here?</span> <span class="text-ink-muted">How to turn a photo into a recipe file</span></span>
+            <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+          </a>
+        </div>
+        <nav class="border-t border-line bg-surface px-2 pt-1.5 pb-5 grid grid-cols-5 text-[11px] font-medium">
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipes</a>
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plans</a>
+          <a class="flex flex-col items-center -mt-5"><span class="size-14 rounded-full bg-primary text-on-primary grid place-items-center shadow-lg ring-4 ring-bg"><svg class="size-7 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg></span><span class="text-primary mt-0.5">Import</span></a>
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare</a>
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-users"/></svg>Household</a>
+        </nav>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Start</p><p class="text-ink-muted mt-1">Files first (the usual route: save from Claude, pick in the phone's file picker), paste as the alternative, since copying from the Claude app on a phone is often easier. Pasting checks one recipe at a time.</p></figcaption>
+    </figure>
+
+    <!-- B. Review a mixed batch -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <p class="font-display text-[22px] font-semibold">Check 4 files</p>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-2">
+          <p class="text-ink-muted"><b class="text-ink">2 ready to import.</b> 1 unchanged, 1 has problems.</p>
+
+          <p class="mt-5 text-xs font-semibold uppercase tracking-wider text-ink-muted">Ready</p>
+          <ul class="mt-2 space-y-2">
+            <li class="rounded-card bg-surface border border-line p-4 flex items-start gap-3">
+              <span class="mt-0.5 size-6 shrink-0 rounded-md bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+              <span class="flex-1 min-w-0">
+                <span class="flex items-center gap-2"><span class="inline-flex h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold items-center">New</span><span class="text-xs text-ink-subtle truncate">char-siu-tofoo-noodles.json</span></span>
+                <span class="block mt-1 font-display text-lg font-semibold leading-snug">Char siu Tofoo noodles</span>
+                <span class="block text-sm text-ink-muted">Serves 2 · 55 min · ~825 kcal · Veg</span>
+              </span>
+              <svg class="mt-1 size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </li>
+            <li class="rounded-card bg-surface border border-line p-4 flex items-start gap-3">
+              <span class="mt-0.5 size-6 shrink-0 rounded-md bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+              <span class="flex-1 min-w-0">
+                <span class="flex items-center gap-2"><span class="inline-flex h-6 px-2 rounded-full bg-surface-2 text-ink text-xs font-semibold items-center border border-line">Update</span><span class="text-xs text-ink-subtle truncate">lemony-tuna-tomato-caper-pasta.json</span></span>
+                <span class="block mt-1 font-display text-lg font-semibold leading-snug">Lemony tuna, tomato &amp; caper one-pot pasta</span>
+                <span class="block text-sm text-ink-muted">3 things change · your notes and rating are kept</span>
+              </span>
+              <svg class="mt-1 size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </li>
+          </ul>
+
+          <p class="mt-5 text-xs font-semibold uppercase tracking-wider text-danger">Problems · not imported</p>
+          <ul class="mt-2">
+            <li class="rounded-card border border-danger/40 bg-danger-soft p-4 flex items-start gap-3">
+              <svg class="mt-0.5 size-6 shrink-0 fill-none stroke-danger stroke-2"><use href="#i-alert"/></svg>
+              <span class="flex-1 min-w-0">
+                <span class="block text-xs text-ink-subtle truncate">smoked-mackerel-bake.json</span>
+                <span class="block mt-1 font-semibold">Smoked mackerel &amp; leek pasta bake</span>
+                <span class="block text-sm text-danger">2 problems to fix in Claude</span>
+              </span>
+              <svg class="mt-1 size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </li>
+          </ul>
+
+          <p class="mt-5 text-xs font-semibold uppercase tracking-wider text-ink-muted">Already up to date</p>
+          <p class="mt-2 text-sm text-ink-muted rounded-control bg-surface-2 px-4 py-3">Prawn linguine with chilli &amp; lemon: identical to the saved recipe, skipped.</p>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6">
+          <button class="w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Import 2 recipes</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · Review a batch</p><p class="text-ink-muted mt-1">Every file is checked on its own and sorted into Ready (new or update), Problems and Already up to date. Untick a ready file to leave it out. Files with problems never block the others. Tap any row for details.</p></figcaption>
+    </figure>
+
+    <!-- C. New recipe preview -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <span class="inline-flex h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold items-center">New recipe</span>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-2">
+          <h1 class="font-display text-[26px] leading-8 font-semibold">Char siu Tofoo noodles</h1>
+          <p class="mt-1 text-sm text-ink-muted">Tofoo cookbook · "Delicious Dinners" chapter, p137</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full bg-surface-2 text-sm font-medium">Noodles · udon</span>
+            <span class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-veg-soft text-veg text-sm font-semibold"><span class="size-2 rounded-full bg-veg"></span>Veg</span>
+            <span class="inline-flex items-center h-7 px-2.5 rounded-full border border-dashed border-ink-subtle text-ink-muted text-sm font-medium">~ Estimated</span>
+          </div>
+          <dl class="mt-4 rounded-card bg-surface border border-line divide-y divide-line text-sm">
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Serves</dt><dd class="font-medium">2</dd></div>
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Time</dt><dd class="font-medium">15 prep · 10 cook · 30 waiting = 55 min</dd></div>
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Per serving</dt><dd class="font-medium">~825 kcal · ~31g protein</dd></div>
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Suitable for</dt><dd class="font-medium">Vegetarian · Dairy-free · Nut-free</dd></div>
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Ingredients</dt><dd class="font-medium">12, in 2 groups</dd></div>
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Method</dt><dd class="font-medium">5 steps</dd></div>
+            <div class="px-4 py-2.5 flex justify-between"><dt class="text-ink-muted">Variations</dt><dd class="font-medium">Greens, Rice</dd></div>
+          </dl>
+          <p class="mt-3 text-sm text-ink-muted">Worth a quick check that Claude read the photo right: the category, carbs and dietary flags drive the filters.</p>
+          <button class="mt-3 w-full h-11 rounded-control border border-line font-semibold">See the full recipe</button>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6">
+          <button class="w-full h-12 rounded-control border border-line font-semibold">Back to the list</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · A new recipe</p><p class="text-ink-muted mt-1">The facts that matter for finding the recipe later, so a mis-read can be caught before it's saved. "See the full recipe" opens a preview of the recipe page.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Updates and problems</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- D. Update diff -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <span class="inline-flex h-6 px-2 rounded-full bg-surface-2 text-ink text-xs font-semibold items-center border border-line">Update</span>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-2">
+          <h1 class="font-display text-[26px] leading-8 font-semibold">Lemony tuna, tomato &amp; caper one-pot pasta</h1>
+          <p class="mt-2 text-ink-muted">This file replaces the saved recipe. <b class="text-ink">3 things change:</b></p>
+          <ul class="mt-3 space-y-2">
+            <li class="rounded-control bg-surface border border-line p-3">
+              <p class="font-semibold">Times</p>
+              <p class="mt-1 text-sm tabular-nums">Cook <span class="line-through text-ink-subtle">30 min</span> → <b>25 min</b> · Total <span class="line-through text-ink-subtle">35</span> → <b>30 min</b></p>
+            </li>
+            <li class="rounded-control bg-surface border border-line p-3">
+              <p class="font-semibold">Ingredients</p>
+              <p class="mt-1 text-sm"><span class="text-veg font-medium">+ chilli flakes</span>, 1 pinch</p>
+              <p class="text-sm"><span class="text-ink-muted">capers:</span> <span class="line-through text-ink-subtle">2 tbsp</span> → <b>3 tbsp</b></p>
+            </li>
+            <li class="rounded-control bg-surface border border-line p-3">
+              <p class="font-semibold">Spice level</p>
+              <p class="mt-1 text-sm"><span class="line-through text-ink-subtle">None</span> → <b>Mild</b></p>
+            </li>
+          </ul>
+          <div class="mt-4 rounded-control bg-veg-soft text-ink px-4 py-3 text-sm flex gap-2">
+            <svg class="size-5 shrink-0 fill-none stroke-veg stroke-2"><use href="#i-check"/></svg>
+            <span>Kept: favourite, rating, your notes and cooking history. Meal plans that use this recipe will show the new version.</span>
+          </div>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6">
+          <button class="w-full h-12 rounded-control border border-line font-semibold">Back to the list</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · An update</p><p class="text-ink-muted mt-1">Lists each part of the recipe that differs (times, ingredients, nutrition…), with before → after where that's short enough to read; otherwise just "changed". Matching is by the recipe's id within your household.</p></figcaption>
+    </figure>
+
+    <!-- E. Problems -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <span class="inline-flex h-6 px-2 rounded-full bg-danger-soft text-danger text-xs font-semibold items-center">Not imported</span>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-2">
+          <h1 class="font-display text-[26px] leading-8 font-semibold">Smoked mackerel &amp; leek pasta bake</h1>
+          <p class="mt-1 text-sm text-ink-subtle">smoked-mackerel-bake.json</p>
+          <p class="mt-3 text-ink-muted">Nothing from this file was saved. Ask Claude to fix these and give you the file again:</p>
+          <ol class="mt-3 space-y-2">
+            <li class="rounded-control bg-surface border border-line p-3">
+              <p class="font-semibold">Unknown unit "glug"</p>
+              <p class="mt-1 text-sm text-ink-muted">Ingredient 4 (olive oil) uses a unit the app doesn't know. Allowed: g, kg, ml, l, tsp, tbsp, cup, pinch, handful, bunch, can, jar, pack, clove, slice, sprig, sheet, piece, or none.</p>
+              <code class="mt-2 block text-xs text-ink-subtle">ingredients[3].unit</code>
+            </li>
+            <li class="rounded-control bg-surface border border-line p-3">
+              <p class="font-semibold">Mackerel is listed as meat</p>
+              <p class="mt-1 text-sm text-ink-muted">"mackerel" is a fish item, so its category must be "fish".</p>
+              <code class="mt-2 block text-xs text-ink-subtle">proteins[0]</code>
+            </li>
+          </ol>
+          <button class="mt-4 w-full h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-copy"/></svg>Copy problems for Claude</button>
+          <p class="mt-2 text-xs text-ink-subtle text-center">Copies a message listing both problems, ready to paste into your Claude project.</p>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · A file with problems</p><p class="text-ink-muted mt-1">Every problem at once, in plain English, with where it is (by ingredient number and name, not just a JSON path; the path is shown small for Claude). "Copy problems for Claude" closes the loop. Files that aren't recipe JSON at all (wrong file, broken JSON, too big, unknown schema version) get a single clear message instead.</p></figcaption>
+    </figure>
+
+    <!-- F. Done -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-20 text-center">
+          <span class="mx-auto size-16 rounded-full bg-veg-soft text-veg grid place-items-center"><svg class="size-8 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg></span>
+          <h1 class="font-display text-[26px] font-semibold mt-5">2 recipes imported</h1>
+          <ul class="mt-5 text-left rounded-card bg-surface border border-line divide-y divide-line">
+            <li class="px-4 py-3 flex items-center gap-3"><span class="inline-flex h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold items-center">New</span><span class="flex-1 font-medium truncate">Char siu Tofoo noodles</span><svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg></li>
+            <li class="px-4 py-3 flex items-center gap-3"><span class="inline-flex h-6 px-2 rounded-full bg-surface-2 text-ink text-xs font-semibold items-center border border-line">Updated</span><span class="flex-1 font-medium truncate">Lemony tuna, tomato &amp; caper…</span><svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg></li>
+          </ul>
+          <p class="mt-4 text-sm text-danger">1 file wasn't imported: Smoked mackerel &amp; leek pasta bake.</p>
+          <button class="mt-1 text-sm font-semibold text-primary">Copy its problems for Claude</button>
+        </div>
+        <div class="border-t border-line bg-surface px-4 pt-3 pb-6 flex gap-3">
+          <button class="flex-1 h-12 rounded-control border border-line font-semibold">Import more</button>
+          <button class="flex-1 h-12 rounded-control bg-primary text-on-primary font-semibold">Go to recipes</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · Done</p><p class="text-ink-muted mt-1">What was saved, with links to each recipe, and a reminder of anything left behind.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Export, delete and limits</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- G. Export -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[640px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-5 pt-5 flex-1">
+          <h1 class="font-display text-[28px] font-semibold">Household</h1>
+          <p class="mt-1 text-sm text-ink-muted">The Gwynnes · 2 members</p>
+          <p class="mt-6 text-xs font-semibold uppercase tracking-wider text-ink-muted">Your recipes</p>
+          <div class="mt-2 rounded-card bg-surface border border-line p-4">
+            <p class="font-semibold">Download all recipes</p>
+            <p class="mt-1 text-sm text-ink-muted">A .zip of 24 recipe files, exactly as imported. Use it as a backup, or import it into another household.</p>
+            <button class="mt-3 w-full h-12 rounded-control border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-download"/></svg>Download (.zip, 48 KB)</button>
+            <p class="mt-2 text-xs text-ink-subtle">Notes, ratings and meal plans aren't included.</p>
+          </div>
+          <p class="mt-6 text-xs font-semibold uppercase tracking-wider text-ink-muted">Members, invites, settings</p>
+          <div class="mt-2 rounded-card bg-surface-2 h-28 grid place-items-center text-sm text-ink-subtle">Designed in PP-152</div>
+        </div>
+        <nav class="border-t border-line bg-surface px-2 pt-1.5 pb-5 grid grid-cols-5 text-[11px] font-medium">
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipes</a>
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plans</a>
+          <a class="flex flex-col items-center -mt-5"><span class="size-14 rounded-full bg-primary text-on-primary grid place-items-center shadow-lg ring-4 ring-bg"><svg class="size-7 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg></span><span class="text-ink-muted mt-0.5">Import</span></a>
+          <a class="flex flex-col items-center gap-0.5 py-1 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare</a>
+          <a class="flex flex-col items-center gap-0.5 py-1 text-primary"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-users"/></svg>Household</a>
+        </nav>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · Export</p><p class="text-ink-muted mt-1">Lives on the Household tab. One file per recipe, named <code>&lt;id&gt;.json</code>, each one re-importable. A single recipe can also be downloaded from its ⋯ menu. To move a library to another household, unzip it and import the files there (up to 50 at a time).</p></figcaption>
+    </figure>
+
+    <!-- H. Delete warning -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[640px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-[22px] font-semibold mt-4">Delete Lemony tuna pasta?</p>
+          <p class="text-ink-muted mt-2">It's planned in 2 meal plans and will be removed from them:</p>
+          <ul class="mt-3 rounded-control bg-surface-2 divide-y divide-line text-sm">
+            <li class="px-4 py-2.5 flex justify-between"><span class="font-medium">This week</span><span class="text-ink-muted">Tue dinner</span></li>
+            <li class="px-4 py-2.5 flex justify-between"><span class="font-medium">Half-term</span><span class="text-ink-muted">Mon lunch, Thu dinner</span></li>
+          </ul>
+          <p class="text-ink-muted mt-3 text-sm">Your notes, rating and cooking history for it are deleted too. To keep a copy, download the recipe file first.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Delete recipe</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">H · Deleting a recipe that's planned</p><p class="text-ink-muted mt-1">Names the plans and slots it'll disappear from. A recipe that isn't in any plan gets the same sheet without the list.</p></figcaption>
+    </figure>
+
+    <!-- I. Limits -->
+    <figure class="w-[390px] max-w-full space-y-4">
+      <div class="rounded-card border border-warning/40 bg-warning-soft p-4">
+        <p class="font-semibold text-warning flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-clock"/></svg>Too many imports for now</p>
+        <p class="mt-1 text-sm">You've imported a lot in the last hour. Try again in about 10 minutes. Nothing from this batch was saved.</p>
+      </div>
+      <div class="rounded-card border border-danger/40 bg-danger-soft p-4">
+        <p class="font-semibold text-danger flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg>IMG_2041.jpg isn't a recipe file</p>
+        <p class="mt-1 text-sm">Only .json recipe files can be imported. Got a .zip export? Unzip it first.</p>
+      </div>
+      <div class="rounded-card border border-danger/40 bg-danger-soft p-4">
+        <p class="font-semibold text-danger flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg>Too many files</p>
+        <p class="mt-1 text-sm">You picked 63 files; the most at once is 50. Pick fewer and import the rest after.</p>
+      </div>
+      <div class="rounded-card border border-danger/40 bg-danger-soft p-4">
+        <p class="font-semibold text-danger flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg>Made for a newer version of the app</p>
+        <p class="mt-1 text-sm">This file says <code>schema_version: 2</code>; this app reads version 1. Check your Claude project is using the current schema.</p>
+      </div>
+      <figcaption class="text-sm"><p class="font-semibold text-base">I · Limits and whole-file errors</p><p class="text-ink-muted mt-1">The app is public, so there are limits: 50 files and 256 KB per file per import, and a cap on imports per hour. Each gets a plain message saying what to do.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 11 October 2026.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>The review step is always shown, even for a single file.</li>
+    <li>"Copy problems for Claude" stays.</li>
+    <li>Import accepts .json files only for now (no .zip). Export is still a .zip.</li>
+    <li>Export lives on the Household tab.</li>
+  </ul>
+</section>
+</main>
+</body>
+</html>
