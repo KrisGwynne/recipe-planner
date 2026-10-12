@@ -26,6 +26,32 @@ export default defineConfig([
       "no-console": ["error", { allow: ["warn", "error"] }],
     },
   },
+  // Household data goes through the data-access layer (src/data, PP-155): only
+  // it, the database module and auth may touch the database. Tests may too.
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/data/**", "src/db/**", "src/auth/**", "**/*.test.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            { name: "drizzle-orm", message: "Query household data through @/data (the data-access layer)." },
+          ],
+          patterns: [
+            {
+              group: ["@/db/*", "drizzle-orm/*", "**/db", "**/db/*"],
+              message: "Query household data through @/data (the data-access layer).",
+            },
+            {
+              group: ["@/data/*", "!@/data/index"],
+              message: "Import from @/data, not its files: contexts only come from requireHousehold.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",
