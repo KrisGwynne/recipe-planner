@@ -79,4 +79,4 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 
 **React Compiler on**, as in the holiday planner. No Storybook (as decided), and no service worker yet.
 
-**ESLint 10** rather than the holiday planner's 9; eslint-config-next 16 supports it.
+**ESLint 9**, as in the holiday planner. ESLint 10 installs with a peer warning on older npm but fails `npm ci` on current npm, because eslint-config-next's plugins (eslint-plugin-import) only support up to 9.

@@ -19,12 +19,12 @@ Shared conventions (secrets, git, devices) are in `~/Projects/AGENTS.md`.
 
 ## Commands
 
-Node 24 (`.nvmrc`).
+Node 24 (`.nvmrc`). CI uses the npm bundled with the latest Node 24, which is stricter about the lockfile than older npm; if `npm ci` fails in CI, regenerate the lockfile with `npx npm@<that version> install`.
 
 - `npm install`
 - `npm run dev`: start the app at http://localhost:3000
 - `npm run build`: production build (`npm start` to serve it)
-- `npm run lint`: ESLint (Next.js core web vitals and TypeScript rules)
+- `npm run lint`: ESLint 9 (Next.js core web vitals and TypeScript rules)
 - `npm run typecheck`: type check with TypeScript 7 (`tsc`)
 - `npm run test:run`: run tests once (`npm test` to watch). `*.test.ts` runs in Node, `*.test.tsx` (components) in jsdom with Testing Library.
 - `npm run designs`: build `designs/src/*.html` into self-contained `designs/*.html` (Tailwind compiled and inlined). Edit the sources, never the built files. Tokens live in `designs/theme.css`, shared with the app.
