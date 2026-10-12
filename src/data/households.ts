@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { householdMembers, households, users } from "@/db/schema";
 import type { HouseholdContext, Role } from "./context";
+import { isUniqueViolation } from "./errors";
 
 export type Membership = {
   householdId: string;
@@ -87,12 +88,4 @@ export async function listMembers(ctx: HouseholdContext) {
     .innerJoin(users, eq(users.id, householdMembers.userId))
     .where(eq(householdMembers.householdId, ctx.householdId))
     .orderBy(asc(householdMembers.role), asc(householdMembers.joinedAt));
-}
-
-// Postgres unique_violation, possibly wrapped by Drizzle (error.cause).
-function isUniqueViolation(error: unknown): boolean {
-  for (let e = error; e && typeof e === "object"; e = (e as { cause?: unknown }).cause) {
-    if ((e as { code?: unknown }).code === "23505") return true;
-  }
-  return false;
 }
