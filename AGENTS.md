@@ -32,7 +32,7 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 - `pnpm designs`: build `designs/src/*.html` into self-contained `designs/*.html` (Tailwind compiled and inlined). Edit the sources, never the built files. Tokens live in `designs/theme.css`, shared with the app.
 - `node scripts/screenshot.mjs <html> <out-prefix> [width] [dark]`: screenshot a design to check it (first run `pnpm exec playwright install --only-shell chromium`).
 - `pnpm db:generate`: after changing `src/db/schema/`, write a migration to `drizzle/` (Drizzle Kit). Commit it; never edit applied migrations.
-- `pnpm db:migrate`: apply the migrations to `DATABASE_URL`. For now every environment shares the production Neon database, so migrations must be additive (see `docs/decisions.md`). Tests apply them to an in-memory PGlite (`src/db/test-db.ts`).
+- `pnpm db:migrate`: apply the migrations to `DATABASE_URL`. For now every environment shares the production Neon database, so migrations must be additive (see `docs/decisions.md`). Run it by hand once for a PR that adds a migration, so its preview works; production deploys also run it (`vercel.json` build command, `node scripts/migrate.mjs --production-only`, which does nothing when everything is applied). Previews never migrate. Tests apply the migrations to an in-memory PGlite (`src/db/test-db.ts`).
 - `pnpm schema:types`: regenerate `src/types/recipe.ts` from the schema after changing it. Never edit that file by hand; a test fails if it's out of date.
 
 **TypeScript 7, with the 6.0 API for typescript-eslint.** `typescript` is TypeScript 7 (`tsc`, and `next build`'s type check). typescript-eslint needs the TypeScript API, which 7.0 doesn't have, so `.pnpmfile.cjs` gives it `@typescript/typescript6` instead. Delete that file once typescript-eslint supports 7.x.
@@ -41,7 +41,7 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 
 **Brand-new releases** aren't installed: pnpm waits a minimum release age before using a version. Don't add `minimumReleaseAgeExclude` entries to get round it; use the previous version.
 
-The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. The database schema is in `src/db/schema`; household data is only queried through `src/data` (see Data access). `src/app/globals.css` imports the design tokens from `designs/theme.css`.
+The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. Security headers are in `src/security/headers.ts`: the Content-Security-Policy, with a fresh nonce per request, is set by `src/proxy.ts`, and the fixed headers by `next.config.ts`. Scripts only run with the nonce, so every page renders per request (the root layout calls `connection()`); don't add inline `<script>`s or third-party scripts, images, fonts or API calls without updating the policy. Inline styles are allowed. The database schema is in `src/db/schema`; household data is only queried through `src/data` (see Data access). `src/app/globals.css` imports the design tokens from `designs/theme.css`.
 
 ## Data access
 
