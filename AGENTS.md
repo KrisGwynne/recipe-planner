@@ -12,9 +12,11 @@ Shared conventions (secrets, git, devices) are in `~/Projects/AGENTS.md`.
 
 ## Workflow
 
-- **Design before code.** Any ticket that changes UI needs an approved design in `designs/` first. Designs are written in `designs/src/*.html` with Tailwind, built with `pnpm designs`, checked with `scripts/screenshot.mjs`, then Kris reviews the built file by opening it in a browser (give him the `\\wsl.localhost\Ubuntu\...` path from `wslpath -w`; files can't be shown inline in chat). Each design ends with "Questions for review"; on approval, replace them with a "Decisions" section, add the decisions to `docs/decisions.md`, comment on the Jira ticket and move it to Done.
+- **Design before code.** Any ticket that changes what a user sees needs an approved design in `designs/` before implementation. Approved means the design ends with a "Decisions" section and has an entry in `docs/decisions.md`. If there isn't one, stop and make one first: don't write UI code against an unapproved or missing design.
+- **Skills.** `/pick-up-task PP-NN` runs a ticket end to end (Jira, design check, plan and questions, code, tests, PR, CI, Jira). `/design-screen PP-NN` makes a design and takes it through review to approval. Both are in `.claude/skills/`.
+- **Design reviews.** Designs are written in `designs/src/*.html` with Tailwind, built with `pnpm designs`, and checked with `scripts/screenshot.mjs`. Kris then reviews the built file by opening it in a browser (give him the `\\wsl.localhost\Ubuntu\...` path from `wslpath -w`; files can't be shown inline in chat). Each design ends with "Questions for review"; on approval, replace them with a "Decisions" section, add the decisions to `docs/decisions.md`, comment on the Jira ticket and move it to Done.
 - **Decisions** go in `docs/decisions.md` (dated). Scope changes also go as comments on the affected Jira tickets.
-- **Jira:** move a ticket to In Progress when starting and Done when finished, with a comment saying what was done.
+- **Jira:** every ticket has the `Recipe Planner` component. Move a ticket to In Progress when starting. Comment with what was done when the PR is up, and move it to Done once the PR is merged (design tickets: on approval).
 - **Git:** GitHub repo `KrisGwynne/recipe-planner`. One branch per ticket (`feat/PP-NN-...`, `design/PP-NN-...`), stacked on the previous one while earlier PRs are unmerged, and one PR per branch based on the branch below it. CI (`.github/workflows/ci.yml`) runs lint, type check, tests and build on every PR. Vercel and Neon are still on hold.
 
 ## Commands

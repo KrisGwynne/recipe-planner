@@ -10,3 +10,7 @@ build/
 out/
 next-env.d.ts
 *.tsbuildinfo
+
+# Claude Code: skills are shared; local settings and worktrees aren't
+.claude/settings.local.json
+.claude/worktrees/
