@@ -82,3 +82,13 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 **React Compiler on**, as in the holiday planner. No Storybook (as decided), and no service worker yet.
 
 **ESLint 10.** eslint-config-next's plugins (import, jsx-a11y, react) declare ESLint up to 9 but work with 10: checked by linting a file that broke one rule from each, and all fired. Their peer warnings are silenced in `pnpm-workspace.yaml` for those three only. If a later plugin update breaks on 10, drop back to ESLint 9.
+
+## 2026-10-12: app shell (PP-144)
+
+**Tab URLs** are `/recipes`, `/plans`, `/import`, `/compare` and `/household`, in an `(app)` route group whose layout holds the navigation. `/` redirects to `/recipes` until sign-in (PP-153) brings a landing page.
+
+**Side rail from `md` (768px) up**, so a portrait iPad gets the rail. It follows the library design's wider-screens mockup: Import at the top, Household at the bottom.
+
+**Components built now** are only the ones the ticket lists (buttons, badges, cards and list rows, filter chips) plus the empty state the placeholder pages use. Inputs, the stepper, toggle, rating, bottom sheets, toast and cooking pieces are built with the first screen that needs them. Icons are inline SVGs with the designs' Lucide paths; no icon library.
+
+**Vercel is connected** (Kris, 2026-10-12), so PRs get preview deployments. Kris checks the bottom navigation on a real iPhone in Safari (toolbar expanded and collapsed); automated checks run in Chromium only. Neon is still on hold.
