@@ -7,16 +7,38 @@
     "schema:types": "node scripts/generate-types.mjs",
     "test": "vitest",
     "test:run": "vitest run",
-    "designs": "node scripts/build-designs.mjs"
+    "designs": "node scripts/build-designs.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "eslint": "^10.12.0",
+    "eslint-config-next": "^16.4.0",
+    "jsdom": "^29.1.1",
     "json-schema-to-typescript": "^16.0.0",
     "playwright": "^1.64.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vitest": "^5.0.3"
-  }
+  },
+  "dependencies": {
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "packageManager": "pnpm@12.10.1"
 }

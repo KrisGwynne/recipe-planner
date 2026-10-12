@@ -1,0 +1,17 @@
+# pnpm settings for this project (pnpm 12 reads them from here, not .npmrc).
+# See also .pnpmfile.cjs, which gives typescript-eslint the TypeScript 6 API.
+
+# Dependency install scripts must be reviewed. Both of these ship prebuilt
+# binaries as optional dependencies, so their scripts (source-build
+# fallbacks) aren't needed.
+allowBuilds:
+  "@parcel/watcher": false
+  unrs-resolver: false
+
+peerDependencyRules:
+  allowedVersions:
+    # eslint-config-next's plugins declare ESLint <= 9 but work with 10:
+    # checked 2026-10-12 by linting a file that breaks one rule from each.
+    "eslint-plugin-import>eslint": "10"
+    "eslint-plugin-jsx-a11y>eslint": "10"
+    "eslint-plugin-react>eslint": "10"

@@ -1,4 +1,4 @@
-/* Generated from schema/recipe.schema.json by `npm run schema:types`. Do not edit. */
+/* Generated from schema/recipe.schema.json by `pnpm schema:types`. Do not edit. */
 
 export type Protein =
   | {

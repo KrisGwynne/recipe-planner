@@ -47,7 +47,7 @@ describe("recipe.schema.json", () => {
 });
 
 describe("src/types/recipe.ts", () => {
-  it("is up to date with the schema (run `npm run schema:types`)", async () => {
+  it("is up to date with the schema (run `pnpm schema:types`)", async () => {
     const committed = readFileSync(new URL("../src/types/recipe.ts", import.meta.url), "utf8");
     expect(committed).toBe(await generateRecipeTypes());
   });

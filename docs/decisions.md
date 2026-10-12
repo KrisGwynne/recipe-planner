@@ -70,3 +70,15 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 **Hosting on hold.** Kris will set up GitHub, Vercel and Neon later. Until then, work stays on local stacked branches and branch-by-branch review is skipped.
 
 **Registry entry is stale, deliberately.** `~/Projects/registry.yaml` still describes `recipe-planner` as "scaffold only, stack not chosen". Kris chose to update it later, with PP-142 (hosting); it's also noted in `~/Projects/TODO.md`.
+
+## 2026-10-12: app scaffold (PP-141)
+
+**GitHub is set up** (`KrisGwynne/recipe-planner`). The local stack was pushed as one PR per ticket (#1 to #6), each based on the one below. CI runs lint, type check, tests and build on every PR. Vercel and Neon remain on hold (PP-142).
+
+**pnpm, not npm** (Kris, 2026-10-12). Version pinned with `packageManager`, so local and CI match (the first CI run failed because CI's newer npm disagreed with the lockfile local npm wrote). Install scripts are allow-listed (`allowBuilds`), and pnpm's minimum release age is kept, with no exemptions.
+
+**TypeScript 7, with the 6.0 API only for typescript-eslint.** TypeScript 7 has no programmatic API yet and typescript-eslint refuses to run on it. `typescript` is 7, used by `tsc` and by `next build`'s type check (checked: both catch type errors), and a pnpm `readPackage` hook (`.pnpmfile.cjs`) swaps typescript-eslint's `typescript` peer for `@typescript/typescript6`. pnpm overrides and `packageExtensions` were tried first; they can't do it, because the project's own `typescript` always satisfies the peer. Delete the hook when typescript-eslint supports 7.x.
+
+**React Compiler on**, as in the holiday planner. No Storybook (as decided), and no service worker yet.
+
+**ESLint 10.** eslint-config-next's plugins (import, jsx-a11y, react) declare ESLint up to 9 but work with 10: checked by linting a file that broke one rule from each, and all fired. Their peer warnings are silenced in `pnpm-workspace.yaml` for those three only. If a later plugin update breaks on 10, drop back to ESLint 9.
