@@ -20,7 +20,8 @@ async function migratedTemplate(): Promise<PGlite> {
 export async function createTestDb(): Promise<Db> {
   template ??= migratedTemplate();
   await previous?.close();
-  const client = await (await template).clone();
+  // clone() is typed as the interface, but it is a PGlite.
+  const client = (await (await template).clone()) as PGlite;
   previous = client;
   return drizzle(client, { schema });
 }
