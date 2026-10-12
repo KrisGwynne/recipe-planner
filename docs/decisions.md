@@ -206,3 +206,13 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Search** matches every word, case-insensitive, somewhere in the name, an ingredient item or the source title (Kris, 2026-10-12). When only an ingredient matches, the card shows it ("Ingredient: sushi-grade tuna, diced").
 
 **Details the design left open:** the URL keeps the state (`?q=`, `sort=`, `cat=`, `item=fish:tuna`, `carb=`, `time=`, `meal=`, `cuisine=`, `source=`, `diet=`, `cook=`, `difficulty=`, `spice=`, `veggie=1`, `freezable=1`); filters and sort add history entries, typing replaces the current one. "Cook with" is one chip ("Cook with: Hob, Oven") since the ticked set is one rule. Nothing matching with only a search offers "Clear search". When no single filter would bring anything back, only "Clear all filters" is offered.
+
+## 2026-10-12: recipe page (PP-168)
+
+**Household parts come with their tickets** (Kris, 2026-10-12): the favourite heart, the rating and cooking history, "Our notes" and **Cooked today** with PP-169; **Add to plan** with meal plans (PP-171). Until there's an action for the bottom bar, the page keeps the normal tab bar. The ⋯ menu has **Download recipe file (.json)** and **Replace with a new version…** (opens Import, whose review shows what changes); "Compare with…" (PP-173) and "Delete recipe" (PP-165) join it with their tickets.
+
+**Scaled amounts** (Kris, 2026-10-12): g and ml as whole numbers (one decimal below 10), kg and l to two decimals (below 1 shown as g or ml: "500 ml"), everything else the nearest kitchen fraction (½, ⅓, ¼, ¾, ⅔) or one decimal if none is close. Countable units go plural ("2 cans"). Notes with amounts get "(for 4)" when scaled, except next to a gram total, where the note is the pack size and the total scales instead.
+
+**Servings and ticks last for the visit** (Kris, 2026-10-12); every visit starts at the recipe's own servings. The recipe file's own `notes` show as "Tips" under "From the recipe".
+
+**Import links to recipes** (Kris, 2026-10-12): the done screen's recipe names open their pages, and a new file's details have "See the full recipe", the same page from the file, read-only, before anything is saved. The page is a shared component (`src/components/recipe/recipe-view.tsx`) for that reason.
