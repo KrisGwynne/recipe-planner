@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { parseRecipe, problemsForClaude, validateRecipe, type Problem } from "./validate";
+import { problemsForClaude } from "./review";
+import { parseRecipe, validateRecipe, type Problem } from "./validate";
 
 const text = (slug: string) => readFileSync(new URL(`../../examples/${slug}.json`, import.meta.url), "utf8");
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- tests break the file on purpose
