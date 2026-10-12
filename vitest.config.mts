@@ -10,6 +10,10 @@ export default defineConfig({
     },
   },
   test: {
+    // Each test worker holds an in-memory Postgres of about 0.5 GB (src/db/test-db.ts),
+    // so cap the workers, and allow time for each one's first database.
+    maxWorkers: 4,
+    hookTimeout: 30_000,
     // Component tests (.tsx) run in jsdom; everything else in Node.
     projects: [
       { extends: true, test: { name: "node", include: ["**/*.test.ts"], exclude: ["node_modules/**"], environment: "node" } },
