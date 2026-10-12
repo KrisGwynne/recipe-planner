@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
 import { recipes } from "@/db/schema";
@@ -48,6 +48,15 @@ export async function getRecipeBySlug(ctx: HouseholdContext, slug: string) {
     .from(recipes)
     .where(and(eq(recipes.householdId, ctx.householdId), eq(recipes.slug, slug)));
   return row ?? null;
+}
+
+/** The household's recipes with these slugs (for comparing an import with what's saved). */
+export async function getRecipesBySlugs(ctx: HouseholdContext, slugs: string[]) {
+  if (slugs.length === 0) return [];
+  return getDb()
+    .select({ id: recipes.id, slug: recipes.slug, data: recipes.data })
+    .from(recipes)
+    .where(and(eq(recipes.householdId, ctx.householdId), inArray(recipes.slug, slugs)));
 }
 
 /** Every recipe in the household, A to Z, with the columns cards and filters use (not `data`). */

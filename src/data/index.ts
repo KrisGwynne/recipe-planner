@@ -25,4 +25,4 @@ export {
   type InviteStatus,
   type Invitee,
 } from "./invites";
-export { deleteRecipe, getRecipe, getRecipeBySlug, listRecipes, saveRecipe } from "./recipes";
+export { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipes, saveRecipe } from "./recipes";
