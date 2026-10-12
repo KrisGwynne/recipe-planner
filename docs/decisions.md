@@ -152,3 +152,11 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Derived values** live in `src/recipes/derive.ts` (pure, usable on screens). A variation without a `proteins` list keeps the main recipe's, so it doesn't make a veggie option. `browsingCategory` returns `meat | fish | meat-and-fish | vegetarian | vegan`; how "meat & fish" shows on cards and filters is settled with the library (PP-166/167).
 
 **Tests share one migrated in-memory database per worker.** Each PGlite is about 0.5 GB, so tests run on at most 4 workers and each test gets a clone of a database migrated once per worker.
+
+## 2026-10-12: recipe validation (PP-161)
+
+**Problems follow the import design (screen E):** a short title, a plain-English detail naming the ingredient, step, protein or section (e.g. "Ingredient 4 (olive oil)"), and the path in a form Claude reads (`ingredients[3].unit`). The proteins and carbs `oneOf` errors are explained from the option the file meant ("Tuna is listed as meat"). Nothing is coerced, defaulted or removed.
+
+**`schema_version` above 1** gets the single whole-file message from screen I ("Made for a newer version of the app"), as do broken JSON and files that aren't a JSON object (Kris, 2026-10-12). A missing or other `schema_version` (0, "1") is an ordinary problem in the list.
+
+**"Copy problems for Claude" text** is built with the messages (`problemsForClaude` in `src/recipes/validate.ts`); the button comes with the import screen (PP-162). So do the size limits (256 KB per file, 50 files).
