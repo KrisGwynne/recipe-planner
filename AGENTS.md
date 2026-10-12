@@ -31,6 +31,8 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 - `pnpm test:run`: run tests once (`pnpm test` to watch). `*.test.ts` runs in Node, `*.test.tsx` (components) in jsdom with Testing Library.
 - `pnpm designs`: build `designs/src/*.html` into self-contained `designs/*.html` (Tailwind compiled and inlined). Edit the sources, never the built files. Tokens live in `designs/theme.css`, shared with the app.
 - `node scripts/screenshot.mjs <html> <out-prefix> [width] [dark]`: screenshot a design to check it (first run `pnpm exec playwright install --only-shell chromium`).
+- `pnpm db:generate`: after changing `src/db/schema/`, write a migration to `drizzle/` (Drizzle Kit). Commit it; never edit applied migrations.
+- `pnpm db:migrate`: apply the migrations to `DATABASE_URL` (Neon). Tests apply them to an in-memory PGlite (`src/db/test-db.ts`).
 - `pnpm schema:types`: regenerate `src/types/recipe.ts` from the schema after changing it. Never edit that file by hand; a test fails if it's out of date.
 
 **TypeScript 7, with the 6.0 API for typescript-eslint.** `typescript` is TypeScript 7 (`tsc`, and `next build`'s type check). typescript-eslint needs the TypeScript API, which 7.0 doesn't have, so `.pnpmfile.cjs` gives it `@typescript/typescript6` instead. Delete that file once typescript-eslint supports 7.x.
@@ -39,7 +41,7 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 
 **Brand-new releases** aren't installed: pnpm waits a minimum release age before using a version. Don't add `minimumReleaseAgeExclude` entries to get round it; use the previous version.
 
-The app lives in `src/app` (Next.js 16 App Router). `src/app/globals.css` imports the design tokens from `designs/theme.css`.
+The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. The database schema is in `src/db/schema`. `src/app/globals.css` imports the design tokens from `designs/theme.css`.
 
 ## Secrets
 

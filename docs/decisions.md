@@ -92,3 +92,17 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 **Components built now** are only the ones the ticket lists (buttons, badges, cards and list rows, filter chips) plus the empty state the placeholder pages use. Inputs, the stepper, toggle, rating, bottom sheets, toast and cooking pieces are built with the first screen that needs them. Icons are inline SVGs with the designs' Lucide paths; no icon library.
 
 **Vercel is connected** (Kris, 2026-10-12), so PRs get preview deployments. Kris checks the bottom navigation on a real iPhone in Safari (toolbar expanded and collapsed); automated checks run in Chromium only. Neon is still on hold.
+
+## 2026-10-12: Google sign-in (PP-153)
+
+**The code half of PP-142 is done here** (Kris, 2026-10-12): Drizzle schema and migrations in `drizzle/`, a Neon HTTP client (`DATABASE_URL`), PGlite for tests, and `pnpm db:generate` / `pnpm db:migrate`. Left for PP-142: creating Neon (through Vercel's Neon integration), applying migrations on deploy, and the security headers the holiday planner sets (X-Frame-Options, nosniff, Referrer-Policy) in `next.config.ts`.
+
+**Local development uses a Neon dev branch**, not a local database, so it matches production.
+
+**Auth.js v5 (`next-auth@5.0.0-beta.32`)**, as in the holiday planner; v5 has no stable release. Env names are Auth.js's defaults: `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`. Tables are `users` (with `created_at`), `accounts` and `sessions`, with snake_case columns; no verification-token table, since there's no email sign-in.
+
+**Protecting pages.** `src/proxy.ts` (Next 16's name for middleware) only checks for a session cookie and sends visitors without one to `/sign-in?callbackUrl=...`. The `(app)` layout checks the session itself, so an expired cookie also ends at sign-in. Public: `/`, `/sign-in`, `/sign-in/error`, `/privacy`, `/terms`, `/invite/*` and `/api/auth/*`. Callback URLs are limited to paths on this site.
+
+**Invite links are public**, following the approved onboarding design (D) rather than PP-153's description: the invite page says who invited you before asking you to sign in (PP-156).
+
+**Sign out** sits on the Household placeholder page, styled as on the create-household screen, until household settings are designed (PP-152). The terms and privacy links 404 until PP-159.
