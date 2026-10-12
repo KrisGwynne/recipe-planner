@@ -17,7 +17,7 @@ Shared conventions (secrets, git, devices) are in `~/Projects/AGENTS.md`.
 - **Design reviews.** Designs are written in `designs/src/*.html` with Tailwind, built with `pnpm designs`, and checked with `scripts/screenshot.mjs`. Kris then reviews the built file by opening it in a browser (give him the `\\wsl.localhost\Ubuntu\...` path from `wslpath -w`; files can't be shown inline in chat). Each design ends with "Questions for review"; on approval, replace them with a "Decisions" section, add the decisions to `docs/decisions.md`, comment on the Jira ticket and move it to Done.
 - **Decisions** go in `docs/decisions.md` (dated). Scope changes also go as comments on the affected Jira tickets.
 - **Jira:** every ticket has the `Recipe Planner` component. Move a ticket to In Progress when starting. Comment with what was done when the PR is up, and move it to Done once the PR is merged (design tickets: on approval).
-- **Git:** GitHub repo `KrisGwynne/recipe-planner`. One branch per ticket (`feat/PP-NN-...`, `design/PP-NN-...`), stacked on the previous one while earlier PRs are unmerged, and one PR per branch based on the branch below it. CI (`.github/workflows/ci.yml`) runs lint, type check, tests and build on every PR. Vercel is connected (PR previews). Neon: one production database shared by every environment for now.
+- **Git:** GitHub repo `KrisGwynne/recipe-planner`. One branch per ticket (`feat/PP-NN-...`, `design/PP-NN-...`), stacked on the previous one while earlier PRs are unmerged, and one PR per branch based on the branch below it. CI (`.github/workflows/ci.yml`) runs lint, type check, tests and build on every PR. Vercel is connected (PR previews). Neon: production uses the main branch; each preview deployment gets its own branch (copied from production) through the Vercel–Neon integration.
 
 ## Commands
 
@@ -32,7 +32,7 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 - `pnpm designs`: build `designs/src/*.html` into self-contained `designs/*.html` (Tailwind compiled and inlined). Edit the sources, never the built files. Tokens live in `designs/theme.css`, shared with the app.
 - `node scripts/screenshot.mjs <html> <out-prefix> [width] [dark]`: screenshot a design to check it (first run `pnpm exec playwright install --only-shell chromium`).
 - `pnpm db:generate`: after changing `src/db/schema/`, write a migration to `drizzle/` (Drizzle Kit). Commit it; never edit applied migrations.
-- `pnpm db:migrate`: apply the migrations to `DATABASE_URL`. For now every environment shares the production Neon database, so migrations must be additive (see `docs/decisions.md`). Tests apply them to an in-memory PGlite (`src/db/test-db.ts`).
+- `pnpm db:migrate`: apply the migrations to `DATABASE_URL` (locally, whatever `.env.local` points at). Every Vercel deploy runs it before building (`vercel.json`): a preview migrates its own Neon branch, production migrates production when the PR is merged. Nothing to run by hand for a PR. Production migrations must still be additive while old code can be running (see `docs/decisions.md`). Tests apply the migrations to an in-memory PGlite (`src/db/test-db.ts`).
 - `pnpm schema:types`: regenerate `src/types/recipe.ts` from the schema after changing it. Never edit that file by hand; a test fails if it's out of date.
 
 **TypeScript 7, with the 6.0 API for typescript-eslint.** `typescript` is TypeScript 7 (`tsc`, and `next build`'s type check). typescript-eslint needs the TypeScript API, which 7.0 doesn't have, so `.pnpmfile.cjs` gives it `@typescript/typescript6` instead. Delete that file once typescript-eslint supports 7.x.
@@ -41,7 +41,7 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 
 **Brand-new releases** aren't installed: pnpm waits a minimum release age before using a version. Don't add `minimumReleaseAgeExclude` entries to get round it; use the previous version.
 
-The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. The database schema is in `src/db/schema`; household data is only queried through `src/data` (see Data access). `src/app/globals.css` imports the design tokens from `designs/theme.css`.
+The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. Security headers are in `src/security/headers.ts`: the Content-Security-Policy, with a fresh nonce per request, is set by `src/proxy.ts`, and the fixed headers by `next.config.ts`. Scripts only run with the nonce, so every page renders per request (the root layout calls `connection()`); don't add inline `<script>`s or third-party scripts, images, fonts or API calls without updating the policy. Inline styles are allowed. The database schema is in `src/db/schema`; household data is only queried through `src/data` (see Data access). `src/app/globals.css` imports the design tokens from `designs/theme.css`.
 
 ## Data access
 
