@@ -50,6 +50,7 @@ All household data goes through the data-access layer in `src/data` (PP-155). It
 - Pages, layouts and server actions import from `@/data` only. ESLint fails any import of `@/db`, `@/db/schema` or `drizzle-orm` outside `src/data`, `src/db` and `src/auth` (tests excepted).
 - Get the signed-in user's household with `requireHousehold()`, which returns `{ user, household, ctx }`. Every household-scoped function takes that `ctx` (a `HouseholdContext`) and filters on `ctx.householdId`. Never take a household id from the client. Ids the client sends (a recipe or plan id) are looked up within `ctx.householdId`, so another household's id finds nothing.
 - Owner-only actions call `requireOwner(ctx)`.
+- Every file in `src/data` (except tests and `test-*.ts` helpers) starts with `import "server-only"`, so the build fails if browser code imports it. ESLint checks this.
 - **Every new household table** (recipes, recipe data, meal plans, invites...) gets its functions in `src/data/<area>.ts`, and **isolation tests** using `twoHouseholds()` from `src/data/test-fixtures.ts`: acting as household A, try to read, change and delete B's rows by id, and check that nothing is returned or changed.
 
 ## Secrets

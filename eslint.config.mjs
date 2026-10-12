@@ -52,6 +52,22 @@ export default defineConfig([
       ],
     },
   },
+  // Everything in src/data runs on the server only: each file imports
+  // "server-only", so the build fails if browser code pulls one in. Tests and
+  // test helpers (test-*.ts) are exempt.
+  {
+    files: ["src/data/**/*.{ts,tsx}"],
+    ignores: ["**/*.test.{ts,tsx}", "src/data/test-*.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Program:not(:has(ImportDeclaration[source.value='server-only']))",
+          message: 'Files in src/data must import "server-only".',
+        },
+      ],
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

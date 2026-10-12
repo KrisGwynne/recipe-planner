@@ -1,5 +1,7 @@
 // The data-access layer: the only place that queries household data. See
 // "Data access" in AGENTS.md.
+import "server-only";
+
 export { ForbiddenError, requireOwner, type HouseholdContext, type Role } from "./context";
 export {
   AlreadyInHouseholdError,
