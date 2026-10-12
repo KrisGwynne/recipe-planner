@@ -6,7 +6,7 @@ import { AlreadyInHouseholdError, createHousehold, householdName } from "@/data"
 
 export type CreateHouseholdState = { name: string; error?: string };
 
-/** Creates the user's household, then opens the (empty) library. */
+/** Creates the user's household, then offers an invite link (screen C). */
 export async function createHouseholdAction(
   _previous: CreateHouseholdState,
   formData: FormData,
@@ -21,6 +21,7 @@ export async function createHouseholdAction(
   } catch (error) {
     // Already in one (another tab, or a double tap): carry on into the app.
     if (!(error instanceof AlreadyInHouseholdError)) throw error;
+    redirect("/recipes");
   }
-  redirect("/recipes");
+  redirect("/welcome/invite");
 }

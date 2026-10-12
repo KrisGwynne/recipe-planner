@@ -15,6 +15,13 @@
       "when": 1791806771000,
       "tag": "0001_households",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791824477571,
+      "tag": "0002_invites",
+      "breakpoints": true
     }
   ]
 }

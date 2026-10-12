@@ -130,3 +130,13 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **`src/data` is the data-access layer**, replacing `src/households`. Household-scoped functions take a `HouseholdContext` (user id, household id, role), which only `requireHousehold()` makes, from the signed-in user's membership. A branded type stops one being built from an id, and ESLint stops anything outside `src/data`, `src/db` and `src/auth` importing the database, so the rule is checked by CI rather than by convention. Files import `server-only`, so the layer can't end up in browser code. New dependency: `server-only`.
 
 **Isolation tests for later tables come with those tables** (Kris, 2026-10-12): recipes, recipe data, meal plans and invites don't exist yet, so PP-155 tests households and members, and each later ticket adds isolation tests with the shared `twoHouseholds()` fixture. A note is on each of those tickets, and the rule is in AGENTS.md.
+
+## 2026-10-12: invite links (PP-156)
+
+**Links are made on demand** on onboarding screen C: the first Copy or Share makes one, later taps reuse it. Until then the box says "Tap Copy or Share to make a link" (Kris, 2026-10-12). Share only shows where the browser has a share sheet; elsewhere Copy is full width.
+
+**Tokens** are 32 random bytes in the link (`/invite/<token>`); only their SHA-256 hash is stored. Joining is one SQL statement that uses up the link and adds the member, so a link lets in one person, and someone already in a household doesn't use it up. Invites go with their household and with the account that made them.
+
+**The invite page checks, in order:** a link that doesn't exist; already a member of this household; expired, used or cancelled; in another household. Then screen D (signed out) or E (signed in). "Not you?" signs out and opens Google's account chooser for this flow only.
+
+**Managing and cancelling links has no screen yet** (Kris, 2026-10-12): `listInvites` and `revokeInvite` are built and tested, and the UI comes with household settings (PP-152 design, PP-157). Until then screen C leaves out "Manage links in Household settings", and "Go to Household settings" (already in a household) opens the Household placeholder.
