@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "node scripts/migrate.mjs --production-only && pnpm build"
+  "buildCommand": "node scripts/migrate.mjs && pnpm build"
 }
