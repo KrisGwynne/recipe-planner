@@ -14,6 +14,15 @@ describe("CategoryBadge", () => {
   });
 });
 
+describe("CategoryBadge for meat and fish", () => {
+  it("is neutral, with a meat dot then a fish dot", () => {
+    const { container } = render(<CategoryBadge category="meat-and-fish" detail="Chicken, prawns" />);
+    expect(screen.getByText("Meat & fish · Chicken, prawns")).toHaveClass("bg-surface-2", "text-ink");
+    const dots = [...container.querySelectorAll(".rounded-full.size-2")].map((dot) => dot.className);
+    expect(dots).toEqual([expect.stringContaining("bg-meat"), expect.stringContaining("bg-fish")]);
+  });
+});
+
 describe("NutritionBadge", () => {
   it("shows printed nutrition plainly", () => {
     render(<NutritionBadge source="printed" />);
