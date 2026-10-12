@@ -70,11 +70,13 @@ export function gramsTotal(ingredient: Ingredient, serves: number, target: numbe
 
 /**
  * Notes text never scales, so when the recipe is scaled, notes with amounts in
- * them say which servings they're written for: "(for 4)".
+ * them say which servings they're written for: "(for 4)". Not when there's a
+ * gram total: then the note gives the pack size ("110g cans"), and the total
+ * scales instead.
  */
 export function notesFor(ingredient: Ingredient, serves: number, target: number): { text: string; forServes?: number } | undefined {
   if (!ingredient.notes) return undefined;
-  return target !== serves && /\d/.test(ingredient.notes) ? { text: ingredient.notes, forServes: serves } : { text: ingredient.notes };
+  return target !== serves && ingredient.grams === undefined && /\d/.test(ingredient.notes) ? { text: ingredient.notes, forServes: serves } : { text: ingredient.notes };
 }
 
 /** "Halved from 4 servings" etc.; undefined at the recipe's own servings. */

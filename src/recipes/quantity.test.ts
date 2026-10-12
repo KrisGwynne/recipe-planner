@@ -39,6 +39,8 @@ describe("scaling the tuna pasta from 4 to 2 (acceptance criteria)", () => {
     // "350g in step 2, 150g in step 3" is written for 4.
     expect(notesFor(tuna.ingredients[2], 4, 2)).toEqual({ text: "350g in step 2, 150g in step 3", forServes: 4 });
     expect(notesFor(tuna.ingredients[2], 4, 4)).toEqual({ text: "350g in step 2, 150g in step 3" });
+    // A pack size next to a gram total: no "(for 4)".
+    expect(notesFor(tuna.ingredients[5], 4, 2)).toEqual({ text: "110g cans" });
     // No amounts in it: no "(for 4)".
     expect(notesFor(tuna.ingredients[8], 4, 2)).toEqual({ text: "heaped" });
   });
