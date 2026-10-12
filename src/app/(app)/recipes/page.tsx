@@ -5,13 +5,12 @@ import { Page } from "@/components/page";
 import { Icon } from "@/components/icon";
 import { buttonClasses } from "@/components/ui/button";
 import { listRecipes, requireHousehold } from "@/data";
-import { toRecipeSummary } from "@/recipes/summary";
 import { RecipeLibrary } from "./recipe-library";
 import { VIEW_COOKIE, parseView } from "./view";
 
 export const metadata: Metadata = { title: "Recipes" };
 
-// The recipe library (designs/src/library.html, screens A, B and I).
+// The recipe library (designs/src/library.html).
 export default async function RecipesPage() {
   const { ctx } = await requireHousehold();
   const [rows, cookieStore] = await Promise.all([listRecipes(ctx), cookies()]);
@@ -24,14 +23,8 @@ export default async function RecipesPage() {
     );
   }
 
-  return (
-    <Page
-      title="Recipes"
-      aside={<span className="tabular-nums">{rows.length === 1 ? "1 recipe" : `${rows.length} recipes`}</span>}
-    >
-      <RecipeLibrary recipes={rows.map(toRecipeSummary)} initialView={parseView(cookieStore.get(VIEW_COOKIE)?.value)} />
-    </Page>
-  );
+  // Search, filters and sort run on the household's whole library (PP-167).
+  return <RecipeLibrary recipes={rows} initialView={parseView(cookieStore.get(VIEW_COOKIE)?.value)} />;
 }
 
 // Screen I. "How do I make recipe JSON?" comes with the Claude project setup (PP-175).
