@@ -124,3 +124,9 @@ The app is called "Recipe planner" for now (landing page, Google consent screen,
 **So migrations must be additive** (new tables, columns or indexes; no renames, drops or new required columns on existing tables while old code uses them). A PR's migration runs on the shared database before the PR is merged, so its preview works, which means production code briefly runs against the new schema. Run `pnpm db:migrate` once per new migration. Testing on previews or locally uses real data.
 
 Revisit (per-preview branches with migrations on deploy, PP-142) when anyone other than Kris's household uses the app, or a migration can't be additive.
+
+## 2026-10-12: data-access layer (PP-155)
+
+**`src/data` is the data-access layer**, replacing `src/households`. Household-scoped functions take a `HouseholdContext` (user id, household id, role), which only `requireHousehold()` makes, from the signed-in user's membership. A branded type stops one being built from an id, and ESLint stops anything outside `src/data`, `src/db` and `src/auth` importing the database, so the rule is checked by CI rather than by convention. Files import `server-only`, so the layer can't end up in browser code. New dependency: `server-only`.
+
+**Isolation tests for later tables come with those tables** (Kris, 2026-10-12): recipes, recipe data, meal plans and invites don't exist yet, so PP-155 tests households and members, and each later ticket adds isolation tests with the shared `twoHouseholds()` fixture. A note is on each of those tickets, and the rule is in AGENTS.md.

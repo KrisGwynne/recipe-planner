@@ -41,7 +41,16 @@ Node 24 (`.nvmrc`; CI's version is set in `.github/workflows/ci.yml`). Package m
 
 **Brand-new releases** aren't installed: pnpm waits a minimum release age before using a version. Don't add `minimumReleaseAgeExclude` entries to get round it; use the previous version.
 
-The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. The database schema is in `src/db/schema`. `src/app/globals.css` imports the design tokens from `designs/theme.css`.
+The app lives in `src/app` (Next.js 16 App Router). Auth (Auth.js v5, Google only, database sessions) is in `src/auth`; `src/proxy.ts` sends signed-out visitors to `/sign-in` (a cookie check only) and the `(app)` layout checks the session. The database schema is in `src/db/schema`; household data is only queried through `src/data` (see Data access). `src/app/globals.css` imports the design tokens from `designs/theme.css`.
+
+## Data access
+
+All household data goes through the data-access layer in `src/data` (PP-155). It is how one household is kept out of another's data (handover section 4, "Data isolation").
+
+- Pages, layouts and server actions import from `@/data` only. ESLint fails any import of `@/db`, `@/db/schema` or `drizzle-orm` outside `src/data`, `src/db` and `src/auth` (tests excepted).
+- Get the signed-in user's household with `requireHousehold()`, which returns `{ user, household, ctx }`. Every household-scoped function takes that `ctx` (a `HouseholdContext`) and filters on `ctx.householdId`. Never take a household id from the client. Ids the client sends (a recipe or plan id) are looked up within `ctx.householdId`, so another household's id finds nothing.
+- Owner-only actions call `requireOwner(ctx)`.
+- **Every new household table** (recipes, recipe data, meal plans, invites...) gets its functions in `src/data/<area>.ts`, and **isolation tests** using `twoHouseholds()` from `src/data/test-fixtures.ts`: acting as household A, try to read, change and delete B's rows by id, and check that nothing is returned or changed.
 
 ## Secrets
 
