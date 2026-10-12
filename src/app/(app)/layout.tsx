@@ -1,10 +1,13 @@
+import { requireUser } from "@/auth";
 import { Nav } from "@/components/nav";
 
 /**
- * The app shell: page content plus the main navigation. On phones the content
- * leaves room at the bottom for the fixed tab bar and the home indicator.
+ * The app shell: page content plus the main navigation. Every page in it
+ * needs a signed-in user. On phones the content leaves room at the bottom for
+ * the fixed tab bar and the home indicator.
  */
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  await requireUser();
   return (
     <div className="min-h-dvh md:flex">
       <Nav />
