@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/recipe.schema.json",
+  "title": "Recipe",
+  "description": "A single recipe, produced by Claude from a photo of a printed recipe and imported into the meal-planning app. schema_version 1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "id", "name", "source", "serves", "times", "difficulty",
+    "meal_type", "cuisine", "carbs", "proteins", "dietary", "equipment",
+    "storage", "spice_level", "tags", "ingredients", "method", "variations",
+    "nutrition_per_serving"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+
+    "id": {
+      "description": "Stable slug, lowercase and hyphenated. Re-importing a file with the same id updates that recipe.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "name": { "type": "string", "minLength": 1, "description": "Recipe name as printed." },
+    "description": { "type": "string", "description": "Optional short summary in Claude's own words." },
+
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "title"],
+      "properties": {
+        "kind": { "enum": ["book", "magazine", "website", "family", "other"] },
+        "title": { "type": "string", "minLength": 1, "description": "Book or magazine name, website name, or person for family recipes." },
+        "details": { "type": "string", "description": "Issue, chapter, page, e.g. \"September 2021, p63\"." },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+
+    "serves": { "type": "integer", "minimum": 1, "description": "Number of portions the ingredient quantities make." },
+
+    "times": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prep_mins", "cook_mins", "wait_mins"],
+      "properties": {
+        "prep_mins": { "type": "integer", "minimum": 0 },
+        "cook_mins": { "type": "integer", "minimum": 0 },
+        "wait_mins": { "type": "integer", "minimum": 0, "description": "Hands-off waiting not already in cook time: marinating, chilling, proving, resting. Use the minimum if the recipe says \"or longer\"." },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "difficulty": { "enum": ["easy", "medium", "hard"] },
+
+    "meal_type": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "enum": ["breakfast", "lunch", "dinner", "side", "snack", "dessert", "baking", "drink"] }
+    },
+
+    "cuisine": {
+      "enum": [
+        "british", "irish", "french", "italian", "spanish", "portuguese", "greek",
+        "mediterranean", "middle-eastern", "north-african", "african", "indian",
+        "chinese", "japanese", "korean", "thai", "vietnamese", "south-east-asian",
+        "mexican", "american", "caribbean", "latin-american", "fusion", "other"
+      ]
+    },
+
+    "carbs": {
+      "description": "Main carbohydrate base(s). Either [\"none\"] or one or more of the others.",
+      "oneOf": [
+        { "type": "array", "items": { "const": "none" }, "minItems": 1, "maxItems": 1 },
+        {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": { "enum": ["pasta", "noodles", "rice", "potato", "bread", "grains", "pastry"] }
+        }
+      ]
+    },
+    "carb_detail": { "type": "string", "description": "Free text specifics, e.g. \"rigatoni\", \"udon\", \"sweet potato\"." },
+
+    "proteins": {
+      "description": "The main protein(s) the dish is built around, not minor ingredients (a sprinkle of parmesan is not a protein). Empty array if there is none. Category is enforced by item.",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object", "additionalProperties": false, "required": ["category", "item"],
+            "properties": {
+              "category": { "const": "meat" },
+              "item": { "enum": ["chicken", "turkey", "duck", "beef", "pork", "lamb", "game", "other"] },
+              "detail": { "type": "string", "description": "e.g. \"thighs\", \"chorizo\", \"mince\"" }
+            }
+          },
+          {
+            "type": "object", "additionalProperties": false, "required": ["category", "item"],
+            "properties": {
+              "category": { "const": "fish" },
+              "item": { "enum": ["salmon", "tuna", "white-fish", "mackerel", "smoked-fish", "prawns", "mussels", "squid", "other"] },
+              "detail": { "type": "string", "description": "e.g. \"cod\", \"tinned\", \"hot-smoked\"" }
+            }
+          },
+          {
+            "type": "object", "additionalProperties": false, "required": ["category", "item"],
+            "properties": {
+              "category": { "const": "vegetarian" },
+              "item": { "enum": ["tofu", "tempeh", "beans-pulses", "egg", "cheese", "meat-substitute", "nuts-seeds", "other"] },
+              "detail": { "type": "string", "description": "e.g. \"chickpeas\", \"halloumi\", \"Quorn\"" }
+            }
+          }
+        ]
+      }
+    },
+
+    "dietary": {
+      "description": "Strict suitability of the recipe AS WRITTEN (main version, not variations). Only include a flag if every ingredient qualifies.",
+      "type": "array", "uniqueItems": true,
+      "items": { "enum": ["vegetarian", "vegan", "gluten-free", "dairy-free", "nut-free"] }
+    },
+
+    "equipment": {
+      "type": "array", "uniqueItems": true,
+      "items": { "enum": ["hob", "oven", "grill", "microwave", "air-fryer", "slow-cooker", "pressure-cooker", "bbq", "food-processor", "blender", "stand-mixer"] }
+    },
+
+    "storage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["freezable", "good_for_leftovers"],
+      "properties": {
+        "freezable": { "type": ["boolean", "null"], "description": "null if unknown." },
+        "good_for_leftovers": { "type": ["boolean", "null"], "description": "Reheats or keeps well for another meal. null if unknown." },
+        "notes": { "type": "string" }
+      }
+    },
+
+    "spice_level": { "enum": ["none", "mild", "medium", "hot"] },
+
+    "tags": {
+      "description": "Free-form extra labels, lowercase and hyphenated. Not used for core filtering.",
+      "type": "array", "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+    },
+
+    "ingredients": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item", "qty", "unit", "aisle"],
+        "properties": {
+          "group": { "type": "string", "description": "Sub-recipe the ingredient belongs to, e.g. \"char siu sauce\"." },
+          "item": { "type": "string", "minLength": 1, "description": "Ingredient name only, singular where natural, e.g. \"red onion\"." },
+          "qty": { "type": ["number", "null"], "exclusiveMinimum": 0, "description": "Decimal amount (0.5 for half). null for \"to taste\"." },
+          "unit": {
+            "description": "null for whole countable items (1 red onion, 0.5 lemon).",
+            "enum": [
+              null, "g", "kg", "ml", "l", "tsp", "tbsp", "cup", "pinch", "handful",
+              "bunch", "can", "jar", "pack", "clove", "slice", "sprig", "sheet", "piece"
+            ]
+          },
+          "grams": { "type": "number", "exclusiveMinimum": 0, "description": "Optional total weight in grams when the unit is a container or non-metric, e.g. 2 x 110g cans -> 220." },
+          "prep": { "type": "string", "description": "e.g. \"finely chopped\", \"drained\"." },
+          "notes": { "type": "string", "description": "Anything else, e.g. \"heaped\", \"small\", \"350g in step 1, 150g in step 3\"." },
+          "optional": { "type": "boolean", "default": false },
+          "aisle": {
+            "description": "Shopping-list grouping.",
+            "enum": ["fruit-veg", "meat", "fish", "dairy-eggs", "bakery", "chilled", "frozen", "tins-jars", "dried-goods", "herbs-spices", "oils-sauces", "drinks", "other"]
+          }
+        }
+      }
+    },
+
+    "method": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text"],
+        "properties": {
+          "text": { "type": "string", "minLength": 1, "description": "One step, as a full sentence." },
+          "timer_mins": { "type": "number", "exclusiveMinimum": 0, "description": "Optional timer for this step." }
+        }
+      }
+    },
+
+    "variations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "description"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "description": "Short label, e.g. \"Veggie\"." },
+          "description": { "type": "string", "minLength": 1 },
+          "proteins": { "$ref": "#/properties/proteins", "description": "Proteins in this variation, if they differ from the main recipe." },
+          "dietary": { "$ref": "#/properties/dietary", "description": "Strict suitability of this variation." }
+        }
+      }
+    },
+
+    "nutrition_per_serving": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "kcal", "fat_g", "saturates_g", "carbs_g", "sugars_g", "fibre_g", "protein_g", "salt_g"],
+      "properties": {
+        "source": { "enum": ["printed", "estimated"] },
+        "kcal": { "type": "number", "minimum": 0 },
+        "fat_g": { "type": "number", "minimum": 0 },
+        "saturates_g": { "type": "number", "minimum": 0 },
+        "carbs_g": { "type": "number", "minimum": 0 },
+        "sugars_g": { "type": "number", "minimum": 0 },
+        "fibre_g": { "type": "number", "minimum": 0 },
+        "protein_g": { "type": "number", "minimum": 0 },
+        "salt_g": { "type": "number", "minimum": 0 }
+      }
+    },
+
+    "notes": { "type": "string", "description": "Optional tips or serving suggestions from the recipe, in Claude's own words." }
+  }
+}
