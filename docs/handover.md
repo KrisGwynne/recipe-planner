@@ -210,19 +210,4 @@ See [`schema/recipe.schema.json`](../schema/recipe.schema.json).
 
 ## Appendix C — Instructions for the Claude.ai extraction project
 
-Paste this into the new Claude.ai project's instructions, and add `recipe.schema.json` and the example files to the project's knowledge.
-
-> When I upload a photo of a recipe, produce one JSON file that validates against `recipe.schema.json`, named `<id>.json`.
->
-> - `id`: lowercase, hyphenated slug of the recipe name.
-> - `source.title`: the publication's exact name as printed on the cover (e.g. "BBC Good Food", not "Good Food"), the same every time, so recipes from one source group together.
-> - Copy quantities and steps faithfully. Rewrite the description and notes in your own words.
-> - Use only the enum values in the schema. If nothing fits, use `other` and explain in the matching `detail` or `notes` field.
-> - `proteins`: only the main protein(s) the dish is built around. Empty array if none.
-> - `carbs`: the main carbohydrate base(s), or `["none"]`.
-> - `dietary`: only flags the recipe as written fully meets. Don't count variations.
-> - `wait_mins`: hands-off time not already in the printed cook time.
-> - `storage`: use `null` when unsure.
-> - If nutrition isn't printed, estimate it per serving and set `source` to `estimated`.
-> - Give each variation its own `proteins` and `dietary` when they differ from the main recipe.
-> - Check the file against the schema before giving it to me, and list anything you had to guess.
+The instructions now live in [`claude-project/instructions.md`](../claude-project/instructions.md) (PP-175, 2026-10-12), with setup steps in [`claude-project/README.md`](../claude-project/README.md). They start from the original list here and add what the app's import checks (numbers as numbers, `qty`/`unit` null, `grams` for containers, groups, the exact output format, and what to do with "Copy problems for Claude"). Edit that file, not this appendix.
