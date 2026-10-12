@@ -160,3 +160,13 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **`schema_version` above 1** gets the single whole-file message from screen I ("Made for a newer version of the app"), as do broken JSON and files that aren't a JSON object (Kris, 2026-10-12). A missing or other `schema_version` (0, "1") is an ordinary problem in the list.
 
 **"Copy problems for Claude" text** is built with the messages (`problemsForClaude` in `src/recipes/validate.ts`); the button comes with the import screen (PP-162). So do the size limits (256 KB per file, 50 files).
+
+## 2026-10-12: import screen (PP-162)
+
+**Left out until their pages exist** (Kris, 2026-10-12): "See the full recipe" (screen C) and the recipe links on Done (F) come with the recipe page (PP-168); "New here? How to turn a photo into a recipe file" (A) comes with the Claude project setup (PP-175). The rate-limit message (screen I) comes with PP-163.
+
+**Meat & fish** gets a badge in the meat colours for now (Kris, 2026-10-12), so a new recipe with both can be previewed; the library settles it (PP-166).
+
+**Two files in one batch with the same id:** the later one goes under Problems ("Same recipe id as …") rather than replacing the first (Kris, 2026-10-12).
+
+**How it works.** The browser reads the files and sends them to a server action that checks each one (`src/recipes/check-files.ts`) and compares it with the household's recipe of the same id, saving nothing. Import sends the chosen files again and the server checks them again before saving. Files go in requests of up to 3 MB, under Vercel's 4.5 MB request limit, and the server action body limit is 4 MB. Each step is in the URL (`?view=review`, `?view=file&i=…`, `?view=done`) so the phone's back gesture steps back; the files stay in memory, so a reload starts again. On review, detail and done screens the action bar covers the tab bar on phones, as on the recipe page.
