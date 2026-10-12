@@ -8,6 +8,7 @@ Shared conventions (secrets, git, devices) are in `~/Projects/AGENTS.md`.
 
 - `docs/handover.md`: the product spec. `docs/decisions.md`: decisions made since; these win where they differ.
 - `schema/recipe.schema.json`: the recipe contract, the single source of truth for recipe data. `examples/` holds valid recipes used as seed data and in tests.
+- `claude-project/`: the Claude.ai project that turns recipe photos into JSON files (instructions to paste, setup steps). Update it when the schema changes.
 - Jira: project PP, component `Recipe Planner` (set it on every ticket). Epics PP-132 to PP-139.
 
 ## Workflow

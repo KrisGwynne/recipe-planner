@@ -216,3 +216,11 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Servings and ticks last for the visit** (Kris, 2026-10-12); every visit starts at the recipe's own servings. The recipe file's own `notes` show as "Tips" under "From the recipe".
 
 **Import links to recipes** (Kris, 2026-10-12): the done screen's recipe names open their pages, and a new file's details have "See the full recipe", the same page from the file, read-only, before anything is saved. The page is a shared component (`src/components/recipe/recipe-view.tsx`) for that reason.
+
+## 2026-10-12: Claude project for recipe photos (PP-175)
+
+**The Claude project's instructions live in `claude-project/instructions.md`** (Kris, 2026-10-12), with setup steps in `claude-project/README.md`; handover Appendix C now points there. The schema and examples are uploaded from `schema/` and `examples/` as they are, not copied. The instructions add what the import checks catch (one code block with the file name, `schema_version: 1`, numbers as numbers, `qty`/`unit` null, `grams` for containers, `group`, protein categories, `"none"` alone) and how to answer a "Copy problems for Claude" message.
+
+**The in-app help page** (and the Import and empty-library links to it) is a new ticket, PP-179, after the meal plan work (Kris, 2026-10-12). It needs a design first.
+
+**Order of work from here** (Kris, 2026-10-12): PP-175, then the meal plans design (PP-150) and PP-170 to PP-172. Favourites, ratings and notes (PP-169) come after.
