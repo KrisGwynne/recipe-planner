@@ -92,7 +92,7 @@ export function RecipeLibrary({ recipes, initialView }: { recipes: LibraryRecipe
       <div className="lg:flex lg:gap-8">
         {/* Wider screens: the filters sit in a panel and apply straight away. */}
         <aside aria-label="Filters" className="hidden lg:block w-72 shrink-0">
-          <p className="font-semibold mb-4">Filters</p>
+          <h2 className="font-display text-xl font-semibold mb-4">Filters</h2>
           <FilterSections filters={state.filters} facets={facets(recipes, state)} onChange={setFilters} />
         </aside>
 

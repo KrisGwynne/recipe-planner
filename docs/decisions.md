@@ -192,3 +192,17 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Not `no-referrer` for invite links.** `strict-origin-when-cross-origin` already keeps `/invite/<token>` from other sites, and `no-referrer` would make browsers send `Origin: null` on the app's own form posts, which Next's server-action check rejects (Join would break).
 
 **Registry entry updated** in `~/Projects/registry.yaml` (a PR in the Projects repo): runs on Vercel at https://recipe-planner-alpha.vercel.app, status active.
+
+## 2026-10-12: library search, filters and sort (PP-167)
+
+**Filtering happens in the browser** (Kris, 2026-10-12), not in the database query as the ticket said. The household's whole library (card fields plus ingredient names, equipment and freezable, read from the file by `listRecipes`) is loaded once, scoped on the server as before, and `src/recipes/library-filter.ts` filters, counts, sorts and searches it. That makes the sheet's "Show N recipes", the count on every option and search-as-you-type instant, and the first server render uses the same code. Revisit if a library reaches a couple of thousand recipes.
+
+**Favourites only, Highest rated, Not cooked for longest and Cooked most recently** are hidden until PP-169 adds that data (Kris, 2026-10-12).
+
+**The phone sheet applies on "Show N recipes"**; the cross throws changes away. On wide screens (`lg`) the filters sit in a panel and apply straight away (Kris, 2026-10-12).
+
+**Type of meat or fish narrows only its own category** (Kris, 2026-10-12): Meat + "Fish: Tuna" finds any meat recipe or a tuna recipe.
+
+**Search** matches every word, case-insensitive, somewhere in the name, an ingredient item or the source title (Kris, 2026-10-12). When only an ingredient matches, the card shows it ("Ingredient: sushi-grade tuna, diced").
+
+**Details the design left open:** the URL keeps the state (`?q=`, `sort=`, `cat=`, `item=fish:tuna`, `carb=`, `time=`, `meal=`, `cuisine=`, `source=`, `diet=`, `cook=`, `difficulty=`, `spice=`, `veggie=1`, `freezable=1`); filters and sort add history entries, typing replaces the current one. "Cook with" is one chip ("Cook with: Hob, Oven") since the ticked set is one rule. Nothing matching with only a search offers "Clear search". When no single filter would bring anything back, only "Clear all filters" is offered.
