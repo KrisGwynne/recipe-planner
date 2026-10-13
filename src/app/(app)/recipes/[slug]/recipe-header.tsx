@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "@/components/icon";
 import type { Recipe } from "@/types/recipe";
-import { Sheet } from "../sheet";
+import { Sheet } from "@/components/ui/sheet";
 
 const iconButton =
   "size-11 rounded-full grid place-items-center hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-primary";

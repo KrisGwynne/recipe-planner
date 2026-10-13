@@ -238,3 +238,19 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **The recipe picker starts filtered to the meal** being added (Kris, 2026-10-13), as a removable chip; search, filters and sort work as in the library. Tapping a recipe adds it with 1 portion each.
 
 **Details settled in the design:** portions each go in halves from ½ to 4 and save as you tap; a new plan starts the day after the latest plan ends (or today) and is named after its start date until renamed; days 1 to 14, people 1 to 12; plan names 1 to 50 characters; fewer days warns before removing meals; changing people changes only the leftovers; anyone in the household can make, change or delete plans; the recipe page's "Add to plan" opens a day-and-meal grid sheet, also used to move a planned recipe; "Compare with another plan" waits for PP-174.
+
+## 2026-10-13: meal plan tables and plan list (PP-170)
+
+**"Today" is UK time** (Europe/London) everywhere for now (Kris, 2026-10-13): pages render on the server in UTC, and "today" decides which plans are this week, coming up or past, and a new plan's start. How to handle other time zones is PP-181. Plan dates are Postgres `date`s ("YYYY-MM-DD"), so stored dates have no time zone.
+
+**Entry functions are in PP-170** (Kris, 2026-10-13): adding a recipe to a plan, changing portions, moving and removing are in `src/data/plans.ts` with their isolation tests; PP-171 builds their screens. A recipe can only go into a plan of the same household, and only on a day inside the plan.
+
+**The plan page in PP-170** (Kris, 2026-10-13) shows the header, the ⋯ menu (Edit, Copy to a new plan, Delete) and each day's recipes read-only, each opening its recipe page until the entry sheet comes (PP-171). The day strip, "+" buttons and totals come with PP-171 and PP-172; so does the plan list's "~820 kcal a day each" (PP-172).
+
+**Single statements, no transactions** (the Neon HTTP driver has none): copying a plan, and shortening a plan (which removes the entries on the days cut off), are each one SQL statement. A copied entry keeps its original `created_at`, so a meal's recipes stay in order; a moved entry goes last in its new meal.
+
+**Limits are also database checks**: days 1 to 14, people 1 to 12, `day_index` 0 to 13, the four meals, and portions in halves from ½ to 4 (`double precision`). Slots are text, as with recipe enums.
+
+**Deleting a recipe deletes its plan entries** (foreign key cascade); the warning before that is PP-165.
+
+**The bottom sheet moved** to `src/components/ui/sheet.tsx` for the plan sheets, and a `Stepper` (`src/components/ui/stepper.tsx`) was added for days, people and, later, portions.
