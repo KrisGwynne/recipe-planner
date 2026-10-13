@@ -14,3 +14,4 @@ next-env.d.ts
 # Claude Code: skills are shared; local settings and worktrees aren't
 .claude/settings.local.json
 .claude/worktrees/
+.vercel
