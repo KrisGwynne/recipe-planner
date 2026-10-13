@@ -21,21 +21,24 @@ const SECTIONS = [
  * A recipe page (designs/src/recipe.html A to G, without the household parts
  * that come with PP-169 and meal plans). Rendered from the recipe file alone,
  * so import can preview a file before it's saved. Servings and ticks last for
- * the visit only.
+ * the visit only; a planned meal opens it at the servings planned.
  */
 export function RecipeView({
   recipe,
   header,
   banner,
+  initialServings,
 }: {
   recipe: Recipe;
   /** The top bar's back and menu buttons. */
   header: ReactNode;
   /** Shown above the title, e.g. import's "not saved yet". */
   banner?: ReactNode;
+  /** From a meal plan (design F's Recipe button); otherwise the recipe's own. */
+  initialServings?: number;
 }) {
   const summary = toRecipeSummary(deriveColumns(recipe));
-  const [servings, setServings] = useState(recipe.serves);
+  const [servings, setServings] = useState(initialServings ?? recipe.serves);
   const [gathered, setGathered] = useState<Set<number>>(new Set());
   const [done, setDone] = useState<Set<number>>(new Set());
   const [current, setCurrent] = useState<string>("ingredients");

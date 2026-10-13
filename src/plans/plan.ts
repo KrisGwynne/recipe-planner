@@ -152,3 +152,35 @@ export function formatPortions(n: number): string {
 export function meals(count: number): string {
   return count === 1 ? "1 meal" : `${count} meals`;
 }
+
+/** Servings a meal needs: people × portions each ("2 people × 1½ = 3 servings", design F). */
+export function servingsPlanned(people: number, portionsPerPerson: number): number {
+  return people * portionsPerPerson;
+}
+
+/**
+ * The servings the recipe page opens at from a planned meal: whole servings,
+ * rounded up so there's enough (4½ planned opens at 5).
+ */
+export function recipeServings(people: number, portionsPerPerson: number): number {
+  return Math.ceil(servingsPlanned(people, portionsPerPerson));
+}
+
+/** "Thu dinner", as toasts and buttons say it. */
+export function mealName(plan: { startDate: string }, dayIndex: number, slot: Slot): string {
+  return `${parts(planDay(plan, dayIndex)).weekday} ${slot}`;
+}
+
+/** "1 serving", "4½ servings". */
+export function servings(n: number): string {
+  return n === 1 ? "1 serving" : `${formatPortions(n)} servings`;
+}
+
+/**
+ * The plan "Add to plan" picks first (design G): the one covering today, or
+ * else the next to start. Past plans aren't offered (Kris, 2026-10-13).
+ */
+export function plansToAddTo<P extends { startDate: string; days: number }>(plans: P[], todayDate: string = today()): P[] {
+  const { current, upcoming } = groupPlans(plans, todayDate);
+  return [...current, ...upcoming];
+}
