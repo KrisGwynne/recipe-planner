@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Meal plans</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-150</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Meal plans</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">Making a plan, filling its days and meals with recipes, setting portions per person, and seeing what each person eats a day and where there'll be leftovers. The example plan is for 2 people, Monday 12 to Sunday 18 October, mostly dinners, as a real week would start.</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<!-- ============ Plans ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Plans</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">The Plans tab lists the household's plans by date. A plan is a name, a start date, a number of days (7 unless changed) and how many people it feeds (2 unless changed).</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Plan list -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="px-5 pt-5 pb-3">
+          <h1 class="font-display text-[28px] font-semibold">Plans</h1>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 space-y-3">
+          <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">This week</p>
+          <a class="block rounded-card bg-surface border border-line p-4">
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <h3 class="font-display text-xl font-semibold leading-snug">This week</h3>
+                <p class="text-sm text-ink-muted mt-0.5">Mon 12 – Sun 18 Oct · 2 people</p>
+              </div>
+              <svg class="size-5 mt-1 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </div>
+            <div class="mt-3 grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-ink-muted">
+              <div><span class="block h-7 rounded-md bg-primary text-on-primary grid place-items-center text-xs font-semibold">1</span>M</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">1</span>T</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">2</span>W</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">1</span>T</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">1</span>F</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">2</span>S</div>
+              <div><span class="block h-7 rounded-md border border-dashed border-line"></span>S</div>
+            </div>
+            <p class="mt-3 text-sm text-ink-muted tabular-nums"><span class="text-ink font-medium">8 meals</span> · ~820 kcal a day each</p>
+          </a>
+
+          <p class="pt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Coming up</p>
+          <a class="block rounded-card bg-surface border border-line p-4">
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <h3 class="font-display text-xl font-semibold leading-snug">Half term with Grandma</h3>
+                <p class="text-sm text-ink-muted mt-0.5">Mon 19 – Sun 25 Oct · 3 people</p>
+              </div>
+              <svg class="size-5 mt-1 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </div>
+            <p class="mt-2 text-sm text-ink-muted"><span class="text-ink font-medium">2 meals</span> · 5 days empty</p>
+          </a>
+
+          <p class="pt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Past</p>
+          <div class="rounded-card bg-surface border border-line divide-y divide-line">
+            <a class="flex items-center gap-3 px-4 min-h-14 py-2.5"><span class="flex-1"><span class="block font-semibold">Week of 5 Oct</span><span class="block text-sm text-ink-muted">5 – 11 Oct · 11 meals</span></span><svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg></a>
+            <button class="w-full h-12 text-sm font-semibold text-primary">Show 7 older plans</button>
+          </div>
+        </div>
+        <button class="absolute right-5 bottom-28 h-12 pl-4 pr-5 rounded-full bg-ink text-bg font-semibold inline-flex items-center gap-2 shadow-xl"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg>New plan</button>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Plan list</p><p class="text-ink-muted mt-1">Grouped by date: the plan covering today (there can be more than one), coming up (soonest first) and past (newest first, the latest shown). The current plan shows meals per day at a glance, today in solid tomato. "New plan" floats above the tab bar within thumb reach; it's ink rather than tomato so it doesn't compete with Import.</p></figcaption>
+    </figure>
+
+    <!-- B. No plans -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-5 pt-5">
+          <h1 class="font-display text-[28px] font-semibold">Plans</h1>
+        </div>
+        <div class="flex-1 px-8 pt-24 text-center">
+          <span class="mx-auto size-16 rounded-full bg-primary-soft text-primary grid place-items-center"><svg class="size-8 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg></span>
+          <p class="font-display text-[22px] font-semibold mt-5">No meal plans yet</p>
+          <p class="text-ink-muted mt-2">Plan a week of meals from your recipes, see what each person eats a day, and spot where there'll be leftovers.</p>
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Create a plan</button>
+        </div>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · No plans yet</p><p class="text-ink-muted mt-1">First visit. One clear action. If the library is empty too, the plan can still be made; the recipe picker (E) then says there are no recipes and offers Import.</p></figcaption>
+    </figure>
+
+    <!-- C. New plan -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <div class="mt-3 flex items-center justify-between">
+            <p class="font-display text-[22px] font-semibold">New plan</p>
+            <button class="size-11 -mr-2 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="mt-3 space-y-5">
+            <label class="block">
+              <span class="text-sm font-medium">Name</span>
+              <input class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px]" value="Week of 19 Oct">
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium">Starts</span>
+              <span class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px] flex items-center justify-between">Monday 19 October<svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-calendar"/></svg></span>
+              <span class="mt-1 block text-sm text-ink-subtle">The day after your latest plan ends</span>
+            </label>
+            <div class="flex items-center justify-between">
+              <div><p class="font-medium">Days</p><p class="text-sm text-ink-muted">19 – 25 Oct</p></div>
+              <div class="flex items-center rounded-full border border-line bg-surface-2">
+                <button class="size-11 grid place-items-center" aria-label="Fewer days"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+                <span class="w-10 text-center text-lg font-semibold tabular-nums">7</span>
+                <button class="size-11 grid place-items-center" aria-label="More days"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+              </div>
+            </div>
+            <div class="flex items-center justify-between gap-4">
+              <div><p class="font-medium">People</p><p class="text-sm text-ink-muted">Used to work out leftovers. Nutrition is per person.</p></div>
+              <div class="shrink-0 flex items-center rounded-full border border-line bg-surface-2">
+                <button class="size-11 grid place-items-center" aria-label="Fewer people"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+                <span class="w-10 text-center text-lg font-semibold tabular-nums">2</span>
+                <button class="size-11 grid place-items-center" aria-label="More people"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Create plan</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · New plan</p><p class="text-ink-muted mt-1">A bottom sheet, filled in so one tap creates a sensible week. Starts the day after the latest plan ends (today if that's passed or there isn't one); the name follows the start date until you change it. Days 1 to 14, people 1 to 12. An empty name shows foundations' field error ("Enter a name for the plan"); names are 1 to 50 characters, as household names. Creating opens the new plan (D).</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Filling a plan ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Filling a plan</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">On a phone a 7 × 4 grid doesn't fit, so the plan is a list of days, each holding its meals in order: breakfast, lunch, dinner, snack. Empty meals are small "+" buttons at the bottom of each day, so a mostly-dinners plan stays short.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- D. Plan, top -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back to plans"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold truncate">This week</p>
+            <p class="text-sm text-ink-muted">Mon 12 – Sun 18 Oct · 2 people</p>
+          </div>
+          <button class="size-11 rounded-full grid place-items-center" aria-label="More"><svg class="size-6 fill-current"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="px-5 pt-3">
+          <a class="flex items-center gap-3 rounded-card bg-surface border border-dashed border-ink-subtle px-4 py-3">
+            <div class="flex-1">
+              <p class="text-xs text-ink-muted">Each person, a day on average</p>
+              <p class="mt-0.5 tabular-nums"><span class="text-xl font-semibold text-ink-muted">~820</span> <span class="text-ink-muted">kcal</span><span class="ml-3 text-sm text-ink-muted">P <b class="text-ink">39g</b> · C <b class="text-ink">92g</b> · F <b class="text-ink">31g</b></span></p>
+            </div>
+            <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+          </a>
+        </div>
+        <div class="mt-3 px-4 pb-2 grid grid-cols-7 gap-1 border-b border-line">
+          <a class="h-12 rounded-control bg-ink text-bg flex flex-col items-center justify-center"><span class="text-[11px] font-medium">Mon</span><span class="font-semibold tabular-nums leading-none">12</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Tue</span><span class="font-semibold tabular-nums leading-none">13</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Wed</span><span class="font-semibold tabular-nums leading-none">14</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Thu</span><span class="font-semibold tabular-nums leading-none">15</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Fri</span><span class="font-semibold tabular-nums leading-none">16</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Sat</span><span class="font-semibold tabular-nums leading-none">17</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center text-ink-subtle"><span class="text-[11px] font-medium">Sun</span><span class="font-semibold tabular-nums leading-none">18</span></a>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-3 space-y-3">
+          <!-- Mon -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Mon 12 Oct</p>
+              <span class="h-5 px-1.5 rounded-full bg-primary-soft text-primary text-xs font-semibold inline-flex items-center">Today</span>
+              <p class="ml-auto text-sm tabular-nums"><b>672</b> <span class="text-ink-muted">kcal</span></p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Lemony tuna, tomato &amp; caper one-pot pasta</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 672 kcal · 29g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">2 left over</span>
+              </span>
+            </a>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Breakfast</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Lunch</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Snack</button>
+            </div>
+          </div>
+          <!-- Tue -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Tue 13 Oct</p>
+              <p class="ml-auto text-sm tabular-nums text-ink-muted">~825 kcal</p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Char siu Tofoo noodles</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · ~825 kcal · ~31g protein</span>
+              </span>
+            </a>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Breakfast</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Lunch</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Snack</button>
+            </div>
+          </div>
+          <!-- Wed (cut off) -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Wed 14 Oct</p>
+              <p class="ml-auto text-sm tabular-nums"><b>1,060</b> <span class="text-ink-muted">kcal</span></p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Lunch</p>
+          </div>
+        </div>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · A plan</p><p class="text-ink-muted mt-1">Opens scrolled to today (or the first day, for a plan that hasn't started). The day strip sticks under the header: tap a day to jump to it. Each day shows its total per person; a recipe row shows portions each, its kcal and protein per person, and an amber "N left over" when the people eating it don't finish it (people × portions is less than the recipe serves). Estimated numbers keep foundations' ~ and dashed outline, including the average card when any meal is estimated. Tap the average for the nutrition page (H); tap a recipe for its options (F).</p></figcaption>
+    </figure>
+
+    <!-- E. Choosing a recipe -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold">Add lunch</p>
+            <p class="text-sm text-ink-muted">Wed 14 Oct · This week</p>
+          </div>
+        </div>
+        <div class="px-5 pt-3 pb-3">
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <svg class="size-5 absolute left-4 top-3.5 fill-none stroke-ink-subtle stroke-2"><use href="#i-search"/></svg>
+              <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface border border-line placeholder:text-ink-subtle" placeholder="Search recipes">
+            </div>
+            <button class="h-12 px-4 rounded-full bg-ink text-bg font-semibold inline-flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-sliders"/></svg>1</button>
+          </div>
+          <div class="mt-3 flex items-center gap-2">
+            <span class="shrink-0 h-9 pl-3 pr-1 rounded-full bg-primary-soft text-primary font-medium inline-flex items-center gap-1">Lunch<svg class="size-7 p-1.5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></span>
+            <span class="ml-auto text-sm text-ink-muted tabular-nums">4 of 24</span>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5">
+          <div class="rounded-card bg-surface border border-line divide-y divide-line">
+            <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Tuna niçoise salad</span>
+                <span class="block text-sm text-ink-muted tabular-nums">25 min · 450 kcal · 32g protein</span>
+                <span class="block text-sm text-ink-subtle">Serves 2</span>
+              </span>
+              <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+              <span class="w-1 self-stretch rounded-full bg-vegan"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Chickpea, spinach &amp; coconut curry</span>
+                <span class="block text-sm text-ink-muted tabular-nums">30 min · 480 kcal · 17g protein</span>
+                <span class="block text-sm text-ink-subtle">Serves 4 · In this plan: Thu dinner</span>
+              </span>
+              <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Halloumi, beetroot &amp; freekeh salad</span>
+                <span class="block text-sm text-ink-muted tabular-nums">30 min · ~560 kcal · ~24g protein</span>
+                <span class="block text-sm text-ink-subtle">Serves 2</span>
+              </span>
+              <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Leek &amp; potato soup</span>
+                <span class="block text-sm text-ink-muted tabular-nums">40 min · 290 kcal · 8g protein</span>
+                <span class="block text-sm text-ink-subtle">Serves 6</span>
+              </span>
+              <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+            </a>
+          </div>
+          <p class="mt-4 text-center text-sm text-ink-muted">Not here? <button class="font-semibold text-primary">Remove the Lunch filter</button></p>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · Choosing a recipe</p><p class="text-ink-muted mt-1">Tapping "+ Lunch" opens the library as a full-screen picker, covering the tab bar. It starts filtered to recipes whose meal type includes that meal, as a removable chip; search, the full filter sheet and sort work as in the library. List rows (denser than cards) add "serves N", since that decides leftovers, and say if the recipe is already in this plan. Tapping a row adds it with 1 portion each and goes back to the plan, with a toast and Undo (I).</p></figcaption>
+    </figure>
+
+    <!-- F. Entry sheet -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="mt-3 text-sm text-ink-muted">Thu 15 Oct · Dinner</p>
+          <p class="font-display text-[22px] leading-7 font-semibold mt-0.5">Chickpea, spinach &amp; coconut curry</p>
+
+          <div class="mt-4 flex items-center justify-between">
+            <div><p class="font-medium">Portions each</p><p class="text-sm text-ink-muted">2 people × 1½ = 3 servings</p></div>
+            <div class="flex items-center rounded-full border border-line bg-surface-2">
+              <button class="size-11 grid place-items-center" aria-label="Fewer portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="w-10 text-center text-lg font-semibold tabular-nums">1½</span>
+              <button class="size-11 grid place-items-center" aria-label="More portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-card border border-warning/40 bg-warning-soft p-3 text-sm">
+            <p class="font-semibold text-warning">1 serving left over</p>
+            <p class="mt-0.5 text-ink">The recipe makes 4; 3 are planned.</p>
+          </div>
+
+          <div class="mt-4 rounded-card bg-surface-2 p-3">
+            <div class="flex items-center gap-2"><p class="text-xs text-ink-muted">Each person gets</p><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></div>
+            <p class="mt-1 tabular-nums"><span class="text-2xl font-semibold">720</span> <span class="text-ink-muted">kcal</span></p>
+            <p class="text-sm text-ink-muted tabular-nums">Protein <b class="text-ink">26g</b> · Carbs <b class="text-ink">78g</b> · Fat <b class="text-ink">33g</b></p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipe</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-move"/></svg>Move</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium text-danger"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Remove</button>
+          </div>
+          <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Done</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · A planned recipe</p><p class="text-ink-muted mt-1">Tapping a recipe in the plan opens this sheet. Portions each go in halves from ½ to 4, and save as you tap; the leftovers box and the nutrition update with them (nutrition per serving × portions each). With no leftovers the box isn't shown. Recipe opens the recipe page scaled to the planned servings (3 here). Move opens the day-and-meal picker (G). Remove takes it out straight away, with an Undo toast.</p></figcaption>
+    </figure>
+
+    <!-- G. Add to plan / move -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-[22px] font-semibold mt-3">Add to plan</p>
+          <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          <button class="mt-3 w-full h-12 px-4 rounded-control bg-surface-2 border border-line flex items-center justify-between"><span><b>This week</b> <span class="text-ink-muted">· 12 – 18 Oct</span></span><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-chevron-down"/></svg></button>
+
+          <table class="mt-3 w-full text-sm">
+            <thead>
+              <tr class="text-xs text-ink-muted"><th class="w-16"></th><th class="font-medium pb-1">Breakfast</th><th class="font-medium pb-1">Lunch</th><th class="font-semibold pb-1 text-ink">Dinner</th><th class="font-medium pb-1">Snack</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="font-medium py-0.5">Mon <span class="text-ink-muted font-normal">12</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Tue <span class="text-ink-muted font-normal">13</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-primary text-on-primary grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-veg"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Wed <span class="text-ink-muted font-normal">14</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-meat"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Thu <span class="text-ink-muted font-normal">15</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="flex gap-1"><span class="size-2.5 rounded-full bg-vegan"></span><span class="size-2.5 rounded-full bg-veg"></span></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Fri <span class="text-ink-muted font-normal">16</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Sat <span class="text-ink-muted font-normal">17</span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-veg"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Sun <span class="text-ink-muted font-normal">18</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+            </tbody>
+          </table>
+          <p class="mt-3 text-sm text-ink-muted">Serves 4 · 2 people × 1 each = 2 · <span class="text-warning font-semibold">2 left over</span></p>
+          <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Add to Tue lunch</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · Add to plan (from a recipe page)</p><p class="text-ink-muted mt-1">The recipe page's "Add to plan" button opens this. It picks the current plan, or the next one if none covers today; the plan button switches. A grid of the plan's days and meals shows what's already planned (a dot per recipe, in its category colour); the meal matching the recipe's meal type is in bold. Tap a cell, then Add; it adds with 1 portion each, and a slot can hold more than one recipe (a curry and a side, say). With no plans, the sheet says so and offers "Create a plan" (C). The same sheet, titled "Move to…", moves a planned recipe (F).</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Totals and leftovers ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Totals and leftovers</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">Everything is per person: a recipe's nutrition per serving × that person's portions, added up per day. The plan average is over the days that have something planned, and says how many.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- H. Nutrition -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back to plan"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold truncate">Nutrition</p>
+            <p class="text-sm text-ink-muted">This week · each person</p>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-3 space-y-4">
+          <div class="rounded-card bg-surface border border-dashed border-ink-subtle p-4">
+            <p class="text-xs text-ink-muted">A day on average · 6 days planned</p>
+            <div class="mt-1 flex items-center justify-between"><p class="tabular-nums"><span class="text-3xl font-semibold text-ink-muted">~820</span> <span class="text-ink-muted">kcal</span></p><span class="shrink-0 inline-flex items-center h-7 px-2.5 rounded-full border border-dashed border-ink-subtle text-ink-muted text-sm font-medium">~ Estimated</span></div>
+            <p class="mt-1 text-sm text-ink-muted tabular-nums">Protein <b class="text-ink">~39g</b> · Carbs <b class="text-ink">~92g</b> · Fat <b class="text-ink">~31g</b></p>
+            <div class="mt-3 flex h-3 rounded-full overflow-hidden">
+              <span class="bg-veg" style="width:19%"></span><span class="bg-primary" style="width:46%"></span><span class="bg-warning" style="width:35%"></span>
+            </div>
+            <div class="mt-2 flex justify-between text-xs text-ink-muted"><span><span class="inline-block size-2 rounded-full bg-veg mr-1"></span>Protein 19%</span><span><span class="inline-block size-2 rounded-full bg-primary mr-1"></span>Carbs 46%</span><span><span class="inline-block size-2 rounded-full bg-warning mr-1"></span>Fat 35%</span></div>
+          </div>
+
+          <div>
+            <p class="text-[17px] font-semibold">Each day</p>
+            <table class="mt-2 w-full text-sm tabular-nums">
+              <thead><tr class="text-xs text-ink-muted text-right"><th class="text-left font-medium pb-1">Day</th><th class="font-medium pb-1">kcal</th><th class="font-medium pb-1">Protein</th><th class="font-medium pb-1">Carbs</th><th class="font-medium pb-1">Fat</th></tr></thead>
+              <tbody class="divide-y divide-line text-right">
+                <tr><td class="py-2 text-left font-medium">Mon <span class="text-ink-muted font-normal">· 1 meal</span></td><td class="font-semibold">672</td><td>29g</td><td>83g</td><td>23g</td></tr>
+                <tr class="text-ink-muted"><td class="py-2 text-left font-medium text-ink">Tue <span class="text-ink-muted font-normal">· 1 meal</span></td><td class="font-semibold">~825</td><td>~31g</td><td>~92g</td><td>~34g</td></tr>
+                <tr><td class="py-2 text-left font-medium">Wed <span class="text-ink-muted font-normal">· 2 meals</span></td><td class="font-semibold">1,060</td><td>74g</td><td>92g</td><td>41g</td></tr>
+                <tr><td class="py-2 text-left font-medium">Thu <span class="text-ink-muted font-normal">· 1 meal</span></td><td class="font-semibold">880</td><td>29g</td><td>107g</td><td>36g</td></tr>
+                <tr><td class="py-2 text-left font-medium">Fri <span class="text-ink-muted font-normal">· 1 meal</span></td><td class="font-semibold">540</td><td>31g</td><td>68g</td><td>14g</td></tr>
+                <tr class="text-ink-muted"><td class="py-2 text-left font-medium text-ink">Sat <span class="text-ink-muted font-normal">· 2 meals</span></td><td class="font-semibold">~940</td><td>~40g</td><td>~110g</td><td>~37g</td></tr>
+                <tr class="text-ink-subtle"><td class="py-2 text-left font-medium">Sun</td><td colspan="4">Nothing planned</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-ink-muted">~ Tue and Sat include recipes with estimated nutrition: Char siu Tofoo noodles, Smoked mackerel &amp; leek pasta bake.</p>
+          <p class="text-sm text-ink-muted">Totals count only what's in the plan. Days with just a dinner planned will look light.</p>
+        </div>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">H · Nutrition for the plan</p><p class="text-ink-muted mt-1">Opened from the average card on the plan. The average uses the same energy-split bar as the recipe page. Each day lists kcal and the three macros per person, and how many meals it counts, so a light day is clearly a mostly-empty one. Rows that include estimates get the ~ and are named underneath. Sugars, saturates, fibre and salt are left off here to keep the table readable on a phone; tapping a day could open them later.</p></figcaption>
+    </figure>
+
+    <!-- I. Further down: several recipes in a slot, empty day, toast -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back to plans"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold truncate">This week</p>
+            <p class="text-sm text-ink-muted">Mon 12 – Sun 18 Oct · 2 people</p>
+          </div>
+          <button class="size-11 rounded-full grid place-items-center" aria-label="More"><svg class="size-6 fill-current"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="mt-3 px-4 pb-2 grid grid-cols-7 gap-1 border-b border-line">
+          <a class="h-12 rounded-control flex flex-col items-center justify-center ring-2 ring-primary ring-inset"><span class="text-[11px] font-medium text-ink-muted">Mon</span><span class="font-semibold tabular-nums leading-none">12</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Tue</span><span class="font-semibold tabular-nums leading-none">13</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Wed</span><span class="font-semibold tabular-nums leading-none">14</span></a>
+          <a class="h-12 rounded-control bg-ink text-bg flex flex-col items-center justify-center"><span class="text-[11px] font-medium">Thu</span><span class="font-semibold tabular-nums leading-none">15</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Fri</span><span class="font-semibold tabular-nums leading-none">16</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Sat</span><span class="font-semibold tabular-nums leading-none">17</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center text-ink-subtle"><span class="text-[11px] font-medium">Sun</span><span class="font-semibold tabular-nums leading-none">18</span></a>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-3 space-y-3">
+          <!-- Thu -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Thu 15 Oct</p>
+              <p class="ml-auto text-sm tabular-nums"><b>880</b> <span class="text-ink-muted">kcal</span></p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-vegan"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Chickpea, spinach &amp; coconut curry</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1½ each · 720 kcal · 26g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">1 left over</span>
+              </span>
+            </a>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Quick garlic &amp; coriander flatbreads</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 160 kcal · 3g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">4 left over</span>
+              </span>
+            </a>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Breakfast</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Lunch</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Dinner</button>
+              <button class="h-11 px-3 rounded-full border border-dashed border-line text-sm font-medium text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Snack</button>
+            </div>
+          </div>
+          <!-- Sat -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Sat 17 Oct</p>
+              <p class="ml-auto text-sm tabular-nums text-ink-muted">~940 kcal</p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Breakfast</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Overnight oats with berries</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 350 kcal · 13g protein</span>
+              </span>
+            </a>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Smoked mackerel &amp; leek pasta bake with a crunchy herby crumb</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · ~590 kcal · ~27g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">2 left over</span>
+              </span>
+            </a>
+          </div>
+          <!-- Sun -->
+          <div class="rounded-card border border-dashed border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Sun 18 Oct</p>
+              <p class="ml-auto text-sm text-ink-subtle">Nothing planned</p>
+            </div>
+          </div>
+        </div>
+        <div class="absolute left-4 right-4 bottom-24 flex items-center gap-3 rounded-full bg-ink text-bg px-5 h-12 shadow-lg">
+          <svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg><span class="font-medium">Added to Thu dinner</span><button class="ml-auto font-semibold underline underline-offset-2">Undo</button>
+        </div>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">I · Further down the plan</p><p class="text-ink-muted mt-1">Thursday's dinner has two recipes (the "+ Dinner" button stays, to add another). Each recipe gets its own leftovers count, worked out on its own. Long names wrap rather than cut off. A day with nothing in it shows "Nothing planned" in a dashed outline; tapping it shows the four "+" buttons. The toast confirms an add or a remove, with Undo.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Managing plans ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Changing and deleting plans</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- J. More menu -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <ul class="mt-3 divide-y divide-line">
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-pencil"/></svg>Edit name, dates and people</li>
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-copy"/></svg><span>Copy to a new plan<span class="block text-sm text-ink-muted">Same meals, starting Mon 19 Oct</span></span></li>
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare with another plan</li>
+            <li class="flex items-center gap-3 min-h-13 py-3 text-danger"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Delete plan</li>
+          </ul>
+          <button class="mt-3 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">J · More (⋯) on a plan</p><p class="text-ink-muted mt-1">"Copy to a new plan" opens New plan (C) filled in as "Copy of This week", starting the day after this one ends, then copies every recipe and portion to the same day and meal. "Compare with another plan" comes with PP-174 (a nice-to-have) and is hidden until then.</p></figcaption>
+    </figure>
+
+    <!-- K. Edit plan -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <div class="mt-3 flex items-center justify-between">
+            <p class="font-display text-[22px] font-semibold">Edit plan</p>
+            <button class="size-11 -mr-2 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="mt-3 space-y-5">
+            <label class="block">
+              <span class="text-sm font-medium">Name</span>
+              <input class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px]" value="This week">
+            </label>
+            <label class="block">
+              <span class="text-sm font-medium">Starts</span>
+              <span class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px] flex items-center justify-between">Monday 12 October<svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-calendar"/></svg></span>
+            </label>
+            <div class="flex items-center justify-between">
+              <div><p class="font-medium">Days</p><p class="text-sm text-ink-muted">12 – 16 Oct</p></div>
+              <div class="flex items-center rounded-full border border-line bg-surface-2">
+                <button class="size-11 grid place-items-center" aria-label="Fewer days"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+                <span class="w-10 text-center text-lg font-semibold tabular-nums">5</span>
+                <button class="size-11 grid place-items-center" aria-label="More days"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+              </div>
+            </div>
+            <div class="rounded-card border border-warning/40 bg-warning-soft p-3 text-sm">
+              <p class="font-semibold text-warning flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg>2 meals will be removed</p>
+              <p class="mt-0.5 text-ink">Sat 17 Oct has 2 meals planned. They'll be taken out of the plan when you save.</p>
+            </div>
+            <div class="flex items-center justify-between gap-4">
+              <div><p class="font-medium">People</p><p class="text-sm text-ink-muted">Leftovers update; nutrition stays per person.</p></div>
+              <div class="shrink-0 flex items-center rounded-full border border-line bg-surface-2">
+                <button class="size-11 grid place-items-center" aria-label="Fewer people"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+                <span class="w-10 text-center text-lg font-semibold tabular-nums">2</span>
+                <button class="size-11 grid place-items-center" aria-label="More people"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+              </div>
+            </div>
+          </div>
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Save</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">K · Edit plan</p><p class="text-ink-muted mt-1">The New plan sheet again, filled in. Recipes are stored by day number, so a new start date moves the whole plan, meals and all. Fewer days warns, before saving, how many meals fall off the end. Changing people changes only the leftovers, since totals are per person.</p></figcaption>
+    </figure>
+
+    <!-- L. Delete -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Delete "This week"?</p>
+          <p class="text-ink-muted mt-1">It has 8 meals planned. The recipes stay in your library.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Delete plan</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">L · Delete a plan</p><p class="text-ink-muted mt-1">Foundations' confirmation sheet. Deleting goes back to the plan list with a toast. An empty plan is deleted without asking. Anyone in the household can make, change or delete plans.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Wider screens ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Wider screens</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">From tablet width the plan becomes the grid the phone can't fit: days across, meals down, and each day's total along the bottom. Tapping a cell or a recipe opens the same sheets, as dialogs.</p>
+  <figure class="mt-5 w-[1240px] max-w-full overflow-hidden rounded-2xl border border-line shadow-xl bg-bg">
+    <div class="h-8 bg-surface-2 border-b border-line flex items-center gap-1.5 px-3"><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span></div>
+    <div class="flex h-[720px]">
+      <nav class="w-20 shrink-0 border-r border-line bg-surface flex flex-col items-center gap-2 py-4 text-[11px] font-medium">
+        <span class="size-12 rounded-full bg-primary text-on-primary grid place-items-center mb-3" aria-label="Import"><svg class="size-6 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg></span>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipes</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-primary"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plans</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted mt-auto"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-users"/></svg>Household</a>
+      </nav>
+      <div class="flex-1 min-w-0 p-6 overflow-hidden">
+        <div class="flex items-center gap-4">
+          <div class="mr-auto">
+            <h1 class="font-display text-[28px] font-semibold leading-tight">This week</h1>
+            <p class="text-sm text-ink-muted">Mon 12 – Sun 18 Oct · 2 people</p>
+          </div>
+          <a class="rounded-control border border-dashed border-ink-subtle bg-surface px-4 py-2 text-sm tabular-nums"><span class="text-ink-muted">A day, each:</span> <b class="text-ink-muted">~820 kcal</b> <span class="text-ink-muted">· P 39g · C 92g · F 31g</span></a>
+          <button class="size-10 rounded-full border border-line grid place-items-center" aria-label="More"><svg class="size-5 fill-current"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="mt-5 grid grid-cols-[5.5rem_repeat(7,minmax(0,1fr))] gap-1.5 text-sm">
+          <div></div>
+          <div class="px-1 pb-1 font-semibold">Mon 12 <span class="ml-1 h-5 px-1.5 rounded-full bg-primary-soft text-primary text-xs inline-flex items-center">Today</span></div>
+          <div class="px-1 pb-1 font-semibold">Tue 13</div>
+          <div class="px-1 pb-1 font-semibold">Wed 14</div>
+          <div class="px-1 pb-1 font-semibold">Thu 15</div>
+          <div class="px-1 pb-1 font-semibold">Fri 16</div>
+          <div class="px-1 pb-1 font-semibold">Sat 17</div>
+          <div class="px-1 pb-1 font-semibold text-ink-subtle">Sun 18</div>
+
+          <div class="text-xs font-semibold uppercase tracking-wider text-ink-muted pt-3">Breakfast</div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg bg-surface border border-line border-l-4 border-l-veg p-2"><p class="font-semibold leading-tight line-clamp-3">Overnight oats with berries</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · 350 kcal</p></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+
+          <div class="text-xs font-semibold uppercase tracking-wider text-ink-muted pt-3">Lunch</div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border-2 border-dashed border-primary text-primary grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></div>
+          <div class="h-20 rounded-lg bg-surface border border-line border-l-4 border-l-fish p-2"><p class="font-semibold leading-tight line-clamp-3">Tuna niçoise salad</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · 450 kcal</p></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+          <div class="h-20 rounded-lg border border-dashed border-line"></div>
+
+          <div class="text-xs font-semibold uppercase tracking-wider text-ink-muted pt-3">Dinner</div>
+          <div class="min-h-28 rounded-lg bg-surface border border-line border-l-4 border-l-fish p-2"><p class="font-semibold leading-tight line-clamp-3">Lemony tuna, tomato &amp; caper one-pot pasta</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · 672 kcal</p><span class="mt-1 h-5 px-1.5 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">2 left over</span></div>
+          <div class="min-h-28 rounded-lg bg-surface border border-line border-l-4 border-l-veg p-2"><p class="font-semibold leading-tight line-clamp-3">Char siu Tofoo noodles</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · ~825 kcal</p></div>
+          <div class="min-h-28 rounded-lg bg-surface border border-line border-l-4 border-l-meat p-2"><p class="font-semibold leading-tight line-clamp-3">Sticky chicken thighs with sesame rice</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · 610 kcal</p><span class="mt-1 h-5 px-1.5 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">2 left over</span></div>
+          <div class="min-h-28 space-y-1.5">
+            <div class="rounded-lg bg-surface border border-line border-l-4 border-l-vegan p-2"><p class="font-semibold leading-tight line-clamp-3">Chickpea, spinach &amp; coconut curry</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1½ · 720 kcal</p></div>
+            <div class="rounded-lg bg-surface border border-line border-l-4 border-l-veg p-2"><p class="font-semibold leading-tight line-clamp-2">Quick garlic &amp; coriander flatbreads</p><p class="text-xs text-ink-muted mt-0.5 tabular-nums">1 · 160 kcal</p></div>
+          </div>
+          <div class="min-h-28 rounded-lg bg-surface border border-line border-l-4 border-l-fish p-2"><p class="font-semibold leading-tight line-clamp-3">Prawn linguine with chilli &amp; lemon</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · 540 kcal</p></div>
+          <div class="min-h-28 rounded-lg bg-surface border border-line border-l-4 border-l-fish p-2"><p class="font-semibold leading-tight line-clamp-3">Smoked mackerel &amp; leek pasta bake</p><p class="text-xs text-ink-muted mt-1 tabular-nums">1 · ~590 kcal</p><span class="mt-1 h-5 px-1.5 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">2 left over</span></div>
+          <div class="min-h-28 rounded-lg border border-dashed border-line"></div>
+
+          <div class="text-xs font-semibold uppercase tracking-wider text-ink-muted pt-3">Snack</div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+          <div class="h-14 rounded-lg border border-dashed border-line"></div>
+
+          <div class="text-xs font-semibold uppercase tracking-wider text-ink-muted pt-2 border-t border-line">Each person</div>
+          <div class="pt-2 border-t border-line tabular-nums"><b>672</b> <span class="text-ink-muted text-xs">kcal</span><p class="text-xs text-ink-muted">P 29 · C 83 · F 23</p></div>
+          <div class="pt-2 border-t border-line tabular-nums text-ink-muted"><b>~825</b> <span class="text-xs">kcal</span><p class="text-xs">P ~31 · C ~92 · F ~34</p></div>
+          <div class="pt-2 border-t border-line tabular-nums"><b>1,060</b> <span class="text-ink-muted text-xs">kcal</span><p class="text-xs text-ink-muted">P 74 · C 92 · F 41</p></div>
+          <div class="pt-2 border-t border-line tabular-nums"><b>880</b> <span class="text-ink-muted text-xs">kcal</span><p class="text-xs text-ink-muted">P 29 · C 107 · F 36</p></div>
+          <div class="pt-2 border-t border-line tabular-nums"><b>540</b> <span class="text-ink-muted text-xs">kcal</span><p class="text-xs text-ink-muted">P 31 · C 68 · F 14</p></div>
+          <div class="pt-2 border-t border-line tabular-nums text-ink-muted"><b>~940</b> <span class="text-xs">kcal</span><p class="text-xs">P ~40 · C ~110 · F ~37</p></div>
+          <div class="pt-2 border-t border-line text-ink-subtle text-xs">Nothing planned</div>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <p class="mt-3 text-sm text-ink-muted max-w-3xl">An empty cell turns tomato on hover (Tue lunch here). A 14-day plan scrolls sideways a week at a time. Below tablet width the phone layout (D) is used.</p>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 13 October 2026.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>On a phone the plan is a list of day cards with a sticky day strip; empty meals are "+" buttons. From tablet width it's the full grid.</li>
+    <li>The plan average is over days with at least one meal planned, and says how many.</li>
+    <li>Leftovers are per recipe, as in the spec. Planning a later meal as "leftovers from Monday" is an optional future ticket (PP-180).</li>
+    <li>New: "Copy to a new plan" in the plan's ⋯ menu, built with PP-170.</li>
+    <li>The recipe picker starts filtered to the meal being added (removable).</li>
+  </ul>
+</section>
+</main>
+</body>
+</html>

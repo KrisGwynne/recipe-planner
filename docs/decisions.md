@@ -224,3 +224,17 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **The in-app help page** (and the Import and empty-library links to it) is a new ticket, PP-179, after the meal plan work (Kris, 2026-10-12). It needs a design first.
 
 **Order of work from here** (Kris, 2026-10-12): PP-175, then the meal plans design (PP-150) and PP-170 to PP-172. Favourites, ratings and notes (PP-169) come after.
+
+## 2026-10-13: meal plans design approved (PP-150)
+
+**Phone layout** (Kris, 2026-10-13): a plan is a list of day cards, each with its meals in order (breakfast, lunch, dinner, snack) and empty meals as "+" buttons, under a sticky strip of days to jump between. From tablet width it becomes the full grid (days across, meals down, per-person totals along the bottom). A meal can hold more than one recipe (a curry and a side).
+
+**Averages** (Kris, 2026-10-13): the plan's per-person daily average is over the days with at least one meal planned, and says how many ("6 days planned"), so an empty day doesn't drag it down. Daily totals count only what's planned. Totals that include an estimated recipe get the ~ and dashed outline, and the nutrition page names those recipes.
+
+**Leftovers stay per entry**, as the handover says (Kris, 2026-10-13): planning the same recipe again counts as cooking it again. Planning a later meal as "leftovers from Monday" is an optional future ticket, PP-180 (Low).
+
+**Copy to a new plan** is in (Kris, 2026-10-13): the plan's ⋯ menu copies every recipe and portion into a new plan starting the day after this one ends, through the New plan sheet. Built with PP-170.
+
+**The recipe picker starts filtered to the meal** being added (Kris, 2026-10-13), as a removable chip; search, filters and sort work as in the library. Tapping a recipe adds it with 1 portion each.
+
+**Details settled in the design:** portions each go in halves from ½ to 4 and save as you tap; a new plan starts the day after the latest plan ends (or today) and is named after its start date until renamed; days 1 to 14, people 1 to 12; plan names 1 to 50 characters; fewer days warns before removing meals; changing people changes only the leftovers; anyone in the household can make, change or delete plans; the recipe page's "Add to plan" opens a day-and-meal grid sheet, also used to move a planned recipe; "Compare with another plan" waits for PP-174.
