@@ -723,14 +723,15 @@
 </section>
 
 <section class="pb-10">
-  <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
-  <ol class="mt-3 list-decimal pl-5 space-y-3 text-ink-muted max-w-3xl">
-    <li><b class="text-ink">Phone layout (D, I).</b> A list of day cards with empty meals as small "+" buttons, plus a sticky day strip to jump around. The alternative is one day per screen with swiping. <i>Recommendation: the list, so the whole week is one scroll.</i></li>
-    <li><b class="text-ink">Averages (D, H).</b> The plan average is over days with at least one meal planned (6 here), not every day of the plan, so an empty Sunday doesn't drag it down. Totals still only count what's planned, so a dinners-only plan looks light. <i>Recommendation: as shown.</i></li>
-    <li><b class="text-ink">Eating the leftovers (F, I).</b> Leftovers are per recipe, as the spec says: planning the same recipe again tomorrow counts as cooking it again. Should a later meal be able to say "leftovers from Monday", so it doesn't flag leftovers twice? That needs a new field on plan entries. <i>Recommendation: not now; a separate ticket after the meal plans are in use.</i></li>
-    <li><b class="text-ink">Copy to a new plan (J).</b> Repeating a good week in two taps. Not in the spec. <i>Recommendation: include it in PP-170; it's small.</i></li>
-    <li><b class="text-ink">The picker starts filtered to the meal (E).</b> "+ Lunch" opens recipes tagged lunch, with the filter removable. <i>Recommendation: yes; it removes most scrolling.</i></li>
-  </ol>
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 13 October 2026.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>On a phone the plan is a list of day cards with a sticky day strip; empty meals are "+" buttons. From tablet width it's the full grid.</li>
+    <li>The plan average is over days with at least one meal planned, and says how many.</li>
+    <li>Leftovers are per recipe, as in the spec. Planning a later meal as "leftovers from Monday" is an optional future ticket (PP-180).</li>
+    <li>New: "Copy to a new plan" in the plan's ⋯ menu, built with PP-170.</li>
+    <li>The recipe picker starts filtered to the meal being added (removable).</li>
+  </ul>
 </section>
 </main>
 </body>
