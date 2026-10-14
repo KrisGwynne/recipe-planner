@@ -5,7 +5,8 @@ import { Icon } from "@/components/icon";
 import { Badge, CategoryBadge, DietaryBadge, NutritionBadge, dietaryLabels } from "@/components/ui/badge";
 import { cx } from "@/lib/cx";
 import { approx, formatMinutes } from "@/lib/format";
-import { deriveColumns, macroEnergySplit, totalMins } from "@/recipes/derive";
+import { deriveColumns, totalMins } from "@/recipes/derive";
+import { EnergySplit } from "./energy-split";
 import { groupIngredients, gramsTotal, notesFor, scaledAmount, scaledBanner } from "@/recipes/quantity";
 import { toRecipeSummary } from "@/recipes/summary";
 import type { Recipe, Variation } from "@/types/recipe";
@@ -384,7 +385,6 @@ function Times({ recipe }: { recipe: Recipe }) {
 function Nutrition({ recipe }: { recipe: Recipe }) {
   const n = recipe.nutrition_per_serving;
   const estimated = n.source === "estimated";
-  const split = macroEnergySplit(n);
   const g = (v: number) => approx(`${v} g`, estimated);
   const rows: [string, string, boolean][] = [
     ["Protein", g(n.protein_g), true],
@@ -394,11 +394,6 @@ function Nutrition({ recipe }: { recipe: Recipe }) {
     ["of which saturates", g(n.saturates_g), false],
     ["Fibre", g(n.fibre_g), true],
     ["Salt", g(n.salt_g), true],
-  ];
-  const parts = [
-    { label: "Protein", value: split.protein, dot: "bg-veg" },
-    { label: "Carbs", value: split.carbs, dot: "bg-primary" },
-    { label: "Fat", value: split.fat, dot: "bg-warning" },
   ];
   const where = { book: "book", magazine: "magazine", website: "website", family: "recipe", other: "recipe" }[recipe.source.kind];
   return (
@@ -419,19 +414,7 @@ function Nutrition({ recipe }: { recipe: Recipe }) {
           <span className={cx("text-3xl font-semibold", estimated && "text-ink-muted")}>{approx(String(n.kcal), estimated)}</span>{" "}
           <span className="text-ink-muted">kcal</span>
         </p>
-        <div className="mt-3 flex h-3 rounded-full overflow-hidden bg-surface-2" aria-hidden="true">
-          {parts.map((p) => (
-            <span key={p.label} className={p.dot} style={{ width: `${p.value}%` }} />
-          ))}
-        </div>
-        <p className="mt-2 flex justify-between text-xs text-ink-muted">
-          {parts.map((p) => (
-            <span key={p.label}>
-              <span className={cx("inline-block size-2 rounded-full mr-1", p.dot)} aria-hidden="true" />
-              {p.label} {Math.round(p.value)}%
-            </span>
-          ))}
-        </p>
+        <EnergySplit proteinG={n.protein_g} carbsG={n.carbs_g} fatG={n.fat_g} />
         <table className="mt-4 w-full text-sm tabular-nums">
           <caption className="sr-only">Nutrition per serving</caption>
           <tbody className="divide-y divide-line">
