@@ -6,13 +6,14 @@ import { useState } from "react";
 import { Icon } from "@/components/icon";
 import type { Recipe } from "@/types/recipe";
 import { Sheet } from "@/components/ui/sheet";
+import { FavouriteButton } from "./household";
 
 const iconButton =
   "size-11 rounded-full grid place-items-center hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-primary";
 
 /**
- * The recipe page's top bar: back, and ⋯ (design G). Compare (PP-173), delete
- * (PP-165) and the favourite heart (PP-169) join it with their tickets.
+ * The recipe page's top bar: back, the favourite heart and ⋯ (design A, G).
+ * Compare (PP-173) and delete (PP-165) join the menu with their tickets.
  */
 export function RecipeHeader({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
@@ -41,6 +42,7 @@ export function RecipeHeader({ recipe }: { recipe: Recipe }) {
         <Icon name="arrow-left" className="size-6" />
       </button>
       <span className="flex-1" />
+      <FavouriteButton />
       <button type="button" onClick={() => setMenu(true)} aria-label="More" className={iconButton}>
         <svg viewBox="0 0 24 24" className="size-6 fill-current" aria-hidden="true">
           <circle cx="5" cy="12" r="1.8" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useOptimistic, useState } from "react";
 import { Icon, type IconName } from "@/components/icon";
 import { ActiveFilterChip } from "@/components/ui/chip";
 import { Page } from "@/components/page";
@@ -13,6 +13,7 @@ import {
   SortSheet,
   useLibraryState,
 } from "@/components/recipe/library-controls";
+import { useToast } from "@/components/ui/toast";
 import { cx } from "@/lib/cx";
 import {
   SORTS,
@@ -26,6 +27,7 @@ import {
   type SortKey,
 } from "@/recipes/library-filter";
 import { toRecipeSummary } from "@/recipes/summary";
+import { setFavouriteAction } from "./actions";
 import { viewCookie, type LibraryView } from "./view";
 
 const emphasis: Partial<Record<SortKey, "time" | "kcal" | "protein">> = {
@@ -158,8 +160,25 @@ function Results({
   view: LibraryView;
   sort: SortKey;
 }) {
+  const toast = useToast();
+  // A tapped heart changes at once; the saved value replaces it when the page refreshes.
+  const [favourites, setOptimistic] = useOptimistic(
+    new Map(recipes.map((r) => [r.id, r.favourite])),
+    (current, [id, favourite]: [string, boolean]) => new Map(current).set(id, favourite),
+  );
+
+  function toggleFavourite(id: string) {
+    const favourite = !favourites.get(id);
+    startTransition(async () => {
+      setOptimistic([id, favourite]);
+      if (!(await setFavouriteAction(id, favourite))) toast("Couldn't save that. Try again.");
+    });
+  }
+
   const summaries = recipes.map((r) => ({
     ...toRecipeSummary(r),
+    id: r.id,
+    favourite: favourites.get(r.id) ?? false,
     highlight: words,
     matchedIngredient: matchedIngredient(r, words),
   }));
@@ -167,7 +186,11 @@ function Results({
     <ul className="mt-3 grid gap-3 md:grid-cols-2 md:gap-4 xl:grid-cols-3">
       {summaries.map((recipe) => (
         <li key={recipe.href}>
-          <RecipeCard recipe={recipe} />
+          <RecipeCard
+            recipe={recipe}
+            favourite={recipe.favourite}
+            onToggleFavourite={() => toggleFavourite(recipe.id)}
+          />
         </li>
       ))}
     </ul>

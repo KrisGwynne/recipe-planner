@@ -88,6 +88,13 @@ export function formatDay(date: string): string {
   return `${p.weekday} ${p.day} ${p.month}`;
 }
 
+/** "2 Oct", plus the year when it isn't this year's: "21 Aug 2025". */
+export function formatShortDate(date: string, todayDate: string = today()): string {
+  const p = parts(date);
+  const year = p.year === parts(todayDate).year ? "" : ` ${p.year}`;
+  return `${p.day} ${p.month}${year}`;
+}
+
 /** "Monday 19 October", plus the year when it isn't this year's. */
 export function formatLongDate(date: string, todayDate: string = today()): string {
   const p = parts(date);

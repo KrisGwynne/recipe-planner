@@ -25,6 +25,7 @@ const example = (slug: string): Recipe =>
 function row(recipe: Recipe, createdAt = "2026-10-01T00:00:00Z"): LibraryRecipe {
   const c = deriveColumns(recipe);
   return {
+    id: `id-${c.slug}`,
     slug: c.slug,
     name: c.name,
     totalMins: c.totalMins,
@@ -46,6 +47,9 @@ function row(recipe: Recipe, createdAt = "2026-10-01T00:00:00Z"): LibraryRecipe 
     equipment: recipe.equipment,
     freezable: recipe.storage.freezable,
     ingredients: recipe.ingredients.map((i) => ({ item: i.item, prep: i.prep ?? null })),
+    favourite: false,
+    rating: null,
+    lastCooked: null,
   };
 }
 
@@ -233,6 +237,43 @@ describe("sort", () => {
     expect(kcal).toEqual([...kcal].sort((a, b) => a - b));
     const protein = applyState(library, state({}, "", "protein")).map((r) => r.proteinG);
     expect(protein).toEqual([...protein].sort((a, b) => b - a));
+  });
+});
+
+describe("the household's own data (PP-169)", () => {
+  // Tofoo: favourite, 5 stars, cooked 2 Oct. Katsu: 3 stars, cooked 14 Sep.
+  // Tuna: favourite, cooked 20 Sep, unrated. Surf and turf and dal: never cooked, unrated.
+  const household: Record<string, Partial<LibraryRecipe>> = {
+    [tofoo.id]: { favourite: true, rating: 5, lastCooked: "2026-10-02" },
+    "chicken-katsu": { rating: 3, lastCooked: "2026-09-14" },
+    [tuna.id]: { favourite: true, lastCooked: "2026-09-20" },
+  };
+  const mine = library.map((r) => ({ ...r, ...household[r.slug] }));
+  const find = (s: LibraryState) => applyState(mine, s).map((r) => r.slug);
+
+  it("Favourites only", () => {
+    expect(find(state({ favourites: true }))).toEqual([tofoo.id, tuna.id]);
+    expect(find(state({ favourites: true, category: ["fish"] }))).toEqual([tuna.id]);
+    expect(facets(mine, state({ category: ["fish"] })).favourites).toBe(1);
+    expect(activeFilters(state({ favourites: true }).filters).map((c) => c.label)).toEqual(["Favourites"]);
+  });
+
+  it("highest rated, unrated last A to Z", () => {
+    expect(find(state({}, "", "rating"))).toEqual([tofoo.id, "chicken-katsu", tuna.id, "lentil-dal", "surf-and-turf"]);
+  });
+
+  it("not cooked for longest, never cooked first", () => {
+    expect(find(state({}, "", "notCooked"))).toEqual(["lentil-dal", "surf-and-turf", "chicken-katsu", tuna.id, tofoo.id]);
+  });
+
+  it("cooked most recently, never cooked last", () => {
+    expect(find(state({}, "", "cooked"))).toEqual([tofoo.id, tuna.id, "chicken-katsu", "lentil-dal", "surf-and-turf"]);
+  });
+
+  it("keeps Favourites only and the sorts in the URL", () => {
+    const s = state({ favourites: true }, "", "notCooked");
+    expect(toSearch(s)).toBe("?sort=notCooked&fav=1");
+    expect(parseState(new URLSearchParams(toSearch(s)))).toEqual(s);
   });
 });
 

@@ -1,22 +1,33 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { useSyncExternalStore } from "react";
+import { ToastProvider } from "@/components/ui/toast";
 import type { LibraryRecipe } from "@/recipes/library-filter";
 
 const mocks = vi.hoisted(() => ({
   requireHousehold: vi.fn(),
   listRecipes: vi.fn(),
   getRecipeBySlug: vi.fn(),
+  getRecipeHousehold: vi.fn(),
   listPlans: vi.fn(),
   cookie: undefined as string | undefined,
+  actions: {
+    setFavouriteAction: vi.fn(),
+    setRatingAction: vi.fn(),
+    setNotesAction: vi.fn(),
+    markCookedAction: vi.fn(),
+    unmarkCookedAction: vi.fn(),
+  },
 }));
 vi.mock("@/data", () => ({
   requireHousehold: mocks.requireHousehold,
   listRecipes: mocks.listRecipes,
   getRecipeBySlug: mocks.getRecipeBySlug,
+  getRecipeHousehold: mocks.getRecipeHousehold,
   listPlans: mocks.listPlans,
 }));
+vi.mock("./actions", () => mocks.actions);
 vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (name: string) => (name === "recipes-view" && mocks.cookie ? { value: mocks.cookie } : undefined) }),
 }));
@@ -47,6 +58,7 @@ const { default: RecipesPage } = await import("./page");
 const { default: RecipePage } = await import("./[slug]/page");
 
 const row = (name: string, slug: string, extra: Partial<LibraryRecipe> = {}): LibraryRecipe => ({
+  id: `id-${slug}`,
   slug,
   name,
   totalMins: 35,
@@ -68,6 +80,9 @@ const row = (name: string, slug: string, extra: Partial<LibraryRecipe> = {}): Li
   equipment: ["hob"],
   freezable: false,
   ingredients: [{ item: "dried pasta", prep: null }],
+  favourite: false,
+  rating: null,
+  lastCooked: null,
   ...extra,
 });
 
@@ -75,8 +90,11 @@ const ctx = { householdId: "h1" };
 
 beforeEach(() => {
   window.history.replaceState(null, "", "/recipes");
-  mocks.requireHousehold.mockResolvedValue({ ctx });
+  mocks.requireHousehold.mockResolvedValue({ ctx, user: { name: "Kris Gwynne" } });
   mocks.listPlans.mockResolvedValue([]);
+  mocks.getRecipeHousehold.mockResolvedValue({ favourite: false, rating: null, notes: null, cooked: [] });
+  for (const action of Object.values(mocks.actions)) action.mockResolvedValue(true);
+  mocks.actions.markCookedAction.mockResolvedValue("2026-10-14");
   mocks.cookie = undefined;
   document.cookie = "recipes-view=; max-age=0; path=/";
 });
@@ -138,6 +156,23 @@ describe("the recipe library", () => {
     render(await RecipesPage());
     expect(within(screen.getByRole("article")).getByText("Meat & fish · Beef, prawns")).toBeInTheDocument();
   });
+
+  it("favourites from a card's heart (PP-169)", async () => {
+    mocks.listRecipes.mockResolvedValue([row("Tuna pasta", "tuna-pasta"), row("Dal", "dal", { favourite: true })]);
+    render(await RecipesPage());
+    const [dal, tuna] = screen.getAllByRole("article");
+    expect(within(dal).getByRole("button", { name: "Favourite" })).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(within(tuna).getByRole("button", { name: "Favourite" }));
+    expect(mocks.actions.setFavouriteAction).toHaveBeenCalledWith("id-tuna-pasta", true);
+  });
+
+  it("marks favourites in the list view (library design B)", async () => {
+    mocks.cookie = "list";
+    mocks.listRecipes.mockResolvedValue([row("Tuna pasta", "tuna-pasta"), row("Dal", "dal", { favourite: true })]);
+    render(await RecipesPage());
+    expect(screen.getByRole("link", { name: /Dal/ })).toHaveTextContent("Favourite");
+    expect(screen.getByRole("link", { name: /Tuna pasta/ })).not.toHaveTextContent("Favourite");
+  });
 });
 
 describe("the recipe page", () => {
@@ -181,6 +216,111 @@ describe("the recipe page", () => {
     expect(within(sheet).getByText("No meal plans yet")).toBeInTheDocument();
     fireEvent.click(within(sheet).getByRole("button", { name: "Create a plan" }));
     expect(screen.getByRole("dialog", { name: "New plan" })).toBeInTheDocument();
+  });
+
+  describe("the household's parts (PP-169)", () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date("2026-10-14T12:00:00Z"));
+      mocks.getRecipeBySlug.mockResolvedValue({ id: "r1", name: tuna.name, mealType: tuna.meal_type, data: tuna });
+    });
+    afterEach(() => vi.useRealTimers());
+
+    const show = async (household: object = {}) => {
+      mocks.getRecipeHousehold.mockResolvedValue({ favourite: false, rating: null, notes: null, cooked: [], ...household });
+      render(<ToastProvider>{await RecipePage(params(tuna.id))}</ToastProvider>);
+    };
+    const notes = () => screen.getByRole("region", { name: "Our notes" });
+
+    it("shows the favourite, rating, notes and history", async () => {
+      await show({
+        favourite: true,
+        rating: 4,
+        notes: { text: "Double the capers.", editedBy: "Sam Smith", editedAt: new Date("2026-10-02T09:00:00Z") },
+        cooked: ["2026-10-02", "2026-09-14", "2026-08-21"],
+      });
+      expect(mocks.getRecipeHousehold).toHaveBeenCalledWith(ctx, "r1");
+      expect(screen.getByRole("button", { name: "Favourite" })).toHaveAttribute("aria-pressed", "true");
+      const card = screen.getByRole("link", { name: /Rated 4 out of 5/ });
+      expect(card).toHaveAttribute("href", "#notes");
+      expect(card).toHaveTextContent("Cooked 3 times · last on 2 Oct");
+      expect(within(notes()).getByRole("button", { name: "Edit our notes" })).toHaveTextContent(
+        "Double the capers.Edited by Sam · 2 Oct",
+      );
+      expect(within(notes()).getByRole("button", { name: "4 stars" })).toHaveAttribute("aria-pressed", "true");
+      expect(within(notes()).getByText("Cooked 3 times: 2 Oct, 14 Sep, 21 Aug")).toBeInTheDocument();
+    });
+
+    it("says when there's nothing yet", async () => {
+      await show();
+      expect(screen.getByRole("link", { name: /Not rated/ })).toHaveTextContent("Not cooked yet");
+      expect(within(notes()).getByRole("button", { name: "Add a note" })).toBeInTheDocument();
+    });
+
+    it("favourites from the heart", async () => {
+      await show();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Favourite" })));
+      expect(mocks.actions.setFavouriteAction).toHaveBeenCalledWith("r1", true);
+    });
+
+    it("rates, and clears the rating by tapping it again", async () => {
+      await show({ rating: 4 });
+      await act(async () => fireEvent.click(within(notes()).getByRole("button", { name: "2 stars" })));
+      expect(mocks.actions.setRatingAction).toHaveBeenLastCalledWith("r1", 2);
+      await act(async () => fireEvent.click(within(notes()).getByRole("button", { name: "4 stars" })));
+      expect(mocks.actions.setRatingAction).toHaveBeenLastCalledWith("r1", null);
+    });
+
+    it("adds a note", async () => {
+      await show();
+      fireEvent.click(within(notes()).getByRole("button", { name: "Add a note" }));
+      const save = within(notes()).getByRole("button", { name: "Save" });
+      expect(save).toBeDisabled();
+      fireEvent.change(within(notes()).getByRole("textbox", { name: "Our notes" }), { target: { value: " Double the capers. " } });
+      await act(async () => fireEvent.click(save));
+      expect(mocks.actions.setNotesAction).toHaveBeenCalledWith("r1", "Double the capers.");
+      expect(within(notes()).queryByRole("textbox")).not.toBeInTheDocument();
+    });
+
+    it("keeps the note open when it can't be saved", async () => {
+      mocks.actions.setNotesAction.mockResolvedValue(false);
+      await show({ notes: { text: "Old", editedBy: "Kris", editedAt: new Date("2026-10-02T09:00:00Z") } });
+      fireEvent.click(within(notes()).getByRole("button", { name: "Edit our notes" }));
+      fireEvent.change(within(notes()).getByRole("textbox", { name: "Our notes" }), { target: { value: "New" } });
+      await act(async () => fireEvent.click(within(notes()).getByRole("button", { name: "Save" })));
+      expect(within(notes()).getByRole("textbox", { name: "Our notes" })).toHaveValue("New");
+      expect(screen.getByRole("status")).toHaveTextContent("Couldn't save the notes. Try again.");
+    });
+
+    it("marks it cooked today, with Undo", async () => {
+      await show({ cooked: ["2026-10-02"] });
+      const bar = screen.getByRole("button", { name: "Cooked today" });
+      expect(bar).toHaveAttribute("aria-pressed", "false");
+      await act(async () => fireEvent.click(bar));
+      expect(mocks.actions.markCookedAction).toHaveBeenCalledWith("r1");
+      const toast = screen.getByRole("status");
+      expect(toast).toHaveTextContent("Marked as cooked today");
+      await act(async () => fireEvent.click(within(toast).getByRole("button", { name: "Undo" })));
+      expect(mocks.actions.unmarkCookedAction).toHaveBeenCalledWith("r1", "2026-10-14");
+    });
+
+    it("takes today out when tapped again", async () => {
+      await show({ cooked: ["2026-10-14", "2026-10-02"] });
+      const bar = screen.getByRole("button", { name: "Cooked today" });
+      expect(bar).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByRole("link", { name: /Not rated/ })).toHaveTextContent("Cooked twice · last today");
+      await act(async () => fireEvent.click(bar));
+      expect(mocks.actions.unmarkCookedAction).toHaveBeenCalledWith("r1", "2026-10-14");
+      expect(mocks.actions.markCookedAction).not.toHaveBeenCalled();
+      expect(screen.getByRole("status")).toHaveTextContent("Removed today");
+    });
+
+    it("says so when Cooked today can't be saved", async () => {
+      mocks.actions.markCookedAction.mockResolvedValue(null);
+      await show();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Cooked today" })));
+      expect(screen.getByRole("status")).toHaveTextContent("Couldn't save that. Try again.");
+    });
   });
 
   it("is not found when the household has no such recipe", async () => {

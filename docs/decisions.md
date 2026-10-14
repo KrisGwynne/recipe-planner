@@ -294,3 +294,19 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Copy is the main action for the instructions** (Kris, 2026-10-14); the full text of `claude-project/instructions.md` is behind "Show the instructions", so the page stays short.
 
 **A small mock of Claude's reply stays** (Kris, 2026-10-14), so a first-timer knows what "the file" looks like.
+
+## 2026-10-14: favourites, ratings, notes and Cooked today (PP-169)
+
+**Notes are edited in place** (Kris, 2026-10-14): tapping "Our notes" turns the card into a text box with Save and Cancel; with no notes there's an "Add a note" button. Up to 2,000 characters; saving it empty deletes the note. "Edited by Kris · 2 Oct" shows the first name of whoever saved last.
+
+**Cooked today can be taken back the same day** (Kris, 2026-10-14): once today is marked, the button stays green (design F) and tapping it again takes today out, with a "Removed today" toast. Marking it shows "Marked as cooked today" with Undo. Today is the UK date, worked out on the server.
+
+**Tapping the current star clears the rating** (Kris, 2026-10-14). The label is **"Our rating"**, not the design's "Your rating", since ratings are shared by the household like the notes.
+
+**The top card always shows** (Kris, 2026-10-14), with empty stars and "Not cooked yet" before anything is set, so the feature can be found. It links to the Notes section, where you rate; its own stars only show the rating.
+
+**The history names the last three days** (Kris, 2026-10-14), then "and N more": "Cooked 7 times: today, 14 Sep, 21 Aug and 4 more". Past days can't be added or removed (only today); either could be a follow-up.
+
+**Cards and rows don't show rating or last cooked** when sorting by them (Kris, 2026-10-14); the design doesn't, and it can be added later.
+
+**How it works.** Two tables keyed by the recipe's row id, which re-importing keeps: `recipe_household_data` (favourite, rating, notes, one row per recipe) and `recipe_cooks` (one row per day cooked). Deleting a recipe deletes both. The data-access functions are in `src/data/recipe-household.ts`; `listRecipes` adds favourite, rating and last cooked for the library's heart, Favourites only (`?fav=1`) and the sorts (`sort=rating`, `notCooked`, `cooked`; ties A to Z). Every change shows at once (`useOptimistic`) and is saved by a server action in `src/app/(app)/recipes/actions.ts`. The recipe page's parts are in `src/app/(app)/recipes/[slug]/household.tsx` and reach `RecipeView` through its `household` and `notes` slots, so import's preview has none of them.

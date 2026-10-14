@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { RecipeView } from "@/components/recipe/recipe-view";
-import { getRecipeBySlug, listPlans, requireHousehold } from "@/data";
+import { getRecipeBySlug, getRecipeHousehold, listPlans, requireHousehold } from "@/data";
 import { defaultPlanName, defaultStartDate, plansToAddTo, today } from "@/plans/plan";
 import { AddToPlan } from "./add-to-plan";
+import { CookedTodayButton, HouseholdSummary, OurNotes, RecipeHousehold } from "./household";
 import { RecipeHeader } from "./recipe-header";
 
 type Props = {
@@ -31,25 +32,33 @@ function servingsParam(value: string | string[] | undefined): number | undefined
 }
 
 export default async function RecipePage({ params, searchParams }: Props) {
-  const { ctx } = await requireHousehold();
+  const { ctx, user } = await requireHousehold();
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const [row, plans] = await Promise.all([findRecipe(slug), listPlans(ctx)]);
   if (!row) notFound();
+  const household = await getRecipeHousehold(ctx, row.id);
+  if (!household) notFound();
   const todayDate = today();
   const startDate = defaultStartDate(plans, todayDate);
   return (
     <main>
-      <RecipeView
-        recipe={row.data}
-        header={<RecipeHeader recipe={row.data} />}
-        initialServings={servingsParam(query.servings)}
-      />
-      <AddToPlan
-        recipe={{ id: row.id, name: row.name, mealType: row.mealType, serves: row.serves }}
-        plans={plansToAddTo(plans, todayDate).map(({ id, name, startDate, days }) => ({ id, name, startDate, days }))}
-        newPlan={{ name: defaultPlanName(startDate), startDate, days: 7, people: 2 }}
-        today={todayDate}
-      />
+      <RecipeHousehold recipeId={row.id} initial={household} today={todayDate} me={user.name ?? null}>
+        <RecipeView
+          recipe={row.data}
+          header={<RecipeHeader recipe={row.data} />}
+          initialServings={servingsParam(query.servings)}
+          household={<HouseholdSummary />}
+          notes={<OurNotes />}
+        />
+        <AddToPlan
+          recipe={{ id: row.id, name: row.name, mealType: row.mealType, serves: row.serves }}
+          plans={plansToAddTo(plans, todayDate).map(({ id, name, startDate, days }) => ({ id, name, startDate, days }))}
+          newPlan={{ name: defaultPlanName(startDate), startDate, days: 7, people: 2 }}
+          today={todayDate}
+        >
+          <CookedTodayButton />
+        </AddToPlan>
+      </RecipeHousehold>
     </main>
   );
 }

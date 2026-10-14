@@ -111,6 +111,28 @@ describe("RecipeView", () => {
     expect(within(details).getByText("one-pot · quick")).toBeInTheDocument();
   });
 
+  it("has no household parts without them, as in import's read-only preview (PP-169)", () => {
+    show(tuna);
+    expect(screen.queryByText("Our notes")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Favourite" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cooked today" })).not.toBeInTheDocument();
+  });
+
+  it("puts the household's parts under the nutrition summary and at the top of Notes", () => {
+    render(
+      <RecipeView
+        recipe={tuna}
+        header={<span>header</span>}
+        household={<p>Household summary</p>}
+        notes={<p>Household notes</p>}
+      />,
+    );
+    expect(screen.getByRole("link", { name: /Per serving/ }).nextElementSibling).toHaveTextContent("Household summary");
+    const notesSection = document.getElementById("notes")!;
+    expect(notesSection.firstElementChild).toHaveTextContent("Household notes");
+    expect(within(notesSection).getByRole("region", { name: "From the recipe" })).toBeInTheDocument();
+  });
+
   it("links a source with a URL", () => {
     show({ ...tuna, source: { kind: "website", title: "BBC Good Food", url: "https://www.bbcgoodfood.com/recipes/x" } });
     expect(screen.getByRole("link", { name: "BBC Good Food" })).toHaveAttribute("href", "https://www.bbcgoodfood.com/recipes/x");
