@@ -21,7 +21,7 @@ export function AddToPlan({
   newPlan,
   today,
 }: {
-  recipe: { id: string; name: string; mealType: string[] };
+  recipe: { id: string; name: string; mealType: string[]; serves: number };
   plans: PlanOption[];
   /** The New plan sheet's starting values, for when there are no plans. */
   newPlan: PlanDetails;
@@ -61,6 +61,7 @@ export function AddToPlan({
           grid={null}
           plans={plans}
           boldSlots={recipe.mealType}
+          portions={{ serves: recipe.serves, each: 1 }}
           onChoose={async (grid, cell) => {
             const id = await addEntryAction(grid.id, { ...cell, recipeId: recipe.id });
             close();

@@ -45,7 +45,7 @@ export default async function RecipePage({ params, searchParams }: Props) {
         initialServings={servingsParam(query.servings)}
       />
       <AddToPlan
-        recipe={{ id: row.id, name: row.name, mealType: row.mealType }}
+        recipe={{ id: row.id, name: row.name, mealType: row.mealType, serves: row.serves }}
         plans={plansToAddTo(plans, todayDate).map(({ id, name, startDate, days }) => ({ id, name, startDate, days }))}
         newPlan={{ name: defaultPlanName(startDate), startDate, days: 7, people: 2 }}
         today={todayDate}

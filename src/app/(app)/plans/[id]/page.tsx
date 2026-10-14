@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { Icon } from "@/components/icon";
 import { getPlan, requireHousehold } from "@/data";
+import { planAverage } from "@/plans/nutrition";
 import { addDays, formatRange, planEnd, today } from "@/plans/plan";
+import { PlanAverage } from "./plan-average";
 import { PlanBoard } from "./plan-board";
 import { PlanMenu } from "./plan-menu";
 
@@ -12,7 +14,7 @@ type Props = { params: Promise<{ id: string }> };
 
 // A meal plan (designs/src/meal-plans.html, D and I). Found by id within the
 // household, so another household's plan is a 404. PP-170 shows the days and
-// what's in them; PP-171 fills them (PlanBoard); totals come with PP-172.
+// what's in them; PP-171 fills them (PlanBoard); PP-172 adds the totals.
 const findPlan = cache(async (id: string) => {
   const { ctx } = await requireHousehold();
   return getPlan(ctx, id);
@@ -27,6 +29,7 @@ export default async function PlanPage({ params }: Props) {
   const plan = await findPlan((await params).id);
   if (!plan) notFound();
   const todayDate = today();
+  const average = planAverage(plan.entries, plan.days);
 
   const mealsByDay = Array.from({ length: plan.days }, (_, day) =>
     new Set(plan.entries.filter((e) => e.dayIndex === day).map((e) => e.slot)).size,
@@ -48,6 +51,11 @@ export default async function PlanPage({ params }: Props) {
             {formatRange(plan)} · {plan.people === 1 ? "1 person" : `${plan.people} people`}
           </p>
         </div>
+        {average && (
+          <div className="hidden md:block ml-3">
+            <PlanAverage planId={plan.id} average={average} wide />
+          </div>
+        )}
         <PlanMenu
           plan={{ id: plan.id, name: plan.name, startDate: plan.startDate, days: plan.days, people: plan.people }}
           mealsByDay={mealsByDay}
@@ -55,6 +63,12 @@ export default async function PlanPage({ params }: Props) {
           today={todayDate}
         />
       </div>
+
+      {average && (
+        <div className="px-5 pt-3 md:hidden">
+          <PlanAverage planId={plan.id} average={average} />
+        </div>
+      )}
 
       <PlanBoard
         plan={{ id: plan.id, name: plan.name, startDate: plan.startDate, days: plan.days, people: plan.people }}

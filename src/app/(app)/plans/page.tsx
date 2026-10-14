@@ -4,6 +4,7 @@ import { Icon } from "@/components/icon";
 import { Page } from "@/components/page";
 import { listPlans, requireHousehold, type PlanSummary } from "@/data";
 import { cx } from "@/lib/cx";
+import { kcal } from "@/plans/nutrition";
 import { defaultPlanName, defaultStartDate, formatRange, groupPlans, meals, planDay, today } from "@/plans/plan";
 import { NewPlan } from "./new-plan";
 import { PastPlans } from "./past-plans";
@@ -90,7 +91,8 @@ function mealCount(plan: PlanSummary) {
 
 /**
  * A plan covering today shows its meals per day, today in solid tomato
- * (design A); one to come says how many days are still empty.
+ * and each person's kcal a day on average (design A); one to come says how
+ * many days are still empty.
  */
 function PlanCard({ plan, today }: { plan: PlanSummary; today?: string }) {
   const emptyDays = plan.mealsByDay.filter((n) => n === 0).length;
@@ -134,6 +136,7 @@ function PlanCard({ plan, today }: { plan: PlanSummary; today?: string }) {
       )}
       <span className="block mt-3 text-sm text-ink-muted tabular-nums">
         <span className="text-ink font-medium">{meals(mealCount(plan))}</span>
+        {today && plan.averageKcal && ` · ${kcal(plan.averageKcal)} a day each`}
         {!today && emptyDays > 0 && ` · ${emptyDays === 1 ? "1 day" : `${emptyDays} days`} empty`}
       </span>
     </Link>

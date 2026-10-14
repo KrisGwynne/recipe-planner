@@ -6,7 +6,8 @@ import { categoryDotClasses } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import { cx } from "@/lib/cx";
-import { SLOTS, formatDay, formatRange, mealName, planDay, slotLabels, type Slot } from "@/plans/plan";
+import { leftOver, leftovers } from "@/plans/nutrition";
+import { SLOTS, formatDay, formatPortions, formatRange, mealName, planDay, servingsPlanned, slotLabels, type Slot } from "@/plans/plan";
 import type { PlanGrid } from "@/plans/plan-grid";
 import { planGridAction } from "@/app/(app)/plans/actions";
 
@@ -27,6 +28,7 @@ export function SlotGridSheet({
   plans,
   boldSlots = [],
   current,
+  portions,
   onChoose,
   onClose,
 }: {
@@ -40,6 +42,8 @@ export function SlotGridSheet({
   boldSlots?: readonly string[];
   /** Where the recipe being moved is now. */
   current?: Cell;
+  /** What the recipe serves and the portions each it's (or will be) planned at, for the leftovers line. */
+  portions: { serves: number; each: number };
   onChoose: (grid: PlanGrid, cell: Cell) => Promise<void>;
   onClose: () => void;
 }) {
@@ -141,7 +145,10 @@ export function SlotGridSheet({
       ) : failed || !grid ? (
         <p className="mt-6 text-center text-ink-muted">That plan no longer exists.</p>
       ) : (
-        <Grid grid={grid} boldSlots={boldSlots} current={current} selected={selected} onSelect={setSelected} />
+        <>
+          <Grid grid={grid} boldSlots={boldSlots} current={current} selected={selected} onSelect={setSelected} />
+          <ServingsLine serves={portions.serves} people={grid.people} each={portions.each} />
+        </>
       )}
     </Sheet>
   );
@@ -223,6 +230,23 @@ function Grid({
         })}
       </tbody>
     </table>
+  );
+}
+
+/** "Serves 4 · 2 people × 1 each = 2 · 2 left over", for the chosen plan's people (design G). */
+function ServingsLine({ serves, people, each }: { serves: number; people: number; each: number }) {
+  const left = leftovers(serves, people, each);
+  return (
+    <p className="mt-3 text-sm text-ink-muted tabular-nums">
+      Serves {serves} · {people === 1 ? "1 person" : `${people} people`} × {formatPortions(each)} each ={" "}
+      {formatPortions(servingsPlanned(people, each))}
+      {left > 0 && (
+        <>
+          {" · "}
+          <span className="text-warning font-semibold">{leftOver(left)}</span>
+        </>
+      )}
+    </p>
   );
 }
 
