@@ -282,3 +282,15 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **"kcal a day each" is on the current plans' cards only** (Kris, 2026-10-14), as design A shows; coming-up plans keep "N days empty".
 
 **How it works.** The sums are in `src/plans/nutrition.ts`; the plan page, entry sheet, Add to plan / Move sheet and the nutrition page (`/plans/<id>/nutrition`) all use them. The plan list's average is summed in SQL in `listPlans`, so it doesn't load every entry. The recipe page's energy-split bar moved to `src/components/recipe/energy-split.tsx` for the nutrition page. Past 7 days, the nutrition page's rows say "Mon 12" rather than "Mon", since a plan can then have two Mondays.
+
+## 2026-10-14: help page design approved (PP-179)
+
+**The help page lives at `/import/help`, under the Import tab** (Kris, 2026-10-14). It's opened only from the two existing links, Import's "New here?" and the empty library's "How do I make recipe JSON?"; there's no entry on Household. Design: `designs/src/help.html`.
+
+**Setup says "Easiest on a computer"** up front (Kris, 2026-10-14), since adding files to a Claude project is fiddly on a phone. On wide screens, setup is the left column and each recipe the right.
+
+**The schema and two examples are three separate downloads, not a zip** (Kris, 2026-10-14). They're served from the app's own copies (`schema/`, `examples/`), so they're always the versions Import checks against. Claude won't take a zip until it's unzipped.
+
+**Copy is the main action for the instructions** (Kris, 2026-10-14); the full text of `claude-project/instructions.md` is behind "Show the instructions", so the page stays short.
+
+**A small mock of Claude's reply stays** (Kris, 2026-10-14), so a first-timer knows what "the file" looks like.
