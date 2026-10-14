@@ -28,7 +28,11 @@ const planColumns = {
   people: mealPlans.people,
 };
 
-/** Every plan in the household, with how many meals each day has planned (for the plan list). */
+/**
+ * Every plan in the household, for the plan list: how many meals each day has
+ * planned, and each person's kcal a day on average over the days planned
+ * (null with nothing planned).
+ */
 export async function listPlans(ctx: HouseholdContext) {
   const db = getDb();
   const [plans, counts] = await Promise.all([
@@ -43,18 +47,31 @@ export async function listPlans(ctx: HouseholdContext) {
         dayIndex: mealPlanEntries.dayIndex,
         // A meal with a curry and a side is one meal.
         meals: sql<number>`count(distinct ${mealPlanEntries.slot})::int`,
+        // Each person's kcal that day (PP-172), and whether any of it is estimated.
+        kcal: sql<number>`sum(${recipes.kcal} * ${mealPlanEntries.portionsPerPerson})::float8`,
+        estimated: sql<boolean>`bool_or(${recipes.nutritionSource} = 'estimated')`,
       })
       .from(mealPlanEntries)
       .innerJoin(mealPlans, eq(mealPlans.id, mealPlanEntries.planId))
+      .innerJoin(recipes, eq(recipes.id, mealPlanEntries.recipeId))
       .where(eq(mealPlans.householdId, ctx.householdId))
       .groupBy(mealPlanEntries.planId, mealPlanEntries.dayIndex),
   ]);
   return plans.map((plan) => {
     const mealsByDay = Array.from({ length: plan.days }, () => 0);
+    let kcal = 0;
+    let estimated = false;
+    let daysPlanned = 0;
     for (const count of counts) {
-      if (count.planId === plan.id && count.dayIndex < plan.days) mealsByDay[count.dayIndex] = count.meals;
+      if (count.planId === plan.id && count.dayIndex < plan.days) {
+        mealsByDay[count.dayIndex] = count.meals;
+        kcal += count.kcal;
+        estimated ||= count.estimated;
+        daysPlanned++;
+      }
     }
-    return { ...plan, mealsByDay };
+    const averageKcal = daysPlanned === 0 ? null : { kcal: kcal / daysPlanned, estimated };
+    return { ...plan, mealsByDay, averageKcal };
   });
 }
 
