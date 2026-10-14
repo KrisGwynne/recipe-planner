@@ -27,7 +27,7 @@ import {
 } from "@/recipes/library-filter";
 import { toRecipeSummary } from "@/recipes/summary";
 import { FilterSections } from "./filter-sections";
-import { Sheet } from "./sheet";
+import { Sheet } from "@/components/ui/sheet";
 import { viewCookie, type LibraryView } from "./view";
 
 const emphasis: Partial<Record<SortKey, "time" | "kcal" | "protein">> = {

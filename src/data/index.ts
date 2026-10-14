@@ -26,3 +26,18 @@ export {
   type Invitee,
 } from "./invites";
 export { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipes, saveRecipe } from "./recipes";
+export {
+  addEntry,
+  copyPlan,
+  createPlan,
+  deletePlan,
+  getPlan,
+  listPlans,
+  moveEntry,
+  removeEntry,
+  setEntryPortions,
+  updatePlan,
+  type Plan,
+  type PlanEntry,
+  type PlanSummary,
+} from "./plans";
