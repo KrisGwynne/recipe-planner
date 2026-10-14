@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Help</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-179</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Help: turning a photo into a recipe file</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">The app never reads photos itself: a Claude.ai project turns a photo of a recipe into a file, and Import brings the file in. This page walks a new user through setting that project up once, then using it for each recipe. It's opened from Import's "New here?" link and the empty library's "How do I make recipe JSON?".</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">On a phone</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">One page in two parts: setting the project up (once), then each recipe. Steps are numbered cards, each with the one thing to do and, where the app can help, a button that does it: open Claude.ai, copy the instructions, download the files.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Top: set up once -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 shrink-0 rounded-full grid place-items-center" aria-label="Back"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <p class="text-sm text-ink-muted">Import</p>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-1">
+          <h1 class="font-display text-[26px] leading-8 font-semibold">Turn a photo into a recipe file</h1>
+          <p class="mt-2 text-ink-muted">The app doesn't read photos. A Claude.ai project does: set it up once, then send it a photo of any recipe and it gives you a file to import.</p>
+
+          <div class="mt-6 flex items-baseline justify-between">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Set up once</h2>
+            <p class="text-xs text-ink-muted">About 5 minutes</p>
+          </div>
+          <p class="mt-2 rounded-control bg-surface-2 px-3 py-2 text-sm text-ink-muted">Easiest on a computer, since you'll add files to the project. After that, a phone is all you need.</p>
+
+          <ol class="mt-3 space-y-3">
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">1</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Create a Claude project</p>
+                  <p class="mt-1 text-sm text-ink-muted">In Claude.ai, open Projects and create one called "Recipe planner".</p>
+                  <a class="mt-3 h-11 px-4 rounded-control border border-line bg-surface font-semibold inline-flex items-center gap-2">Open Claude.ai<svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-external"/></svg></a>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">2</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Paste in the instructions</p>
+                  <p class="mt-1 text-sm text-ink-muted">They tell Claude exactly what file to make. Open the project's instructions and paste these in.</p>
+                  <button class="mt-3 h-11 px-4 rounded-control border border-line bg-surface font-semibold inline-flex items-center gap-2 whitespace-nowrap"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-copy"/></svg>Copy instructions</button>
+                  <button class="mt-1 h-11 rounded-control text-primary text-sm font-semibold inline-flex items-center gap-1">Show the instructions<svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-chevron-down"/></svg></button>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">3</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Add three files to the project</p>
+                  <p class="mt-1 text-sm text-ink-muted">Download them, then add them to the project's knowledge (its files).</p>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <!-- include:import-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Opening the page</p><p class="text-ink-muted mt-1">Opened from Import (A) or the empty library (I); back returns to whichever it was, and the label says where. It sits under the Import tab (<code>/import/help</code>), so Import stays lit. The intro says in one sentence why there's a separate Claude project at all. The instructions are copied straight from the app, so there's nothing to download or retype for step 2.</p></figcaption>
+    </figure>
+
+    <!-- B. Middle: files, try it, each recipe -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 overflow-hidden px-5 pt-5">
+          <ol class="space-y-3" start="3">
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">3</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Add three files to the project</p>
+                  <p class="mt-1 text-sm text-ink-muted">Download them, then add them to the project's knowledge (its files).</p>
+                  <ul class="mt-3 divide-y divide-line rounded-control border border-line">
+                    <li><a class="flex items-center gap-3 px-3 min-h-12 py-2">
+                      <span class="flex-1 min-w-0"><span class="block text-sm font-semibold font-mono truncate">recipe.schema.json</span><span class="block text-xs text-ink-muted">The rules every recipe file follows</span></span>
+                      <svg class="size-5 shrink-0 fill-none stroke-current stroke-2 text-primary"><use href="#i-download"/></svg></a></li>
+                    <li><a class="flex items-center gap-3 px-3 min-h-12 py-2">
+                      <span class="flex-1 min-w-0"><span class="block text-sm font-semibold font-mono truncate">lemony-tuna-tomato-caper-pasta.json</span><span class="block text-xs text-ink-muted">Example: printed nutrition</span></span>
+                      <svg class="size-5 shrink-0 fill-none stroke-current stroke-2 text-primary"><use href="#i-download"/></svg></a></li>
+                    <li><a class="flex items-center gap-3 px-3 min-h-12 py-2">
+                      <span class="flex-1 min-w-0"><span class="block text-sm font-semibold font-mono truncate">char-siu-tofoo-noodles.json</span><span class="block text-xs text-ink-muted">Example: estimated nutrition</span></span>
+                      <svg class="size-5 shrink-0 fill-none stroke-current stroke-2 text-primary"><use href="#i-download"/></svg></a></li>
+                  </ul>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">4</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Try it with one recipe</p>
+                  <p class="mt-1 text-sm text-ink-muted">Follow "Each recipe" below. If it imports with no problems, you're set.</p>
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <h2 class="mt-7 text-xs font-semibold uppercase tracking-wider text-ink-muted">Each recipe</h2>
+          <ol class="mt-3 space-y-3">
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">1</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Send Claude a photo</p>
+                  <p class="mt-1 text-sm text-ink-muted">Start a chat in the Recipe planner project and upload a photo of the recipe: both pages if it spans two.</p>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">2</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Check what it guessed</p>
+                  <p class="mt-1 text-sm text-ink-muted">Claude replies with the file, then lists anything it had to guess or couldn't read.</p>
+                  <div class="mt-3 rounded-control bg-surface-2 p-3 text-xs">
+                    <p class="font-mono font-semibold">lemony-tuna-tomato-caper-pasta.json</p>
+                    <p class="mt-1.5 font-mono text-ink-muted rounded bg-bg px-2 py-1.5 truncate">{ "schema_version": 1, "id": "lemony-tuna…</p>
+                    <p class="mt-2 text-ink-muted"><b class="text-ink">Guessed:</b> the cook time wasn't printed, so 20 minutes.</p>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <!-- include:import-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · The files, then each recipe</p><p class="text-ink-muted mt-1">The three files download from the app itself, always the versions this app checks against, so they can't drift from what Import expects. Long file names truncate; the line under each says what it's for. The small reply in step 2 shows what to expect from Claude, so a first-timer knows what "the file" looks like.</p></figcaption>
+    </figure>
+
+    <!-- C. Bottom: into the app, problems, updates -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 overflow-hidden px-5 pt-5">
+          <ol class="space-y-3">
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">3</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Bring it into the app</p>
+                  <dl class="mt-2 space-y-2 text-sm">
+                    <div><dt class="font-semibold">Paste <span class="font-normal text-ink-muted">· easiest on a phone</span></dt><dd class="text-ink-muted">Copy Claude's code block, then Import → Paste a recipe → Check recipe.</dd></div>
+                    <div><dt class="font-semibold">File <span class="font-normal text-ink-muted">· several at once</span></dt><dd class="text-ink-muted">Save it as a .json file, then Import → Choose recipe files.</dd></div>
+                  </dl>
+                </div>
+              </div>
+            </li>
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">4</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Review and import</p>
+                  <p class="mt-1 text-sm text-ink-muted">The app shows the recipe before saving it. Press Import.</p>
+                </div>
+              </div>
+            </li>
+          </ol>
+
+          <h2 class="mt-7 text-xs font-semibold uppercase tracking-wider text-ink-muted">When something's off</h2>
+          <div class="mt-3 space-y-3 text-sm">
+            <div class="rounded-card border border-line p-4">
+              <p class="font-semibold">The app says a file has problems</p>
+              <p class="mt-1 text-ink-muted">Tap <b class="text-ink">Copy problems for Claude</b>, paste it into the same chat, and import the corrected file Claude gives back.</p>
+            </div>
+            <div class="rounded-card border border-line p-4">
+              <p class="font-semibold">You want to change a recipe</p>
+              <p class="mt-1 text-ink-muted">Ask Claude for a new version in the same chat and import it. The app shows what changed and keeps your favourite, rating and notes.</p>
+            </div>
+            <div class="rounded-card border border-line p-4">
+              <p class="font-semibold">Import says a file is for a newer version</p>
+              <p class="mt-1 text-ink-muted">The app's recipe format has moved on. Copy the instructions and download the files above again, and replace the project's copies.</p>
+            </div>
+          </div>
+
+          <a class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg>Import a recipe</a>
+        </div>
+        <!-- include:import-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · The end of the page</p><p class="text-ink-muted mt-1">Both ways in (paste and file) in one step, each with when to use it. The three things that go wrong get plain cards rather than steps. The page ends with Import, since that's where you go next.</p></figcaption>
+    </figure>
+
+    <!-- D. Instructions shown, copied -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="flex-1 overflow-hidden px-5 pt-5">
+          <ol class="space-y-3">
+            <li class="rounded-card bg-surface border border-line p-4">
+              <div class="flex gap-3">
+                <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">2</span>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold">Paste in the instructions</p>
+                  <p class="mt-1 text-sm text-ink-muted">They tell Claude exactly what file to make. Open the project's instructions and paste these in.</p>
+                  <button class="mt-3 h-11 px-4 rounded-control border border-line bg-surface font-semibold inline-flex items-center gap-2 whitespace-nowrap"><svg class="size-5 fill-none stroke-current stroke-[2.5] text-veg"><use href="#i-check"/></svg>Copied</button>
+                  <button class="mt-1 h-11 rounded-control text-primary text-sm font-semibold inline-flex items-center gap-1" aria-expanded="true">Hide the instructions<svg class="size-4 fill-none stroke-current stroke-2 rotate-180"><use href="#i-chevron-down"/></svg></button>
+                </div>
+              </div>
+              <div class="mt-3 h-[420px] overflow-hidden rounded-control bg-surface-2 p-3 text-xs leading-relaxed text-ink-muted relative">
+                <p>When I upload a photo of a recipe, turn it into one JSON file that validates against <code class="font-mono text-ink">recipe.schema.json</code> (in this project's knowledge). The two example files show what good output looks like. My recipe planner app imports the file and rejects it if anything doesn't match the schema, so be exact.</p>
+                <p class="mt-2 font-semibold text-ink">What to give back</p>
+                <ul class="mt-1 list-disc pl-4 space-y-1">
+                  <li>Only the file: one <code class="font-mono">json</code> code block, preceded by its file name on its own line, <code class="font-mono">&lt;id&gt;.json</code>. Nothing else before it.</li>
+                  <li>After the code block, a short list of anything you had to guess or couldn't read (or "Nothing guessed").</li>
+                </ul>
+                <p class="mt-2 font-semibold text-ink">The file</p>
+                <ul class="mt-1 list-disc pl-4 space-y-1">
+                  <li><code class="font-mono">schema_version</code>: always <code class="font-mono">1</code>.</li>
+                  <li><code class="font-mono">id</code>: the recipe name as a lowercase, hyphenated slug (letters and numbers only, single hyphens), e.g. <code class="font-mono">lemony-tuna-tomato-caper-pasta</code>. The app uses it to match the recipe when I import a new version…</li>
+                  <li><code class="font-mono">name</code>: as printed.</li>
+                </ul>
+                <span class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-surface-2"></span>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <div class="absolute inset-x-0 bottom-24 flex justify-center">
+          <div class="flex items-center gap-3 rounded-full bg-ink text-bg px-5 h-12 shadow-lg w-fit">
+            <svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg><span class="font-medium">Instructions copied</span>
+          </div>
+        </div>
+        <!-- include:import-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Copied, and shown</p><p class="text-ink-muted mt-1">Copy instructions puts the whole text on the clipboard, with a toast and the button saying "Copied" for a few seconds. "Show the instructions" opens the text below the step, scrolling in its own box, for anyone who wants to read it or select it by hand. The text is the app's copy of <code>claude-project/instructions.md</code>, so it's always current.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Wider screens</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">Setting up is easiest on a computer, so from tablet width the two parts sit side by side: set up on the left, each recipe on the right.</p>
+  <figure class="mt-5 w-[1240px] max-w-full overflow-hidden rounded-2xl border border-line shadow-xl bg-bg">
+    <div class="h-8 bg-surface-2 border-b border-line flex items-center gap-1.5 px-3"><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span></div>
+    <div class="flex h-[720px]">
+      <nav class="w-20 shrink-0 border-r border-line bg-surface flex flex-col items-center gap-2 py-4 text-[11px] font-medium">
+        <span class="size-12 rounded-full bg-primary text-on-primary grid place-items-center mb-3 ring-4 ring-primary-soft" aria-label="Import"><svg class="size-6 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg></span>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipes</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plans</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted mt-auto"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-users"/></svg>Household</a>
+      </nav>
+      <div class="flex-1 min-w-0 px-10 py-6 overflow-hidden">
+        <div class="max-w-5xl">
+          <p class="text-sm text-ink-muted inline-flex items-center gap-1"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg>Import</p>
+          <h1 class="mt-1 font-display text-[28px] font-semibold">Turn a photo into a recipe file</h1>
+          <p class="mt-1 text-ink-muted max-w-2xl">The app doesn't read photos. A Claude.ai project does: set it up once, then send it a photo of any recipe and it gives you a file to import.</p>
+          <div class="mt-6 grid grid-cols-2 gap-8">
+            <div>
+              <div class="flex items-baseline justify-between"><h2 class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Set up once</h2><p class="text-xs text-ink-muted">About 5 minutes</p></div>
+              <ol class="mt-3 space-y-3">
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3">
+                  <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">1</span>
+                  <div class="flex-1 min-w-0 flex items-start gap-3"><div class="flex-1"><p class="font-semibold">Create a Claude project</p><p class="mt-1 text-sm text-ink-muted">In Claude.ai, open Projects and create one called "Recipe planner".</p></div>
+                  <a class="h-10 px-3 rounded-control border border-line bg-surface text-sm font-semibold inline-flex items-center gap-2 shrink-0">Open Claude.ai<svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-external"/></svg></a></div>
+                </li>
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3">
+                  <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">2</span>
+                  <div class="flex-1 min-w-0 flex items-start gap-3"><div class="flex-1"><p class="font-semibold">Paste in the instructions</p><p class="mt-1 text-sm text-ink-muted">Open the project's instructions and paste these in. <span class="text-primary font-semibold">Show the instructions</span></p></div>
+                  <button class="h-10 px-3 rounded-control border border-line bg-surface text-sm font-semibold inline-flex items-center gap-2 shrink-0"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-copy"/></svg>Copy instructions</button></div>
+                </li>
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3">
+                  <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">3</span>
+                  <div class="flex-1 min-w-0"><p class="font-semibold">Add three files to the project</p><p class="mt-1 text-sm text-ink-muted">Download them, then add them to the project's knowledge.</p>
+                    <ul class="mt-3 divide-y divide-line rounded-control border border-line text-sm">
+                      <li class="flex items-center gap-3 px-3 h-11"><span class="flex-1 font-mono font-semibold">recipe.schema.json</span><span class="text-xs text-ink-muted">The rules</span><svg class="size-5 fill-none stroke-current stroke-2 text-primary"><use href="#i-download"/></svg></li>
+                      <li class="flex items-center gap-3 px-3 h-11"><span class="flex-1 font-mono font-semibold truncate">lemony-tuna-tomato-caper-pasta.json</span><span class="text-xs text-ink-muted">Example</span><svg class="size-5 fill-none stroke-current stroke-2 text-primary"><use href="#i-download"/></svg></li>
+                      <li class="flex items-center gap-3 px-3 h-11"><span class="flex-1 font-mono font-semibold truncate">char-siu-tofoo-noodles.json</span><span class="text-xs text-ink-muted">Example</span><svg class="size-5 fill-none stroke-current stroke-2 text-primary"><use href="#i-download"/></svg></li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3">
+                  <span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center text-sm font-semibold">4</span>
+                  <div><p class="font-semibold">Try it with one recipe</p><p class="mt-1 text-sm text-ink-muted">Follow "Each recipe". If it imports with no problems, you're set.</p></div>
+                </li>
+              </ol>
+            </div>
+            <div>
+              <h2 class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Each recipe</h2>
+              <ol class="mt-3 space-y-3 text-sm">
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3"><span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center font-semibold">1</span><div><p class="font-semibold text-base">Send Claude a photo</p><p class="mt-1 text-ink-muted">Start a chat in the project and upload the recipe: both pages if it spans two.</p></div></li>
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3"><span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center font-semibold">2</span><div><p class="font-semibold text-base">Check what it guessed</p><p class="mt-1 text-ink-muted">Claude replies with the file, then lists anything it had to guess or couldn't read.</p></div></li>
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3"><span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center font-semibold">3</span><div><p class="font-semibold text-base">Bring it into the app</p><p class="mt-1 text-ink-muted"><b class="text-ink">Paste:</b> copy the code block, then Import → Paste a recipe. <b class="text-ink">File:</b> save it as .json, then Import → Choose recipe files.</p></div></li>
+                <li class="rounded-card bg-surface border border-line p-4 flex gap-3"><span class="size-7 shrink-0 rounded-full bg-primary-soft text-primary grid place-items-center font-semibold">4</span><div><p class="font-semibold text-base">Review and import</p><p class="mt-1 text-ink-muted">The app shows the recipe before saving it.</p></div></li>
+              </ol>
+              <h2 class="mt-6 text-xs font-semibold uppercase tracking-wider text-ink-muted">When something's off</h2>
+              <p class="mt-2 text-sm text-ink-muted">Problems with a file, changing a recipe, a newer version: the same three cards as on a phone (C).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <p class="text-ink-muted mt-3 max-w-3xl">Below tablet width the phone layout (A to D) is used.</p>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
+  <ol class="mt-3 list-decimal pl-6 space-y-2 max-w-3xl">
+    <li><b>Where it lives (A).</b> Under the Import tab at <code>/import/help</code>, opened only from the two links (Import's "New here?" is always on Import, so it's easy to find again). <i>Recommend:</i> just the two links, no extra entry on Household.</li>
+    <li><b>"Easiest on a computer" (A).</b> Adding files to a Claude project is fiddly on a phone, so the setup says so up front and the wide layout puts setup first. <i>Recommend:</i> keep it.</li>
+    <li><b>The three files (B).</b> Downloaded one by one from the app, always the versions Import checks against. A single zip would be one tap but has to be unzipped before Claude will take the files. <i>Recommend:</i> three separate downloads.</li>
+    <li><b>The instructions (D).</b> Copy is the main action; the text itself is behind "Show the instructions" so the page stays short. <i>Recommend:</i> as shown.</li>
+    <li><b>The example reply (B).</b> A small mock of what Claude sends back, so a first-timer knows what "the file" looks like. <i>Recommend:</i> keep it.</li>
+  </ol>
+</section>
+
+</main>
+</body>
+</html>
