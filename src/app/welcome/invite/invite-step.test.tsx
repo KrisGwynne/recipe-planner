@@ -31,7 +31,8 @@ describe("invite step page (C)", () => {
     render(await InviteStepPage());
     expect(screen.getByRole("heading", { name: "Household A is ready" })).toBeInTheDocument();
     expect(screen.getByText("Tap Copy or Share to make a link")).toBeInTheDocument();
-    expect(screen.getByText("Works once, for one person, and expires in 7 days.")).toBeInTheDocument();
+    expect(screen.getByText(/Works once, for one person, and expires in 7 days\. Manage links in/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Household settings" })).toHaveAttribute("href", "/household");
     expect(screen.getByRole("link", { name: "Done, go to recipes" })).toHaveAttribute("href", "/recipes");
     expect(screen.getByRole("link", { name: "Skip for now" })).toHaveAttribute("href", "/recipes");
     expect(await mocks.db.select().from(householdInvites)).toHaveLength(0);

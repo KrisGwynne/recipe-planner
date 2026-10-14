@@ -326,3 +326,15 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Invite links can't be copied again** (Kris, 2026-10-14): only a hash of each is stored (PP-156), so the open links list shows when each expires and who made it, with Cancel only. A lost link means making a new one.
 
 **Details settled in the design:** a link is only made on Copy or Share, as in onboarding; making someone an owner happens straight away with Undo; after leaving, being removed or the household being deleted, "Start a household" shows "You're no longer in The Gwynnes" once, the same wording whichever way it happened; after deleting your account you're signed out and the sign-in page says so; from tablet width the page is two columns.
+
+## 2026-10-14: household settings (PP-157)
+
+**"Download all recipes" and "Delete my account" come with their tickets** (Kris, 2026-10-14), PP-164 and PP-158, rather than showing buttons that don't work yet. The same goes for "Download all recipes first" on the Delete household sheet, and the Privacy and Terms links at the bottom of the page (PP-159).
+
+**You can't change your own role** (Kris, 2026-10-14): your row doesn't open, as in the design. To step back, another owner makes you a member, or you leave.
+
+**The "You're no longer in …" note** (Kris, 2026-10-14) comes from a small `household_departures` table: one row per person, holding the household's name, written when you leave, are removed, or the household is deleted, and replaced next time. "Start a household" shows it whenever you have no household, so loading a page never deletes anything.
+
+**Two owners leaving at the same instant could leave none** (Kris, 2026-10-14). Each change is one SQL statement with the "always an owner" rule inside it (the Neon HTTP driver has no transactions), which covers everything but exact races. Households are small enough to accept that rather than add locking.
+
+**How it works.** The functions are in `src/data/households.ts` (`renameHousehold`, `setRole`, `removeMember`, `leaveHousehold`, `deleteHousehold`, `householdCounts`, `getDeparture`); the page is `src/app/(app)/household/`. Deleting a household checks the typed name on the server too, and the database's cascades take its recipes, recipe data, plans and invites. After leaving or deleting, the action goes to `/welcome`. Onboarding screen C links to Household settings again.

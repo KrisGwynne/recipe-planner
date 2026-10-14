@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
 import { users } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
-import { createHousehold, getMembership } from "@/data";
+import { createHousehold, deleteHousehold, getMembership } from "@/data";
+import { contextFor } from "@/data/context";
 
 const mocks = vi.hoisted(() => ({
   db: undefined as unknown as Db,
@@ -48,6 +49,21 @@ describe("welcome page", () => {
     expect(container.querySelector("img")?.getAttribute("src")).toContain(
       encodeURIComponent("https://lh3.googleusercontent.com/a/kris"),
     );
+  });
+
+  it("says which household they're no longer in, after leaving one (household design M)", async () => {
+    await createHousehold("kris", "Our kitchen");
+    const membership = await getMembership("kris");
+    await deleteHousehold(contextFor({ userId: "kris", householdId: membership!.householdId, role: "owner" }), "Our kitchen");
+    render(await WelcomePage());
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "You're no longer in Our kitchen. Start your own household, or open an invite link to join one.",
+    );
+  });
+
+  it("has no note for someone who's never been in a household", async () => {
+    render(await WelcomePage());
+    expect(screen.queryByText(/no longer in/)).not.toBeInTheDocument();
   });
 
   it("sends someone who already has a household to the app", async () => {
