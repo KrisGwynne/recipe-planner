@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Icon } from "@/components/icon";
 import { NoPlans, SlotGridSheet, type PlanOption } from "@/components/plans/slot-grid-sheet";
 import { buttonClasses } from "@/components/ui/button";
@@ -12,20 +12,23 @@ import { PlanSheet, type PlanDetails } from "../../plans/plan-sheet";
 
 /**
  * The recipe page's action bar, in place of the tab bar on phones (recipe
- * design A), with Add to plan (meal plans design G). Cooked today joins it
- * with PP-169. Offers the plan covering today, then the ones to come.
+ * design A): `children` (Cooked today), then Add to plan (meal plans design
+ * G). Offers the plan covering today, then the ones to come.
  */
 export function AddToPlan({
   recipe,
   plans,
   newPlan,
   today,
+  children,
 }: {
   recipe: { id: string; name: string; mealType: string[]; serves: number };
   plans: PlanOption[];
   /** The New plan sheet's starting values, for when there are no plans. */
   newPlan: PlanDetails;
   today: string;
+  /** Actions before Add to plan. */
+  children?: ReactNode;
 }) {
   const toast = useToast();
   const [open, setOpen] = useState<"grid" | "new" | null>(null);
@@ -36,6 +39,7 @@ export function AddToPlan({
       <div aria-hidden="true" className="hidden md:block h-24" />
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface px-4 pt-3 pb-[max(1.5rem,env(safe-area-inset-bottom))] md:left-20">
         <div className="mx-auto max-w-xl flex gap-3">
+          {children}
           <button type="button" onClick={() => setOpen("grid")} className={buttonClasses("primary", "flex-1")}>
             <Icon name="calendar" className="size-5" />
             Add to plan

@@ -19,16 +19,19 @@ const SECTIONS = [
 ] as const;
 
 /**
- * A recipe page (designs/src/recipe.html A to G, without the household parts
- * that come with PP-169 and meal plans). Rendered from the recipe file alone,
- * so import can preview a file before it's saved. Servings and ticks last for
- * the visit only; a planned meal opens it at the servings planned.
+ * A recipe page (designs/src/recipe.html A to G). Rendered from the recipe
+ * file alone, so import can preview a file before it's saved; the household's
+ * parts (PP-169) come in through `household` and `notes`, which the preview
+ * leaves out. Servings and ticks last for the visit only; a planned meal
+ * opens it at the servings planned.
  */
 export function RecipeView({
   recipe,
   header,
   banner,
   initialServings,
+  household,
+  notes,
 }: {
   recipe: Recipe;
   /** The top bar's back and menu buttons. */
@@ -37,6 +40,10 @@ export function RecipeView({
   banner?: ReactNode;
   /** From a meal plan (design F's Recipe button); otherwise the recipe's own. */
   initialServings?: number;
+  /** The household's rating and cooking history, under the nutrition summary (design A). */
+  household?: ReactNode;
+  /** "Our notes", at the top of the Notes section (design F). */
+  notes?: ReactNode;
 }) {
   const summary = toRecipeSummary(deriveColumns(recipe));
   const [servings, setServings] = useState(initialServings ?? recipe.serves);
@@ -173,6 +180,7 @@ export function RecipeView({
           </span>
           <Icon name="chevron-right" className="size-5 text-ink-subtle" />
         </a>
+        {household}
 
         {/* B, C. Ingredients */}
         <section id="ingredients" aria-labelledby="ingredients-title" className="mt-8 scroll-mt-28">
@@ -319,33 +327,36 @@ export function RecipeView({
           )}
         </section>
 
-        {/* F. Recipe details (household notes, rating and history: PP-169) */}
-        <section id="notes" aria-labelledby="notes-title" className="mt-8 scroll-mt-28">
-          <h2 id="notes-title" className="text-[17px] font-semibold">
-            From the recipe
-          </h2>
-          <dl className="mt-2 rounded-control bg-surface border border-line divide-y divide-line text-sm">
-            <Detail label="Source">
-              {recipe.source.url ? (
-                <a href={recipe.source.url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline underline-offset-2">
-                  {recipe.source.title}
-                </a>
-              ) : (
-                recipe.source.title
-              )}
-              <span className="block text-ink-muted">
-                {word(recipe.source.kind)}
-                {recipe.source.details && ` · ${recipe.source.details}`}
-              </span>
-            </Detail>
-            <Detail label="Storage">
-              {storageText(recipe.storage)}
-              {recipe.storage.notes && <span className="block text-ink-muted">{recipe.storage.notes}</span>}
-            </Detail>
-            {recipe.tags.length > 0 && <Detail label="Tags">{recipe.tags.join(" · ")}</Detail>}
-            {recipe.notes && <Detail label="Tips">{recipe.notes}</Detail>}
-          </dl>
-        </section>
+        {/* F. The household's notes, rating and history, then the recipe file's details */}
+        <div id="notes" className="mt-8 scroll-mt-28">
+          {notes}
+          <section aria-labelledby="notes-title">
+            <h2 id="notes-title" className="text-[17px] font-semibold">
+              From the recipe
+            </h2>
+            <dl className="mt-2 rounded-control bg-surface border border-line divide-y divide-line text-sm">
+              <Detail label="Source">
+                {recipe.source.url ? (
+                  <a href={recipe.source.url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary underline underline-offset-2">
+                    {recipe.source.title}
+                  </a>
+                ) : (
+                  recipe.source.title
+                )}
+                <span className="block text-ink-muted">
+                  {word(recipe.source.kind)}
+                  {recipe.source.details && ` · ${recipe.source.details}`}
+                </span>
+              </Detail>
+              <Detail label="Storage">
+                {storageText(recipe.storage)}
+                {recipe.storage.notes && <span className="block text-ink-muted">{recipe.storage.notes}</span>}
+              </Detail>
+              {recipe.tags.length > 0 && <Detail label="Tags">{recipe.tags.join(" · ")}</Detail>}
+              {recipe.notes && <Detail label="Tips">{recipe.notes}</Detail>}
+            </dl>
+          </section>
+        </div>
       </div>
     </div>
   );

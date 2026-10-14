@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { boolean, check, date, integer, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { MAX_NOTES } from "@/recipes/household";
 import { users } from "./auth";
 import { recipes } from "./recipes";
 
@@ -8,9 +9,6 @@ import { recipes } from "./recipes";
 // the household. Kept apart from the imported file and keyed by the recipe's
 // row id, which re-importing keeps, so a new version of the file never changes
 // it. Deleting the recipe deletes it. Households are reached through the recipe.
-
-/** Longest "Our notes" can be. */
-export const MAX_NOTES = 2000;
 
 // One row per recipe, made the first time anything is set.
 export const recipeHouseholdData = pgTable(

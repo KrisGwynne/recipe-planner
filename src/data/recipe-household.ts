@@ -2,7 +2,8 @@ import "server-only";
 import { desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
-import { MAX_NOTES, recipeCooks, recipeHouseholdData, recipes, users } from "@/db/schema";
+import { recipeCooks, recipeHouseholdData, recipes, users } from "@/db/schema";
+import { MAX_NOTES } from "@/recipes/household";
 import type { HouseholdContext } from "./context";
 
 // The household's favourite, rating, notes and cooking history for a recipe

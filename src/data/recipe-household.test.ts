@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
-import { MAX_NOTES, recipeCooks, recipeHouseholdData } from "@/db/schema";
+import { recipeCooks, recipeHouseholdData } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
+import { MAX_NOTES } from "@/recipes/household";
 import type { Recipe } from "@/types/recipe";
 import {
   getRecipeHousehold,
