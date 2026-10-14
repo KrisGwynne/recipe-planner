@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Household</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-152</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Household settings and account</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">The Household tab: the household's name, its members and roles, invite links, downloading every recipe, signing out, and the steps for leaving, removing someone, deleting the household and deleting your account. Owners see everything; members see the household and their own account.</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<!-- ============ The tab ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">The Household tab</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">One scrolling page in four groups: the household and its people, recipes, your account, then leaving and deleting at the bottom, away from everyday taps.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Owner, top -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 overflow-hidden px-5 pt-5">
+          <h1 class="font-display text-[28px] font-semibold">Household</h1>
+
+          <button class="mt-4 w-full rounded-card bg-surface border border-line p-4 flex items-center gap-3 text-left">
+            <span class="flex-1">
+              <span class="block text-xs text-ink-muted">Household name</span>
+              <span class="block font-display text-xl font-semibold leading-snug">The Gwynnes</span>
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-pencil"/></svg>Rename</span>
+          </button>
+
+          <div class="mt-6 flex items-baseline justify-between">
+            <h2 class="text-[17px] font-semibold">Members</h2>
+            <span class="text-sm text-ink-muted tabular-nums">3</span>
+          </div>
+          <ul class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+            <li class="flex items-center gap-3 px-4 min-h-16 py-2.5">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">K</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Kris Gwynne <span class="font-normal text-ink-muted">(you)</span></span><span class="block text-sm text-ink-muted truncate">kris.gwynne@gmail.com</span></span>
+              <span class="h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold inline-flex items-center">Owner</span>
+            </li>
+            <li class="flex items-center gap-3 px-4 min-h-16 py-2.5">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">S</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Sam Gwynne</span><span class="block text-sm text-ink-muted truncate">sam.gwynne@gmail.com</span></span>
+              <span class="h-6 px-2 rounded-full bg-surface-2 text-xs font-semibold inline-flex items-center">Member</span>
+              <svg class="size-5 shrink-0 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </li>
+            <li class="flex items-center gap-3 px-4 min-h-16 py-2.5">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">A</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Alex Morgan</span><span class="block text-sm text-ink-muted truncate">alex.m@googlemail.com</span></span>
+              <span class="h-6 px-2 rounded-full bg-surface-2 text-xs font-semibold inline-flex items-center">Member</span>
+              <svg class="size-5 shrink-0 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </li>
+          </ul>
+          <button class="mt-3 w-full h-12 rounded-control border border-line bg-surface font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Invite someone</button>
+
+          <h2 class="mt-6 text-[17px] font-semibold">Open invite links</h2>
+          <ul class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+            <li class="flex items-center gap-3 pl-4 pr-2 min-h-16 py-2.5">
+              <svg class="size-5 shrink-0 fill-none stroke-ink-muted stroke-2"><use href="#i-link"/></svg>
+              <span class="flex-1 min-w-0"><span class="block font-medium">Expires in 5 days</span><span class="block text-sm text-ink-muted">Made by you 2 days ago</span></span>
+              <button class="h-11 px-3 rounded-control text-sm font-semibold text-danger">Cancel link</button>
+            </li>
+          </ul>
+          <p class="mt-2 text-sm text-ink-subtle">Each link lets one person join. To send one again, invite them again and cancel the old one.</p>
+        </div>
+        <!-- include:household-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Household, as an owner</p><p class="text-ink-muted mt-1">Tapping the name renames it (D). Members show their Google name, email and photo (initials here), owners first, then by when they joined. Tapping another member opens what an owner can do with them (F); your own row has no chevron. Open links are the ones that can still be used, newest first; used, expired and cancelled ones drop off. Links can't be copied again later, because only a fingerprint of each is kept (as decided for PP-156).</p></figcaption>
+    </figure>
+
+    <!-- B. Owner, further down -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="bg-bg/95 border-b border-line px-5 py-3">
+          <p class="font-display font-semibold">Household</p>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4">
+          <h2 class="text-[17px] font-semibold">Recipes</h2>
+          <button class="mt-2 w-full rounded-card bg-surface border border-line p-4 flex items-center gap-3 text-left">
+            <span class="size-10 shrink-0 rounded-full bg-surface-2 grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-download"/></svg></span>
+            <span class="flex-1"><span class="block font-semibold">Download all recipes</span><span class="block text-sm text-ink-muted">42 recipe files in a .zip: a backup, or a way to move them to another household.</span></span>
+          </button>
+
+          <h2 class="mt-6 text-[17px] font-semibold">Your account</h2>
+          <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+            <div class="flex items-center gap-3 px-4 py-3">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">K</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Kris Gwynne</span><span class="block text-sm text-ink-muted truncate">Signed in with Google as kris.gwynne@gmail.com</span></span>
+            </div>
+            <button class="w-full h-13 px-4 flex items-center font-semibold">Sign out</button>
+            <button class="w-full h-13 px-4 flex items-center font-semibold text-danger">Delete my account…</button>
+          </div>
+
+          <h2 class="mt-6 text-[17px] font-semibold">Leave or delete</h2>
+          <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+            <button class="w-full px-4 py-3 flex flex-col items-start text-left"><span class="font-semibold">Leave The Gwynnes…</span><span class="text-sm text-ink-muted">Make someone else an owner first.</span></button>
+            <button class="w-full px-4 py-3 flex flex-col items-start text-left"><span class="font-semibold text-danger">Delete The Gwynnes…</span><span class="text-sm text-ink-muted">Deletes its recipes and plans for everyone.</span></button>
+          </div>
+
+          <p class="mt-6 text-center text-sm text-ink-subtle"><a class="underline underline-offset-2">Privacy</a> · <a class="underline underline-offset-2">Terms</a></p>
+        </div>
+        <!-- include:household-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · Further down</p><p class="text-ink-muted mt-1">Anyone in the household can download the recipes (PP-164); the .zip holds one schema-valid file per recipe, which Import takes back in. Sign out is a plain row; the three that can't be undone end in "…" and always ask first. As the only owner, Leave says what's needed and opens I rather than the confirmation. Privacy and terms (PP-159) are linked at the very bottom.</p></figcaption>
+    </figure>
+
+    <!-- C. Member view -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 overflow-hidden px-5 pt-5">
+          <h1 class="font-display text-[28px] font-semibold">Household</h1>
+
+          <div class="mt-4 rounded-card bg-surface border border-line p-4">
+            <span class="block text-xs text-ink-muted">Household name</span>
+            <span class="block font-display text-xl font-semibold leading-snug">The Gwynnes</span>
+          </div>
+
+          <div class="mt-6 flex items-baseline justify-between">
+            <h2 class="text-[17px] font-semibold">Members</h2>
+            <span class="text-sm text-ink-muted tabular-nums">3</span>
+          </div>
+          <ul class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+            <li class="flex items-center gap-3 px-4 min-h-16 py-2.5">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">K</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Kris Gwynne</span><span class="block text-sm text-ink-muted truncate">kris.gwynne@gmail.com</span></span>
+              <span class="h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold inline-flex items-center">Owner</span>
+            </li>
+            <li class="flex items-center gap-3 px-4 min-h-16 py-2.5">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">S</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Sam Gwynne <span class="font-normal text-ink-muted">(you)</span></span><span class="block text-sm text-ink-muted truncate">sam.gwynne@gmail.com</span></span>
+              <span class="h-6 px-2 rounded-full bg-surface-2 text-xs font-semibold inline-flex items-center">Member</span>
+            </li>
+            <li class="flex items-center gap-3 px-4 min-h-16 py-2.5">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">A</span>
+              <span class="flex-1 min-w-0"><span class="block font-semibold truncate">Alex Morgan</span><span class="block text-sm text-ink-muted truncate">alex.m@googlemail.com</span></span>
+              <span class="h-6 px-2 rounded-full bg-surface-2 text-xs font-semibold inline-flex items-center">Member</span>
+            </li>
+          </ul>
+          <p class="mt-3 rounded-control bg-surface-2 px-4 py-3 text-sm text-ink-muted">Kris is the owner, so they invite people and look after the household.</p>
+
+          <h2 class="mt-6 text-[17px] font-semibold">Recipes</h2>
+          <button class="mt-2 w-full rounded-card bg-surface border border-line p-4 flex items-center gap-3 text-left">
+            <span class="size-10 shrink-0 rounded-full bg-surface-2 grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-download"/></svg></span>
+            <span class="flex-1"><span class="block font-semibold">Download all recipes</span><span class="block text-sm text-ink-muted">42 recipe files in a .zip.</span></span>
+          </button>
+
+          <h2 class="mt-6 text-[17px] font-semibold">Your account</h2>
+          <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+            <button class="w-full h-13 px-4 flex items-center font-semibold">Sign out</button>
+            <button class="w-full h-13 px-4 flex items-center font-semibold text-danger">Delete my account…</button>
+          </div>
+        </div>
+        <!-- include:household-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · Household, as a member</p><p class="text-ink-muted mt-1">The same page without the owner's controls: the name can't be changed, rows don't open, and there's no invite button or link list. A note says who the owners are, so a member knows who to ask. Further down: account, then "Leave The Gwynnes…" (H); no Delete household.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Owner actions ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Name, invites and members (owners)</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- D. Rename -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <div class="mt-3 flex items-center justify-between">
+            <p class="font-display text-[22px] font-semibold">Rename household</p>
+            <button class="size-11 -mr-2 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </div>
+          <label class="block mt-3">
+            <span class="text-sm font-medium">Name</span>
+            <input class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border-2 border-primary text-[17px]" value="The Gwynne kitchen">
+            <span class="mt-1.5 block text-sm text-ink-subtle">Only members see this, and people you invite.</span>
+          </label>
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Save</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Rename</p><p class="text-ink-muted mt-1">The sheet from Edit plan. 1 to 50 characters, as when the household was made. Saving closes it with a "Renamed" toast.</p></figcaption>
+    </figure>
+
+    <!-- E. Invite -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <div class="mt-3 flex items-center justify-between">
+            <p class="font-display text-[22px] font-semibold">Invite someone</p>
+            <button class="size-11 -mr-2 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </div>
+          <p class="mt-1 text-ink-muted">Send them a link. They'll need a Google account.</p>
+          <div class="mt-4 rounded-card bg-surface-2 p-4">
+            <p class="h-11 px-3 rounded-control bg-surface border border-line font-mono text-sm flex items-center text-ink-muted truncate">recipes.example/invite/k7Qm2xP…</p>
+            <div class="mt-3 grid grid-cols-2 gap-2">
+              <button class="h-11 rounded-control border border-line bg-surface font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-copy"/></svg>Copy</button>
+              <button class="h-11 rounded-control border border-line bg-surface font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg>Share</button>
+            </div>
+          </div>
+          <p class="mt-3 text-sm text-ink-subtle">Works once, for one person, and expires in 7 days. They join as a member.</p>
+          <button class="mt-4 w-full h-12 rounded-control font-semibold">Done</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · Invite someone</p><p class="text-ink-muted mt-1">Onboarding screen C's invite card in a sheet, working the same way: the link is only made on Copy or Share, so opening and closing the sheet leaves nothing behind. Once made, it appears under "Open invite links" (A).</p></figcaption>
+    </figure>
+
+    <!-- F. Member sheet -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <div class="mt-4 flex items-center gap-3">
+            <span class="size-12 shrink-0 rounded-full bg-surface-2 border border-line grid place-items-center text-lg font-semibold">S</span>
+            <span class="flex-1 min-w-0"><span class="block font-display text-xl font-semibold">Sam Gwynne</span><span class="block text-sm text-ink-muted truncate">Member · joined 12 Oct</span></span>
+          </div>
+          <ul class="mt-3 divide-y divide-line">
+            <li class="flex items-center gap-3 min-h-13 py-3"><svg class="size-5 shrink-0 fill-none stroke-current stroke-2"><use href="#i-users"/></svg><span>Make an owner<span class="block text-sm text-ink-muted">Owners invite and remove people, rename the household and can delete it.</span></span></li>
+            <li class="flex items-center gap-3 min-h-13 py-3 text-danger"><svg class="size-5 shrink-0 fill-none stroke-current stroke-2"><use href="#i-x"/></svg>Remove from household…</li>
+          </ul>
+          <button class="mt-3 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · A member, as an owner</p><p class="text-ink-muted mt-1">A household can have several owners. "Make an owner" happens straight away with a toast and Undo. On another owner's row the first option is "Make a member" instead, offered only while someone else stays an owner. Handing over is "Make an owner" and then leaving.</p></figcaption>
+    </figure>
+
+    <!-- G. Remove -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Remove Sam from The Gwynnes?</p>
+          <p class="text-ink-muted mt-1">They'll lose access to its recipes and plans straight away. Anything they added stays. You can invite them again later.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Remove Sam</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · Remove someone</p><p class="text-ink-muted mt-1">Foundations' confirmation sheet, as for deleting a plan. Their next visit takes them to "Start a household" (onboarding B) with a note (M). Removing doesn't sign them out of Google or delete their account.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Leaving and deleting ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Leaving and deleting</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">There's always at least one owner. The steps change with who you are: a member, one of several owners, the only owner with others in the household, or the only person in it.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- H. Leave -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Leave The Gwynnes?</p>
+          <p class="text-ink-muted mt-1">You'll lose access to its 42 recipes and 3 meal plans. They stay with Kris and Alex. To come back, ask an owner for a new invite.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Leave household</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">H · Leave</p><p class="text-ink-muted mt-1">For members, and owners while another owner stays. Leaving goes to "Start a household" (onboarding B), where you can make a new one or open someone's invite link. This is also how to join a different household ("You're already in a household", onboarding F).</p></figcaption>
+    </figure>
+
+    <!-- I. Last owner -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <span class="mt-4 size-11 rounded-full bg-warning-soft text-warning grid place-items-center"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg></span>
+          <p class="font-display text-xl font-semibold mt-3">Choose another owner first</p>
+          <p class="text-ink-muted mt-1">You're the only owner of The Gwynnes. Make Sam or Alex an owner, then you can leave. Or delete the household for everyone.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Choose an owner</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold text-danger">Delete the household…</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">I · The only owner can't leave</p><p class="text-ink-muted mt-1">"Choose an owner" closes the sheet and scrolls up to the members. If you're the only person in the household, Leave isn't offered at all, only Delete (J): there'd be no one left to leave it to.</p></figcaption>
+    </figure>
+
+    <!-- J. Delete household -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Delete The Gwynnes?</p>
+          <p class="text-ink-muted mt-1">This deletes, for everyone, and can't be undone:</p>
+          <ul class="mt-2 space-y-1 text-ink">
+            <li class="flex gap-2"><span class="text-danger">•</span>42 recipes, with their notes, ratings and cooking history</li>
+            <li class="flex gap-2"><span class="text-danger">•</span>3 meal plans</li>
+            <li class="flex gap-2"><span class="text-danger">•</span>The household itself: Sam and Alex lose access</li>
+          </ul>
+          <button class="mt-4 w-full rounded-control bg-surface-2 px-4 py-3 text-left text-sm flex items-center gap-3"><svg class="size-5 shrink-0 fill-none stroke-current stroke-2"><use href="#i-download"/></svg><span><span class="font-semibold">Download all recipes first</span><span class="block text-ink-muted">Keep a copy to import somewhere else.</span></span></button>
+          <label class="block mt-4">
+            <span class="text-sm font-medium">Type <b>The Gwynnes</b> to confirm</span>
+            <input class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px]" value="The Gwyn">
+          </label>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold opacity-40">Delete household</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">J · Delete the household (owners)</p><p class="text-ink-muted mt-1">The one place that asks for typing, since it wipes everyone's recipes at once. The button stays off until the name matches (ignoring case and spaces at the ends). Afterwards you're taken to "Start a household" (onboarding B); other members get the note in M on their next visit.</p></figcaption>
+    </figure>
+
+    <!-- K. Delete account -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Delete your account?</p>
+          <p class="text-ink-muted mt-1">You'll leave The Gwynnes and your sign-in details are deleted. Its recipes and plans stay with Kris and Alex. Signing in with Google again starts from scratch.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Delete my account</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">K · Delete my account</p><p class="text-ink-muted mt-1">For a member, or an owner while another owner stays (PP-158). Deletes your membership, sessions and Google link; notes you edited keep their text but stop saying who. Afterwards you're signed out and land on the sign-in page with the message in M.</p></figcaption>
+    </figure>
+
+    <!-- L. Account variants -->
+    <figure class="w-[390px] max-w-full space-y-4">
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">Delete your account and The Gwynnes?</p>
+        <p class="mt-1 text-ink-muted">You're the only person in The Gwynnes, so it goes too: 42 recipes and 3 meal plans. This can't be undone.</p>
+        <p class="mt-3 text-sm font-semibold inline-flex items-center gap-2"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-download"/></svg>Download all recipes first</p>
+        <p class="mt-3 text-sm font-medium">Type <b>The Gwynnes</b> to confirm</p>
+        <p class="mt-1.5 h-12 rounded-control bg-surface-2 border border-line"></p>
+        <p class="mt-3 h-12 rounded-control bg-danger text-on-danger font-semibold grid place-items-center opacity-40">Delete account and household</p>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="font-display text-xl font-semibold">Choose another owner first</p>
+        <p class="mt-1 text-ink-muted">You're the only owner of The Gwynnes. Make Sam or Alex an owner before deleting your account, so the household isn't left without one.</p>
+        <p class="mt-3 h-12 rounded-control bg-primary text-on-primary font-semibold grid place-items-center">Choose an owner</p>
+      </div>
+      <figcaption class="text-sm"><p class="font-semibold text-base">L · Delete my account, in the other two cases</p><p class="text-ink-muted mt-1">Shown in the same sheet as K. Alone in the household: it says the household goes too and asks for the name, as J does. The only owner with others: it doesn't offer deletion, and points to the members, as I does.</p></figcaption>
+    </figure>
+
+    <!-- M. Afterwards -->
+    <figure class="w-[390px] max-w-full space-y-4">
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Start a household (onboarding B), with a note</p>
+        <div class="mt-3 rounded-control bg-surface-2 px-4 py-3 text-sm flex gap-3"><svg class="size-5 shrink-0 fill-none stroke-ink-muted stroke-2"><use href="#i-alert"/></svg><span>You're no longer in <b>The Gwynnes</b>. Start your own household, or open an invite link to join one.</span></div>
+        <p class="mt-3 text-sm text-ink-muted">After leaving, being removed, or the household being deleted. Shown once.</p>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Sign-in page, after deleting your account</p>
+        <div class="mt-3 rounded-control bg-veg-soft text-veg px-4 py-3 text-sm font-medium flex gap-3"><svg class="size-5 shrink-0 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Your account has been deleted.</div>
+      </div>
+      <figcaption class="text-sm"><p class="font-semibold text-base">M · Afterwards</p><p class="text-ink-muted mt-1">The same wording whichever way you left, so a removed member isn't told who removed them.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ Wider screens ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Wider screens</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">From tablet width the page splits in two: the household and its people on the left, recipes, account and leave or delete on the right. Sheets open as dialogs.</p>
+  <figure class="mt-5 w-[1240px] max-w-full overflow-hidden rounded-2xl border border-line shadow-xl bg-bg">
+    <div class="h-8 bg-surface-2 border-b border-line flex items-center gap-1.5 px-3"><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span></div>
+    <div class="flex h-[720px]">
+      <nav class="w-20 shrink-0 border-r border-line bg-surface flex flex-col items-center gap-2 py-4 text-[11px] font-medium">
+        <span class="size-12 rounded-full bg-primary text-on-primary grid place-items-center mb-3" aria-label="Import"><svg class="size-6 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg></span>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipes</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plans</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-primary mt-auto"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-users"/></svg>Household</a>
+      </nav>
+      <div class="flex-1 min-w-0 p-8 overflow-hidden">
+        <h1 class="font-display text-[28px] font-semibold">Household</h1>
+        <div class="mt-5 grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-8 max-w-5xl">
+          <div>
+            <div class="rounded-card bg-surface border border-line p-4 flex items-center gap-3">
+              <span class="flex-1"><span class="block text-xs text-ink-muted">Household name</span><span class="block font-display text-xl font-semibold">The Gwynnes</span></span>
+              <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-pencil"/></svg>Rename</span>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+              <h2 class="text-[17px] font-semibold">Members <span class="font-normal text-ink-muted">3</span></h2>
+              <button class="h-10 px-4 rounded-control border border-line bg-surface text-sm font-semibold inline-flex items-center gap-2"><svg class="size-4 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Invite someone</button>
+            </div>
+            <ul class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+              <li class="flex items-center gap-3 px-4 min-h-16 py-2.5"><span class="size-10 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">K</span><span class="flex-1"><span class="block font-semibold">Kris Gwynne <span class="font-normal text-ink-muted">(you)</span></span><span class="block text-sm text-ink-muted">kris.gwynne@gmail.com</span></span><span class="h-6 px-2 rounded-full bg-primary-soft text-primary text-xs font-semibold inline-flex items-center">Owner</span></li>
+              <li class="flex items-center gap-3 px-4 min-h-16 py-2.5 bg-surface-2"><span class="size-10 rounded-full bg-surface border border-line grid place-items-center font-semibold">S</span><span class="flex-1"><span class="block font-semibold">Sam Gwynne</span><span class="block text-sm text-ink-muted">sam.gwynne@gmail.com</span></span><span class="h-6 px-2 rounded-full bg-surface text-xs font-semibold inline-flex items-center">Member</span><svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg></li>
+              <li class="flex items-center gap-3 px-4 min-h-16 py-2.5"><span class="size-10 rounded-full bg-surface-2 border border-line grid place-items-center font-semibold">A</span><span class="flex-1"><span class="block font-semibold">Alex Morgan</span><span class="block text-sm text-ink-muted">alex.m@googlemail.com</span></span><span class="h-6 px-2 rounded-full bg-surface-2 text-xs font-semibold inline-flex items-center">Member</span><svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg></li>
+            </ul>
+            <h2 class="mt-6 text-[17px] font-semibold">Open invite links</h2>
+            <ul class="mt-2 rounded-card bg-surface border border-line">
+              <li class="flex items-center gap-3 pl-4 pr-2 min-h-16 py-2.5"><svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-link"/></svg><span class="flex-1"><span class="block font-medium">Expires in 5 days</span><span class="block text-sm text-ink-muted">Made by you 2 days ago</span></span><button class="h-10 px-3 text-sm font-semibold text-danger">Cancel link</button></li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="text-[17px] font-semibold">Recipes</h2>
+            <div class="mt-2 rounded-card bg-surface border border-line p-4 flex items-center gap-3">
+              <span class="size-10 shrink-0 rounded-full bg-surface-2 grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-download"/></svg></span>
+              <span class="flex-1"><span class="block font-semibold">Download all recipes</span><span class="block text-sm text-ink-muted">42 recipe files in a .zip.</span></span>
+            </div>
+            <h2 class="mt-6 text-[17px] font-semibold">Your account</h2>
+            <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+              <p class="px-4 py-3 text-sm text-ink-muted">Signed in with Google as kris.gwynne@gmail.com</p>
+              <p class="h-12 px-4 flex items-center font-semibold">Sign out</p>
+              <p class="h-12 px-4 flex items-center font-semibold text-danger">Delete my account…</p>
+            </div>
+            <h2 class="mt-6 text-[17px] font-semibold">Leave or delete</h2>
+            <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+              <p class="px-4 py-3"><span class="block font-semibold">Leave The Gwynnes…</span><span class="text-sm text-ink-muted">Make someone else an owner first.</span></p>
+              <p class="px-4 py-3"><span class="block font-semibold text-danger">Delete The Gwynnes…</span><span class="text-sm text-ink-muted">Deletes its recipes and plans for everyone.</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Questions for review</h2>
+  <ol class="mt-3 list-decimal pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li><b class="text-ink">Several owners (F).</b> Owners can make others owners, and step back to member while another owner stays; handing over is "Make an owner" then leave. The handover says "transfer ownership". <i>Recommend:</i> allow several owners as shown, with no separate Transfer step.</li>
+    <li><b class="text-ink">Only owners invite (C, E).</b> As the handover says. With several owners allowed, a household that wants everyone to invite can make everyone an owner. <i>Recommend:</i> keep invites to owners.</li>
+    <li><b class="text-ink">Typing the name to confirm (J, L).</b> Only when the household and its recipes are deleted; everything else is a plain confirmation. <i>Recommend:</i> yes.</li>
+    <li><b class="text-ink">Emails in the member list (A, C).</b> Everyone in the household sees each other's Google email, which helps tell two people with the same name apart. <i>Recommend:</i> show them to everyone.</li>
+    <li><b class="text-ink">Old invite links can't be copied again (A).</b> Only a fingerprint is stored, so the list offers Cancel only, and a lost link means making a new one. <i>Recommend:</i> keep it that way, rather than storing links so they can be shown again.</li>
+  </ol>
+</section>
+</main>
+</body>
+</html>
