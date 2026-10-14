@@ -89,6 +89,10 @@ describe("the recipe library", () => {
     expect(mocks.listRecipes).toHaveBeenCalledWith(ctx);
     expect(screen.getByText("Your recipe book is empty")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Import recipes" })).toHaveAttribute("href", "/import");
+    expect(screen.getByRole("link", { name: "How do I make recipe JSON?" })).toHaveAttribute(
+      "href",
+      "/import/help?from=recipes",
+    );
     expect(screen.queryByRole("group", { name: "View" })).not.toBeInTheDocument();
   });
 

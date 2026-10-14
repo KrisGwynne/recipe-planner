@@ -244,6 +244,16 @@ function Start({
         {busy ? "Checking…" : "Check recipe"}
       </button>
       {error}
+      <Link
+        href="/import/help"
+        className="mt-6 flex items-center justify-between gap-3 rounded-control bg-surface-2 hover:bg-line/40 px-4 py-3 text-sm focus-visible:outline-2 focus-visible:outline-primary"
+      >
+        <span>
+          <span className="font-semibold">New here?</span>{" "}
+          <span className="text-ink-muted">How to turn a photo into a recipe file</span>
+        </span>
+        <Icon name="chevron-right" className="size-5 shrink-0 text-ink-subtle" />
+      </Link>
     </main>
   );
 }

@@ -27,7 +27,7 @@ export default async function RecipesPage() {
   return <RecipeLibrary recipes={rows} initialView={parseView(cookieStore.get(VIEW_COOKIE)?.value)} />;
 }
 
-// Screen I. "How do I make recipe JSON?" comes with the Claude project setup (PP-175).
+// Screen I. "How do I make recipe JSON?" opens the help page (PP-179).
 function EmptyLibrary() {
   return (
     <div className="mx-auto max-w-sm px-3 pt-12 text-center">
@@ -41,6 +41,9 @@ function EmptyLibrary() {
       <Link href="/import" className={buttonClasses("primary", "mt-6 w-full")}>
         <Icon name="upload" className="size-5" />
         Import recipes
+      </Link>
+      <Link href="/import/help?from=recipes" className={buttonClasses("ghost", "mt-2 w-full")}>
+        How do I make recipe JSON?
       </Link>
     </div>
   );
