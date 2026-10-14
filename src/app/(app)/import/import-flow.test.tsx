@@ -65,6 +65,7 @@ describe("import flow", () => {
     expect(screen.getByRole("heading", { name: "Import recipes" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Choose recipe files/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Check recipe" })).toBeDisabled();
+    expect(screen.getByRole("link", { name: /New here\?/ })).toHaveAttribute("href", "/import/help");
   });
 
   it("reviews a mixed batch, then imports the ticked ones (B, F)", async () => {
