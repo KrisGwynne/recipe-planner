@@ -8,6 +8,7 @@ import type { RecipeListRow } from "./summary";
 
 /** A recipe as listRecipes returns it: card fields plus what filters and search read. */
 export type LibraryRecipe = RecipeListRow & {
+  id: string;
   cuisine: string;
   difficulty: string;
   mealType: string[];
@@ -18,10 +19,15 @@ export type LibraryRecipe = RecipeListRow & {
   equipment: string[];
   freezable: boolean | null;
   ingredients: { item: string; prep: string | null }[];
+  /** The household's own data (PP-169). */
+  favourite: boolean;
+  rating: number | null;
+  /** YYYY-MM-DD, or null if never cooked. */
+  lastCooked: string | null;
 };
 
 export type Category = "meat" | "fish" | "veg" | "vegan";
-export type SortKey = "name" | "recent" | "quickest" | "calories" | "protein";
+export type SortKey = "name" | "recent" | "quickest" | "calories" | "protein" | "rating" | "notCooked" | "cooked";
 
 export type Filters = {
   category: Category[];
@@ -38,6 +44,7 @@ export type Filters = {
   equipment: string[];
   difficulty: string[];
   spice: string[];
+  favourites: boolean;
   freezable: boolean;
 };
 
@@ -66,12 +73,15 @@ export const SPICE = ["none", "mild", "medium", "hot"];
 export const MEAT_ITEMS = ["chicken", "turkey", "duck", "beef", "pork", "lamb", "game", "other"];
 export const FISH_ITEMS = ["salmon", "tuna", "white-fish", "mackerel", "smoked-fish", "prawns", "mussels", "squid", "other"];
 
-export const SORTS: { key: SortKey; label: string }[] = [
+export const SORTS: { key: SortKey; label: string; hint?: string }[] = [
   { key: "name", label: "Name, A to Z" },
   { key: "recent", label: "Recently added" },
   { key: "quickest", label: "Quickest first" },
   { key: "calories", label: "Fewest calories" },
   { key: "protein", label: "Most protein" },
+  { key: "rating", label: "Highest rated" },
+  { key: "notCooked", label: "Not cooked for longest", hint: "never cooked first" },
+  { key: "cooked", label: "Cooked most recently" },
 ];
 
 export const noFilters = (): Filters => ({
@@ -87,6 +97,7 @@ export const noFilters = (): Filters => ({
   equipment: [],
   difficulty: [],
   spice: [],
+  favourites: false,
   freezable: false,
 });
 
@@ -116,6 +127,7 @@ export function parseState(params: Params): LibraryState {
       equipment: known("cook", EQUIPMENT),
       difficulty: known("difficulty", DIFFICULTIES),
       spice: known("spice", SPICE),
+      favourites: params.get("fav") === "1",
       freezable: params.get("freezable") === "1",
     },
   };
@@ -141,6 +153,7 @@ export function toSearch({ filters: f, q, sort }: LibraryState): string {
   for (const [name, values] of lists) for (const value of values) params.append(name, value);
   if (f.veggieOption) params.set("veggie", "1");
   if (f.maxMins !== null) params.set("time", String(f.maxMins));
+  if (f.favourites) params.set("fav", "1");
   if (f.freezable) params.set("freezable", "1");
   const text = params.toString();
   return text ? `?${text}` : "";
@@ -174,6 +187,7 @@ type Section =
   | "equipment"
   | "difficulty"
   | "spice"
+  | "favourites"
   | "freezable";
 
 const anyOf = (selected: string[], values: string[]) => selected.length === 0 || selected.some((v) => values.includes(v));
@@ -213,6 +227,8 @@ function passes(section: Section, recipe: LibraryRecipe, f: Filters): boolean {
       return anyOf(f.difficulty, [recipe.difficulty]);
     case "spice":
       return anyOf(f.spice, [recipe.spiceLevel]);
+    case "favourites":
+      return !f.favourites || recipe.favourite;
     case "freezable":
       return !f.freezable || recipe.freezable === true;
   }
@@ -230,6 +246,7 @@ const SECTIONS: Section[] = [
   "equipment",
   "difficulty",
   "spice",
+  "favourites",
   "freezable",
 ];
 
@@ -285,6 +302,12 @@ export function sortRecipes(recipes: LibraryRecipe[], sort: SortKey): LibraryRec
     quickest: (a, b) => a.totalMins - b.totalMins || byName(a, b),
     calories: (a, b) => a.kcal - b.kcal || byName(a, b),
     protein: (a, b) => b.proteinG - a.proteinG || byName(a, b),
+    // Unrated last.
+    rating: (a, b) => (b.rating ?? 0) - (a.rating ?? 0) || byName(a, b),
+    // Never cooked first, then the longest ago.
+    notCooked: (a, b) => (a.lastCooked ?? "").localeCompare(b.lastCooked ?? "") || byName(a, b),
+    // Never cooked last.
+    cooked: (a, b) => (b.lastCooked ?? "").localeCompare(a.lastCooked ?? "") || byName(a, b),
   };
   return [...recipes].sort(compare[sort]);
 }
@@ -331,6 +354,7 @@ export type Facets = {
   equipment: Option[];
   difficulty: Option[];
   spice: Option[];
+  favourites: number;
   freezable: number;
 };
 
@@ -366,6 +390,7 @@ export function facets(recipes: LibraryRecipe[], state: LibraryState): Facets {
     equipment: byCount(countWith(recipes, f, words, EQUIPMENT, (e) => ({ ...f, equipment: toggle(f.equipment, e) }))),
     difficulty: countEach(recipes, f, words, "difficulty", DIFFICULTIES, (r, d) => r.difficulty === d),
     spice: countEach(recipes, f, words, "spice", SPICE, (r, s) => r.spiceLevel === s),
+    favourites: countMatching(recipes, { ...f, favourites: true }, state.q),
     freezable: countMatching(recipes, { ...f, freezable: true }, state.q),
   };
 }
@@ -399,6 +424,7 @@ export function activeFilters(f: Filters): ActiveFilter[] {
   }
   for (const d of f.difficulty) chips.push({ key: `difficulty:${d}`, label: word(d), remove: (x) => ({ ...x, difficulty: without(x.difficulty, d) }) });
   for (const s of f.spice) chips.push({ key: `spice:${s}`, label: s === "none" ? "Not spicy" : `${word(s)} spice`, remove: (x) => ({ ...x, spice: without(x.spice, s) }) });
+  if (f.favourites) chips.push({ key: "fav", label: "Favourites", remove: (x) => ({ ...x, favourites: false }) });
   if (f.freezable) chips.push({ key: "freezable", label: "Freezable", remove: (x) => ({ ...x, freezable: false }) });
   return chips;
 }

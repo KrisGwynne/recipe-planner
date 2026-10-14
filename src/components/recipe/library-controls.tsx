@@ -174,7 +174,10 @@ export function SortSheet({
                 state.sort === s.key ? "font-semibold text-primary" : "font-medium",
               )}
             >
-              {s.label}
+              <span>
+                {s.label}
+                {s.hint && <span className="ml-2 text-xs font-normal text-ink-subtle">{s.hint}</span>}
+              </span>
               {state.sort === s.key && <Icon name="check" className="size-5" strokeWidth={2.5} />}
             </button>
           </li>

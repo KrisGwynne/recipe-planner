@@ -161,6 +161,13 @@ export function FilterSections({
       </div>
 
       <div className="rounded-card bg-surface border border-line divide-y divide-line">
+        <Switch
+          label="Favourites only"
+          count={facets.favourites}
+          checked={f.favourites}
+          onChange={(favourites) => set({ favourites })}
+          boxed
+        />
         <Switch label="Freezable" count={facets.freezable} checked={f.freezable} onChange={(freezable) => set({ freezable })} boxed />
       </div>
     </div>

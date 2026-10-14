@@ -23,6 +23,8 @@ export type RecipeSummary = {
   highlight?: string[];
   /** When only an ingredient matched the search, which one (design C). */
   matchedIngredient?: string;
+  /** The household's favourite: list rows show a filled heart (library design B). */
+  favourite?: boolean;
 };
 
 /** Text with each search word marked (library design C). */
@@ -166,6 +168,12 @@ export function RecipeRow({ recipe, emphasis }: { recipe: RecipeSummary; emphasi
           </span>
         )}
       </span>
+      {recipe.favourite && (
+        <>
+          <Icon name="heart" filled className="size-5 shrink-0 text-primary" />
+          <span className="sr-only">Favourite</span>
+        </>
+      )}
     </Link>
   );
 }
