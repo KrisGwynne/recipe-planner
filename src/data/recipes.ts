@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
-import { recipes } from "@/db/schema";
+import { recipeHouseholdData, recipes } from "@/db/schema";
 import { deriveColumns } from "@/recipes/derive";
 import type { Recipe } from "@/types/recipe";
 import type { HouseholdContext } from "./context";
@@ -90,8 +90,13 @@ export async function listRecipes(ctx: HouseholdContext) {
         select jsonb_agg(jsonb_build_object('item', i->>'item', 'prep', i->>'prep'))
         from jsonb_array_elements(${recipes.data}->'ingredients') i
       ), '[]'::jsonb)`,
+      // The household's own data (PP-169), for the heart, Favourites only and the sorts.
+      favourite: sql<boolean>`coalesce(${recipeHouseholdData.favourite}, false)`,
+      rating: recipeHouseholdData.rating,
+      lastCooked: sql<string | null>`(select max(cooked_on)::text from recipe_cooks c where c.recipe_id = ${recipes.id})`,
     })
     .from(recipes)
+    .leftJoin(recipeHouseholdData, eq(recipeHouseholdData.recipeId, recipes.id))
     .where(eq(recipes.householdId, ctx.householdId))
     .orderBy(asc(sql`lower(${recipes.name})`), asc(recipes.name));
 }

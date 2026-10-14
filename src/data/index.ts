@@ -25,6 +25,15 @@ export {
   type InviteStatus,
   type Invitee,
 } from "./invites";
+export {
+  getRecipeHousehold,
+  markCooked,
+  setFavourite,
+  setNotes,
+  setRating,
+  unmarkCooked,
+  type RecipeHousehold,
+} from "./recipe-household";
 export { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipes, saveRecipe } from "./recipes";
 export {
   addEntry,
