@@ -310,3 +310,19 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Cards and rows don't show rating or last cooked** when sorting by them (Kris, 2026-10-14); the design doesn't, and it can be added later.
 
 **How it works.** Two tables keyed by the recipe's row id, which re-importing keeps: `recipe_household_data` (favourite, rating, notes, one row per recipe) and `recipe_cooks` (one row per day cooked). Deleting a recipe deletes both. The data-access functions are in `src/data/recipe-household.ts`; `listRecipes` adds favourite, rating and last cooked for the library's heart, Favourites only (`?fav=1`) and the sorts (`sort=rating`, `notCooked`, `cooked`; ties A to Z). Every change shows at once (`useOptimistic`) and is saved by a server action in `src/app/(app)/recipes/actions.ts`. The recipe page's parts are in `src/app/(app)/recipes/[slug]/household.tsx` and reach `RecipeView` through its `household` and `notes` slots, so import's preview has none of them.
+
+## 2026-10-14: household settings design approved (PP-152)
+
+**One Household tab for the household and your account** (Kris, 2026-10-14): the name, members and roles, invite links, "Download all recipes" (PP-164), your account (Sign out, Delete my account), and Leave or delete at the bottom. Members see the same page without the owner's controls, with a note naming the owners. Design: `designs/src/household.html`.
+
+**Several owners** (Kris, 2026-10-14): owners can make a member an owner, and an owner can go back to being a member while another owner stays. That replaces a separate "Transfer ownership" step: handing over is making someone an owner, then leaving. The only owner can't leave or delete their account while others are in the household; they're asked to choose another owner first.
+
+**Only owners invite** (Kris, 2026-10-14), as the handover says.
+
+**Typing the name to confirm** (Kris, 2026-10-14) only where the household and its recipes are deleted: Delete household, and Delete my account when you're the only person in it. Leaving, removing someone and deleting an account otherwise use foundations' plain confirmation sheet.
+
+**Emails are shown to everyone in the household** (Kris, 2026-10-14) in the member list, to tell people with the same name apart.
+
+**Invite links can't be copied again** (Kris, 2026-10-14): only a hash of each is stored (PP-156), so the open links list shows when each expires and who made it, with Cancel only. A lost link means making a new one.
+
+**Details settled in the design:** a link is only made on Copy or Share, as in onboarding; making someone an owner happens straight away with Undo; after leaving, being removed or the household being deleted, "Start a household" shows "You're no longer in The Gwynnes" once, the same wording whichever way it happened; after deleting your account you're signed out and the sign-in page says so; from tablet width the page is two columns.
