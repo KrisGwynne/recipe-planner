@@ -6,10 +6,17 @@ export { ForbiddenError, requireOwner, type HouseholdContext, type Role } from "
 export {
   AlreadyInHouseholdError,
   createHousehold,
+  deleteHousehold,
+  getDeparture,
   getHousehold,
   getMembership,
+  householdCounts,
   householdName,
+  leaveHousehold,
   listMembers,
+  removeMember,
+  renameHousehold,
+  setRole,
   type Membership,
 } from "./households";
 export { requireHousehold } from "./session";

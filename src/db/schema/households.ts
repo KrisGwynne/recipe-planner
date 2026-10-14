@@ -29,3 +29,14 @@ export const householdMembers = pgTable(
     uniqueIndex("household_members_one_per_user").on(member.userId),
   ],
 );
+
+// The household someone last left, was removed from, or saw deleted (PP-157),
+// for the "You're no longer in …" note on the create-household page. One row
+// per person, replaced each time; it's only shown while they have no household.
+export const householdDepartures = pgTable("household_departures", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  householdName: text("household_name").notNull(),
+  leftAt: timestamp("left_at", { mode: "date", withTimezone: true }).notNull().defaultNow(),
+});

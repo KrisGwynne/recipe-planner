@@ -42,6 +42,7 @@ export async function listInvites(ctx: HouseholdContext) {
       createdAt: householdInvites.createdAt,
       expiresAt: householdInvites.expiresAt,
       createdBy: users.name,
+      createdById: householdInvites.createdBy,
     })
     .from(householdInvites)
     .innerJoin(users, eq(users.id, householdInvites.createdBy))

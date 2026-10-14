@@ -43,6 +43,13 @@
       "when": 1792008823718,
       "tag": "0005_recipe_household",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792011412299,
+      "tag": "0006_household_departures",
+      "breakpoints": true
     }
   ]
 }

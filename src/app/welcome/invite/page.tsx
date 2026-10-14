@@ -27,7 +27,13 @@ export default async function InviteStepPage() {
         </p>
         <div className="mt-6 rounded-card bg-surface border border-line p-4">
           <InviteLink createLink={createInviteAction} householdName={household.name} />
-          <p className="mt-3 text-xs text-ink-subtle">Works once, for one person, and expires in {INVITE_DAYS} days.</p>
+          <p className="mt-3 text-xs text-ink-subtle">
+            Works once, for one person, and expires in {INVITE_DAYS} days. Manage links in{" "}
+            <Link href="/household" className="underline underline-offset-2">
+              Household settings
+            </Link>
+            .
+          </p>
         </div>
       </div>
       <div className="px-6 pt-6 pb-[max(2rem,env(safe-area-inset-bottom))]">
