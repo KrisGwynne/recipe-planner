@@ -8,8 +8,13 @@ import {
   formatPortions,
   formatRange,
   groupPlans,
+  mealName,
   planEnd,
   planInput,
+  plansToAddTo,
+  recipeServings,
+  servings,
+  servingsPlanned,
   today,
 } from "./plan";
 
@@ -108,5 +113,36 @@ describe("planInput", () => {
 describe("formatPortions", () => {
   it("uses halves", () => {
     expect([0.5, 1, 1.5, 4].map(formatPortions)).toEqual(["½", "1", "1½", "4"]);
+  });
+});
+
+describe("servings", () => {
+  it("multiplies people by portions each (design F)", () => {
+    expect(servingsPlanned(2, 1.5)).toBe(3);
+    expect(servings(3)).toBe("3 servings");
+    expect(servings(4.5)).toBe("4½ servings");
+    expect(servings(1)).toBe("1 serving");
+  });
+
+  it("opens the recipe at whole servings, rounded up", () => {
+    expect(recipeServings(2, 1.5)).toBe(3);
+    expect(recipeServings(3, 1.5)).toBe(5);
+    expect(recipeServings(1, 0.5)).toBe(1);
+  });
+});
+
+describe("mealName", () => {
+  it("names a day and meal as the toasts do", () => {
+    expect(mealName({ startDate: "2026-10-12" }, 3, "dinner")).toBe("Thu dinner");
+  });
+});
+
+describe("plansToAddTo", () => {
+  it("offers plans covering today, then the ones to come, never past ones", () => {
+    const past = { startDate: "2026-10-05", days: 7 };
+    const current = { startDate: "2026-10-12", days: 7 };
+    const later = { startDate: "2026-10-26", days: 7 };
+    const next = { startDate: "2026-10-19", days: 7 };
+    expect(plansToAddTo([later, past, next, current], "2026-10-13")).toEqual([current, next, later]);
   });
 });

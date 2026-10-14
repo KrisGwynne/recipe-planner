@@ -8,12 +8,14 @@ const mocks = vi.hoisted(() => ({
   requireHousehold: vi.fn(),
   listRecipes: vi.fn(),
   getRecipeBySlug: vi.fn(),
+  listPlans: vi.fn(),
   cookie: undefined as string | undefined,
 }));
 vi.mock("@/data", () => ({
   requireHousehold: mocks.requireHousehold,
   listRecipes: mocks.listRecipes,
   getRecipeBySlug: mocks.getRecipeBySlug,
+  listPlans: mocks.listPlans,
 }));
 vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (name: string) => (name === "recipes-view" && mocks.cookie ? { value: mocks.cookie } : undefined) }),
@@ -74,6 +76,7 @@ const ctx = { householdId: "h1" };
 beforeEach(() => {
   window.history.replaceState(null, "", "/recipes");
   mocks.requireHousehold.mockResolvedValue({ ctx });
+  mocks.listPlans.mockResolvedValue([]);
   mocks.cookie = undefined;
   document.cookie = "recipes-view=; max-age=0; path=/";
 });
@@ -134,7 +137,10 @@ describe("the recipe library", () => {
 });
 
 describe("the recipe page", () => {
-  const params = (slug: string) => ({ params: Promise.resolve({ slug }) });
+  const params = (slug: string, query: Record<string, string> = {}) => ({
+    params: Promise.resolve({ slug }),
+    searchParams: Promise.resolve(query),
+  });
   const tuna = JSON.parse(readFileSync("examples/lemony-tuna-tomato-caper-pasta.json", "utf8"));
 
   it("shows the household's recipe by slug", async () => {
@@ -152,6 +158,25 @@ describe("the recipe page", () => {
     const menu = screen.getByRole("dialog");
     expect(within(menu).getByRole("button", { name: "Download recipe file (.json)" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: /Replace with a new version/ })).toHaveAttribute("href", "/import");
+  });
+
+  it("opens at the servings a meal plan asks for, within 1 to 50 (meal plans F)", async () => {
+    mocks.getRecipeBySlug.mockResolvedValue({ name: tuna.name, data: tuna });
+    const { unmount } = render(await RecipePage(params(tuna.id, { servings: "5" })));
+    expect(screen.getByText("5 servings")).toBeInTheDocument();
+    unmount();
+    render(await RecipePage(params(tuna.id, { servings: "500" })));
+    expect(screen.getByText(`${tuna.serves} servings`)).toBeInTheDocument();
+  });
+
+  it("has Add to plan in place of the tab bar, offering a plan when there are none (meal plans G)", async () => {
+    mocks.getRecipeBySlug.mockResolvedValue({ id: "r1", name: tuna.name, mealType: tuna.meal_type, data: tuna });
+    render(await RecipePage(params(tuna.id)));
+    fireEvent.click(screen.getByRole("button", { name: "Add to plan" }));
+    const sheet = screen.getByRole("dialog", { name: "Add to plan" });
+    expect(within(sheet).getByText("No meal plans yet")).toBeInTheDocument();
+    fireEvent.click(within(sheet).getByRole("button", { name: "Create a plan" }));
+    expect(screen.getByRole("dialog", { name: "New plan" })).toBeInTheDocument();
   });
 
   it("is not found when the household has no such recipe", async () => {

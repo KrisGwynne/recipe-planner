@@ -254,3 +254,19 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Deleting a recipe deletes its plan entries** (foreign key cascade); the warning before that is PP-165.
 
 **The bottom sheet moved** to `src/components/ui/sheet.tsx` for the plan sheets, and a `Stepper` (`src/components/ui/stepper.tsx`) was added for days, people and, later, portions.
+
+## 2026-10-13: filling a plan (PP-171)
+
+**PP-171 is the screens, PP-172 the numbers** (Kris, 2026-10-13): a planned recipe shows its portions each ("1½ each"), and the entry sheet its servings ("2 people × 1½ = 3 servings"). Everything worked out from nutrition or `serves` comes with PP-172: kcal and protein on recipe rows, the "N left over" badges, the entry sheet's leftovers box and "Each person gets", the Add to plan sheet's leftovers line, day totals, the average card and the wide grid's totals row.
+
+**Every day has a "+" for all four meals** (Kris, 2026-10-13), even a meal already planned, so a side can join a curry (design I) rather than only empty meals (design D). On a phone they sit in one row of four; below 380px the "+" icon is dropped so the labels fit.
+
+**The wide grid is in PP-171** (Kris, 2026-10-13): from `md` the plan is days across and meals down; an empty cell is a "+" that turns tomato on hover, a filled one keeps a small "+" under its recipes. Past 7 days it scrolls sideways.
+
+**"Recipe" from a planned meal opens the recipe page at whole servings, rounded up** (Kris, 2026-10-13): `?servings=N` on the recipe page (1 to 50), so 3 people × 1½ opens at 5.
+
+**"Add to plan" offers the current and coming plans only** (Kris, 2026-10-13), the current one first; past plans aren't listed. With none, the sheet offers "Create a plan", which opens the new plan as usual (the recipe isn't added to it).
+
+**Undo after Remove adds the recipe back last in its meal** (Kris, 2026-10-13), not in its old place among several.
+
+**How it works.** The recipe picker is a page, `/plans/<id>/add?day=2&slot=lunch&meal=lunch` (`meal` is the library's own meal filter, so the chip is an ordinary filter), covering the tab bar on phones. Its search, filters and sort only replace the history entry, so back always returns to the plan; tapping a recipe adds it and goes back. The library's search box, filter and sort sheets and "nothing matches" moved to `src/components/recipe/library-controls.tsx` for both. Toasts come from a provider in the `(app)` layout, so one shown just before going back stays on the plan. The recipe page's action bar has only Add to plan until PP-169 adds Cooked today. The Add to plan sheet loads the chosen plan's grid when it opens (`planGridAction`), so recipe pages don't query plan entries until it's used. Moving shows "Moved to Wed lunch" without Undo.
