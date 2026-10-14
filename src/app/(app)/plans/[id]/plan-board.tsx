@@ -6,6 +6,8 @@ import { Icon } from "@/components/icon";
 import { categoryDotClasses, categoryLabels, categoryOf } from "@/components/ui/badge";
 import type { PlanEntry } from "@/data";
 import { cx } from "@/lib/cx";
+import { approx } from "@/lib/format";
+import { dayTotals, entryLine, entryNutrition, kcal, leftOver, leftovers, whole, type Totals } from "@/plans/nutrition";
 import { SLOTS, formatDay, formatPortions, planDay, slotLabels, type Slot } from "@/plans/plan";
 import { browsingCategory } from "@/recipes/derive";
 import type { DietaryFlag } from "@/types/recipe";
@@ -23,8 +25,9 @@ export function addHref(planId: string, dayIndex: number, slot: Slot): string {
 /**
  * Filling a plan (designs/src/meal-plans.html D, F, G and I). On phones, a
  * card per day under a sticky day strip; from md up, the grid of days across
- * and meals down. Both open the same entry sheet. Totals and leftovers come
- * with PP-172.
+ * and meals down. Both open the same entry sheet. Each day shows each
+ * person's total, and each recipe its nutrition per person and any
+ * leftovers (PP-172).
  */
 export function PlanBoard({ plan, entries, today }: { plan: BoardPlan; entries: PlanEntry[]; today: string }) {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -33,6 +36,7 @@ export function PlanBoard({ plan, entries, today }: { plan: BoardPlan; entries: 
     dayIndex,
     date: planDay(plan, dayIndex),
     entries: entries.filter((e) => e.dayIndex === dayIndex),
+    totals: dayTotals(entries, dayIndex),
   }));
 
   return (
@@ -53,7 +57,7 @@ export function PlanBoard({ plan, entries, today }: { plan: BoardPlan; entries: 
   );
 }
 
-type Day = { dayIndex: number; date: string; entries: PlanEntry[] };
+type Day = { dayIndex: number; date: string; entries: PlanEntry[]; totals: Totals | null };
 
 /**
  * The days to jump between (design D), stuck under the header. The day being
@@ -175,7 +179,10 @@ function DayCard({
           <span className="ml-auto text-sm text-ink-subtle">Nothing planned</span>
         </button>
       ) : (
-        <div className="flex items-baseline gap-2">{heading}</div>
+        <div className="flex items-baseline gap-2">
+          {heading}
+          {day.totals && <DayTotal totals={day.totals} />}
+        </div>
       )}
       {SLOTS.map((slot) => {
         const inSlot = day.entries.filter((e) => e.slot === slot);
@@ -195,9 +202,8 @@ function DayCard({
                     <span className="flex-1 min-w-0">
                       <span className="block font-semibold leading-snug">{entry.recipe.name}</span>
                       <span className="sr-only">{categoryLabels[categoryOfEntry(entry)]}</span>
-                      <span className="block text-sm text-ink-muted tabular-nums">
-                        {formatPortions(entry.portionsPerPerson)} each
-                      </span>
+                      <span className="block text-sm text-ink-muted tabular-nums">{entryLine(entry)}</span>
+                      <LeftOver plan={plan} entry={entry} className="mt-1 h-6 px-2" />
                     </span>
                   </button>
                 </li>
@@ -230,6 +236,35 @@ function DayCard({
   );
 }
 
+/** Each person's total for the day (design D): "672 kcal", or "~825 kcal" muted when estimated. */
+function DayTotal({ totals }: { totals: Totals }) {
+  return (
+    <p className={cx("ml-auto text-sm tabular-nums", totals.estimated && "text-ink-muted")}>
+      <span className="sr-only">Each person: </span>
+      {totals.estimated ? (
+        kcal(totals)
+      ) : (
+        <>
+          <b>{whole(totals.kcal)}</b> <span className="text-ink-muted">kcal</span>
+        </>
+      )}
+    </p>
+  );
+}
+
+/** The amber "2 left over" when the people eating a recipe don't finish it (designs D and I). */
+function LeftOver({ plan, entry, className }: { plan: BoardPlan; entry: PlanEntry; className: string }) {
+  const n = leftovers(entry.recipe.serves, plan.people, entry.portionsPerPerson);
+  if (n === 0) return null;
+  return (
+    <span
+      className={cx("rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center", className)}
+    >
+      {leftOver(n)}
+    </span>
+  );
+}
+
 function categoryOfEntry(entry: PlanEntry) {
   return categoryOf(browsingCategory(entry.recipe.proteinType, entry.recipe.dietary as DietaryFlag[]));
 }
@@ -248,8 +283,8 @@ function CategoryBar({ entry }: { entry: PlanEntry }) {
 /**
  * From md up (design, wider screens): days across, meals down. An empty cell
  * is a "+" that turns tomato on hover; a filled one keeps a small "+" for a
- * second recipe. A 14-day plan scrolls sideways a week at a time. The totals
- * row comes with PP-172.
+ * second recipe. A 14-day plan scrolls sideways a week at a time. Each
+ * person's totals run along the bottom.
  */
 function PlanGridView({
   plan,
@@ -332,8 +367,9 @@ function PlanGridView({
                               <span className="block font-semibold leading-tight line-clamp-3">{entry.recipe.name}</span>
                               <span className="sr-only">{categoryLabels[categoryOfEntry(entry)]}</span>
                               <span className="block text-xs text-ink-muted mt-1 tabular-nums">
-                                {formatPortions(entry.portionsPerPerson)} each
+                                {formatPortions(entry.portionsPerPerson)} · {kcal(entryNutrition(entry))}
                               </span>
+                              <LeftOver plan={plan} entry={entry} className="mt-1 h-5 px-1.5" />
                             </span>
                           </button>
                         ))}
@@ -356,7 +392,36 @@ function PlanGridView({
             </tr>
           ))}
         </tbody>
+        <tfoot>
+          <tr>
+            <th
+              scope="row"
+              className="align-top pt-2 border-t border-line text-left text-xs font-semibold uppercase tracking-wider text-ink-muted"
+            >
+              Each person
+            </th>
+            {days.map(({ date, totals }) => (
+              <td key={date} className="align-top pt-2 px-1 border-t border-line">
+                {totals ? <TotalsCell totals={totals} /> : <span className="text-xs text-ink-subtle">Nothing planned</span>}
+              </td>
+            ))}
+          </tr>
+        </tfoot>
       </table>
+    </div>
+  );
+}
+
+/** A day's totals along the bottom of the grid: "672 kcal / P 29 · C 83 · F 23". */
+function TotalsCell({ totals }: { totals: Totals }) {
+  const e = totals.estimated;
+  const n = (v: number) => approx(whole(v), e);
+  return (
+    <div className={cx("tabular-nums", e && "text-ink-muted")}>
+      <b>{n(totals.kcal)}</b> <span className={cx("text-xs", !e && "text-ink-muted")}>kcal</span>
+      <p className={cx("text-xs", !e && "text-ink-muted")}>
+        P {n(totals.proteinG)} · C {n(totals.carbsG)} · F {n(totals.fatG)}
+      </p>
     </div>
   );
 }

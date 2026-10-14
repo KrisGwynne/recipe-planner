@@ -270,3 +270,15 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Undo after Remove adds the recipe back last in its meal** (Kris, 2026-10-13), not in its old place among several.
 
 **How it works.** The recipe picker is a page, `/plans/<id>/add?day=2&slot=lunch&meal=lunch` (`meal` is the library's own meal filter, so the chip is an ordinary filter), covering the tab bar on phones. Its search, filters and sort only replace the history entry, so back always returns to the plan; tapping a recipe adds it and goes back. The library's search box, filter and sort sheets and "nothing matches" moved to `src/components/recipe/library-controls.tsx` for both. Toasts come from a provider in the `(app)` layout, so one shown just before going back stays on the plan. The recipe page's action bar has only Add to plan until PP-169 adds Cooked today. The Add to plan sheet loads the chosen plan's grid when it opens (`planGridAction`), so recipe pages don't query plan entries until it's used. Moving shows "Moved to Wed lunch" without Undo.
+
+## 2026-10-14: plan totals and leftovers (PP-172)
+
+**Totals add up the exact numbers and round only for display** (Kris, 2026-10-14): a recipe's nutrition per serving × portions each, summed per day, averaged over the days planned, then rounded to whole kcal and grams. A day's total can differ by 1 from adding up its rounded rows.
+
+**Planning more than a recipe makes isn't flagged** (Kris, 2026-10-14): 3 people × 1½ on a recipe that serves 4 shows no badge or warning. Leftovers are only shown when people × portions each is less than the recipe serves; the entry sheet's Recipe button already opens it scaled up. A warning could be a follow-up ticket if it's missed.
+
+**Half servings left over show as halves** (Kris, 2026-10-14): "½ left over", "1½ left over".
+
+**"kcal a day each" is on the current plans' cards only** (Kris, 2026-10-14), as design A shows; coming-up plans keep "N days empty".
+
+**How it works.** The sums are in `src/plans/nutrition.ts`; the plan page, entry sheet, Add to plan / Move sheet and the nutrition page (`/plans/<id>/nutrition`) all use them. The plan list's average is summed in SQL in `listPlans`, so it doesn't load every entry. The recipe page's energy-split bar moved to `src/components/recipe/energy-split.tsx` for the nutrition page. Past 7 days, the nutrition page's rows say "Mon 12" rather than "Mon", since a plan can then have two Mondays.

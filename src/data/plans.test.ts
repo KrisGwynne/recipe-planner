@@ -87,9 +87,30 @@ describe("listPlans", () => {
     await addEntry(h.a, now, { dayIndex: 2, slot: "lunch", recipeId: tofoo });
     await addEntry(h.a, now, { dayIndex: 2, slot: "dinner", recipeId: tuna });
     expect(await listPlans(h.a)).toEqual([
-      { id: now, ...thisWeek, mealsByDay: [1, 0, 2, 0, 0, 0, 0] },
-      { id: later, name: "Half term", startDate: "2026-10-19", days: 3, people: 2, mealsByDay: [0, 0, 0] },
+      {
+        id: now,
+        ...thisWeek,
+        mealsByDay: [1, 0, 2, 0, 0, 0, 0],
+        averageKcal: { kcal: 672 + 825, estimated: true },
+      },
+      {
+        id: later,
+        name: "Half term",
+        startDate: "2026-10-19",
+        days: 3,
+        people: 2,
+        mealsByDay: [0, 0, 0],
+        averageKcal: null,
+      },
     ]);
+  });
+
+  it("averages each person's kcal over the days planned, counting portions each", async () => {
+    const id = await createPlan(h.a, thisWeek);
+    await addEntry(h.a, id, { dayIndex: 0, slot: "dinner", recipeId: tuna, portionsPerPerson: 1.5 });
+    await addEntry(h.a, id, { dayIndex: 3, slot: "lunch", recipeId: tuna, portionsPerPerson: 0.5 });
+    const [plan] = await listPlans(h.a);
+    expect(plan.averageKcal).toEqual({ kcal: (672 * 1.5 + 672 * 0.5) / 2, estimated: false });
   });
 });
 
@@ -233,6 +254,8 @@ describe("household isolation", () => {
 
   it("doesn't list or find B's plans", async () => {
     expect((await listPlans(h.a)).map((p) => p.id)).toEqual([aPlan]);
+    // B's meals don't count towards A's totals.
+    expect((await listPlans(h.a))[0]).toMatchObject({ mealsByDay: [0, 0, 0, 0, 0, 0, 0], averageKcal: null });
     expect(await getPlan(h.a, bPlan)).toBeNull();
     expect(await getPlan(h.aMember, bPlan)).toBeNull();
   });

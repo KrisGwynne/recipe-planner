@@ -46,6 +46,7 @@ vi.mock("next/navigation", async () => {
 const { default: PlansPage } = await import("./page");
 const { default: PlanPage } = await import("./[id]/page");
 const { default: AddRecipePage } = await import("./[id]/add/page");
+const { default: NutritionPage } = await import("./[id]/nutrition/page");
 const { default: RecipePage } = await import("../recipes/[slug]/page");
 const {
   addEntryAction,
@@ -361,6 +362,126 @@ describe("filling a plan (PP-171)", () => {
   });
 });
 
+describe("totals and leftovers (PP-172)", () => {
+  const dayCard = (dayIndex: number) => document.getElementById(`day-${dayIndex}`)!;
+  let id: string;
+
+  // 2 people: Mon tuna pasta (serves 4) at 1 each; Tue Tofoo noodles
+  // (serves 2, estimated) at 1 each and tuna pasta at 1½ each for lunch.
+  beforeEach(async () => {
+    const noodles = (await saveRecipe(h.a, tofoo)).id;
+    id = await createPlan(h.a, thisWeek);
+    await addEntry(h.a, id, { dayIndex: 0, slot: "dinner", recipeId: tuna });
+    await addEntry(h.a, id, { dayIndex: 1, slot: "dinner", recipeId: noodles });
+    await addEntry(h.a, id, { dayIndex: 1, slot: "lunch", recipeId: tuna, portionsPerPerson: 1.5 });
+  });
+
+  it("shows each day's total and each recipe's nutrition and leftovers per person (D, I)", async () => {
+    await openPlan(id);
+    expect(dayCard(0)).toHaveTextContent("Each person: 672 kcal");
+    expect(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ })).toHaveTextContent(
+      "1 each · 672 kcal · 29g protein2 left over",
+    );
+    // Tuesday includes the estimated noodles.
+    expect(dayCard(1)).toHaveTextContent("Each person: ~1,833 kcal");
+    expect(within(dayCard(1)).getByRole("button", { name: /Lemony tuna/ })).toHaveTextContent(
+      "1½ each · 1,008 kcal · 44g protein1 left over",
+    );
+    const noodles = within(dayCard(1)).getByRole("button", { name: /Tofoo/ });
+    expect(noodles).toHaveTextContent("1 each · ~825 kcal · ~31g protein");
+    expect(noodles).not.toHaveTextContent("left over");
+  });
+
+  it("averages over the days planned, linking to the nutrition page (D)", async () => {
+    await openPlan(id);
+    const [wide, card] = screen.getAllByRole("link", { name: /a day/i });
+    expect(card).toHaveTextContent("Each person, a day on average~1,253 kcalP ~52g · C ~150g · F ~46g");
+    expect(card).toHaveAttribute("href", `/plans/${id}/nutrition`);
+    expect(card).toHaveClass("border-dashed");
+    expect(wide).toHaveTextContent("A day, each: ~1,253 kcal · P ~52g · C ~150g · F ~46g");
+  });
+
+  it("has no average on an empty plan", async () => {
+    await openPlan(await createPlan(h.a, { ...thisWeek, name: "Empty" }));
+    expect(screen.queryByRole("link", { name: /a day/i })).not.toBeInTheDocument();
+  });
+
+  it("puts each person's totals along the bottom of the wide grid", async () => {
+    await openPlan(id);
+    const row = screen.getByRole("rowheader", { name: "Each person" }).closest("tr")!;
+    expect(within(row).getAllByRole("cell").map((c) => c.textContent)).toEqual([
+      "672 kcalP 29 · C 83 · F 23",
+      "~1,833 kcalP ~75 · C ~217 · F ~69",
+      ...Array(5).fill("Nothing planned"),
+    ]);
+  });
+
+  it("updates the leftovers and what each person gets as portions change (F)", async () => {
+    await openPlan(id);
+    fireEvent.click(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ }));
+    const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
+    expect(sheet).toHaveTextContent("2 servings left overThe recipe makes 4; 2 are planned.");
+    expect(sheet).toHaveTextContent("Each person getsPrinted672 kcalProtein 29g · Carbs 83g · Fat 23g");
+
+    await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "More portions each" })));
+    expect(sheet).toHaveTextContent("1 serving left overThe recipe makes 4; 3 are planned.");
+    expect(sheet).toHaveTextContent("1,008 kcal");
+
+    // 2 people × 2 each eat it all: no leftovers box.
+    await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "More portions each" })));
+    expect(sheet).not.toHaveTextContent("left over");
+    // 2 × 2½ is more than it makes: still nothing to flag (Kris, 2026-10-14).
+    await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "More portions each" })));
+    expect(sheet).not.toHaveTextContent("left over");
+  });
+
+  it("marks estimated nutrition in the entry sheet (F)", async () => {
+    await openPlan(id);
+    fireEvent.click(within(dayCard(1)).getByRole("button", { name: /Tofoo/ }));
+    expect(screen.getByRole("dialog", { name: tofoo.name })).toHaveTextContent(
+      "Each person gets~ Estimated~825 kcalProtein ~31g · Carbs ~92g · Fat ~34g",
+    );
+  });
+
+  it("shows the leftovers line when moving a recipe (G)", async () => {
+    await openPlan(id);
+    fireEvent.click(within(dayCard(1)).getByRole("button", { name: /Lemony tuna/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Move" }));
+    expect(screen.getByRole("dialog", { name: "Move to…" })).toHaveTextContent(
+      "Serves 4 · 2 people × 1½ each = 3 · 1 left over",
+    );
+  });
+
+  it("shows the plan's nutrition, each day and which recipes are estimated (H)", async () => {
+    render(await NutritionPage({ params: Promise.resolve({ id }) }));
+    expect(screen.getByRole("heading", { level: 1, name: "Nutrition" })).toBeInTheDocument();
+    expect(screen.getByText("This week · each person")).toBeInTheDocument();
+    const average = screen.getByRole("region", { name: "A day on average" });
+    expect(average).toHaveTextContent("A day on average · 2 days planned~1,253 kcal~ EstimatedProtein ~52g · Carbs ~150g · Fat ~46g");
+    expect(average).toHaveTextContent(/Protein \d+%Carbs \d+%Fat \d+%/);
+
+    const rows = within(screen.getByRole("table")).getAllByRole("row").slice(1);
+    expect(rows.map((r) => r.textContent)).toEqual([
+      "Mon · 1 meal67229g83g23g",
+      "Tue · 2 meals~1,833~75g~217g~69g",
+      ...["Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => `${day}Nothing planned`),
+    ]);
+    expect(screen.getByText("~ Tue includes a recipe with estimated nutrition: Char siu Tofoo noodles.")).toBeInTheDocument();
+  });
+
+  it("is a 404 for another household's plan", async () => {
+    const theirs = await createPlan(h.b, thisWeek);
+    await expect(NutritionPage({ params: Promise.resolve({ id: theirs }) })).rejects.toThrow("NEXT_NOT_FOUND");
+  });
+
+  it("shows the current plan's kcal a day each on the plan list (A)", async () => {
+    await createPlan(h.a, { ...thisWeek, name: "Half term", startDate: "2026-10-19" });
+    render(await PlansPage());
+    expect(screen.getByRole("link", { name: /This week/ })).toHaveTextContent("3 meals · ~1,253 kcal a day each");
+    expect(screen.getByRole("link", { name: /Half term/ })).not.toHaveTextContent("kcal");
+  });
+});
+
 describe("recipe picker (E)", () => {
   it("starts filtered to the meal, which can be removed", async () => {
     await saveRecipe(h.a, tofoo);
@@ -443,6 +564,7 @@ describe("Add to plan from a recipe page (G)", () => {
     // The recipe's meal type is in bold.
     expect(within(sheet).getByRole("columnheader", { name: "Dinner" })).toHaveClass("font-semibold");
     expect(within(sheet).getByRole("button", { name: "Mon 12 Oct, dinner: 1 recipe planned" })).toBeInTheDocument();
+    expect(sheet).toHaveTextContent("Serves 4 · 2 people × 1 each = 2 · 2 left over");
 
     fireEvent.click(within(sheet).getByRole("button", { name: /This week/ }));
     const plans = within(sheet).getByRole("list", { name: "Plans" });
