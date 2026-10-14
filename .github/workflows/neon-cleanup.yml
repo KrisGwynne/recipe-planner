@@ -1,0 +1,31 @@
+name: Delete Neon preview branch
+
+# The Vercel–Neon integration makes a Neon branch, preview/<git branch>, for
+# each PR preview, but only deletes it when Vercel deletes the deployment,
+# weeks later, so branches pile up to Neon's limit (PP-182). This deletes a
+# PR's branch as soon as the PR is merged or closed. Production is the main
+# branch, never preview/..., so it can't be matched.
+#
+# Needs the repository secret NEON_API_KEY and variable NEON_PROJECT_ID.
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions: {}
+
+jobs:
+  delete:
+    # Only this repository's branches: the branch name goes into a shell
+    # command, and fork PRs don't get the secret anyway.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: neondatabase/delete-branch-action@4468d825d5a88ef4012f1705a82f02ec3072f776 # v3.2.1
+        # A PR without a preview branch (say one opened while the limit was
+        # reached) has nothing to delete; that isn't a failure.
+        continue-on-error: true
+        with:
+          project_id: ${{ vars.NEON_PROJECT_ID }}
+          branch: preview/${{ github.event.pull_request.head.ref }}
+          api_key: ${{ secrets.NEON_API_KEY }}
