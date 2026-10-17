@@ -71,6 +71,8 @@ const paths = {
       <path d="m15 5 4 4" />
     </>
   ),
+  "pause": <path d="M8 5v14M16 5v14" />,
+  "play": <path d="M6 3v18l14-9z" />,
   "plus": <path d="M5 12h14M12 5v14" />,
   "search": (
     <>
@@ -82,6 +84,12 @@ const paths = {
   "sliders": <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />,
   "star": <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" />,
   "trash": <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />,
+  "timer": (
+    <>
+      <path d="M10 2h4M12 14l3-3" />
+      <circle cx="12" cy="14" r="8" />
+    </>
+  ),
   "upload": <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />,
   "users": (
     <>
