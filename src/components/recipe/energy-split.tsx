@@ -26,9 +26,14 @@ export function EnergySplit({
   ];
   return (
     <>
-      <div className="mt-3 flex h-3 rounded-full overflow-hidden bg-surface-2" aria-hidden="true">
+      {/* The bar draws in from the left; changes slide (PP-184). */}
+      <div className="mt-3 flex h-3 rounded-full overflow-hidden bg-surface-2 motion-safe:animate-bar-in" aria-hidden="true">
         {parts.map((p) => (
-          <span key={p.label} className={p.dot} style={{ width: `${p.value}%` }} />
+          <span
+            key={p.label}
+            className={cx(p.dot, "motion-safe:transition-[width] motion-safe:duration-300")}
+            style={{ width: `${p.value}%` }}
+          />
         ))}
       </div>
       <p className="mt-2 flex justify-between text-xs text-ink-muted">

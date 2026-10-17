@@ -6,3 +6,21 @@
 body {
   @apply bg-bg text-ink font-sans antialiased;
 }
+
+/*
+ * Charts draw in (PP-184): a bar is revealed from its start, so rounded ends
+ * keep their shape. `motion-safe:` keeps everything still for anyone who has
+ * asked for reduced motion.
+ */
+@theme {
+  --animate-bar-in: bar-in 600ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  @keyframes bar-in {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+}
