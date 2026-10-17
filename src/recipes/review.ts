@@ -7,6 +7,11 @@ import type { Problem } from "./validate";
 
 export const MAX_FILES = 50;
 export const MAX_FILE_BYTES = 256 * 1024;
+/**
+ * The most recipes one person can import in an hour (PP-163): enough to move
+ * a large library over in a few goes, not enough to fill the database.
+ */
+export const IMPORTS_PER_HOUR = 200;
 /** Files go to the server in requests of at most this much (Vercel allows 4.5 MB a request). */
 export const MAX_REQUEST_BYTES = 3 * 1024 * 1024;
 
@@ -28,6 +33,19 @@ export function tooManyFiles(count: number): Problem | null {
   return {
     title: "Too many files",
     detail: `You picked ${count} files; the most at once is ${MAX_FILES}. Pick fewer and import the rest after.`,
+    path: "",
+  };
+}
+
+/** Screen I's "Too many imports for now". `saved` is how many of this import were saved before the limit. */
+export function tooManyImports(retryMinutes: number, saved = 0): Problem {
+  const wait = retryMinutes <= 1 ? "about a minute" : `about ${retryMinutes} minutes`;
+  return {
+    title: "Too many imports for now",
+    detail:
+      saved > 0
+        ? `You've imported a lot in the last hour. ${saved === 1 ? "1 recipe was" : `${saved} recipes were`} saved; try the rest again in ${wait}.`
+        : `You've imported a lot in the last hour. Try again in ${wait}. Nothing from this batch was saved.`,
     path: "",
   };
 }
