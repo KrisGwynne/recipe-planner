@@ -414,3 +414,7 @@ Made while Kris was away; open to change in review.
 **The database is with Neon in London, and there are no backups** (Kris, 2026-10-17). Both pages say so: deleted data is gone for good, so keep a download of anything you'd miss.
 
 **The landing page is onboarding A** (Kris, 2026-10-17), the existing sign-in page, at `/` for signed-out visitors; signed-in visitors go to their recipes. The terms keep the nutrition disclaimer ("a guide, not medical or dietary advice").
+
+## 2026-10-17: landing page, privacy policy and terms (PP-159)
+
+**How it works.** `/` renders the sign-in page (onboarding A) for signed-out visitors and sends signed-in ones to `/recipes`, as `/sign-in` does. `/privacy` and `/terms` are public pages with their own back header (`src/components/legal/`), from `designs/src/legal.html`; their text lives in the pages, so a change to what the app stores means a change there too. The Household tab ends with Privacy · Terms links (household design B). A test checks neither page names anyone or gives an email address.
