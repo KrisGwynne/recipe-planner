@@ -101,6 +101,8 @@ describe("as an owner (design A, B)", () => {
     expect(screen.getByRole("button", { name: "Delete my account…" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Download all recipes/ })).toHaveAttribute("href", "/household/download");
     expect(screen.getByRole("link", { name: /Download all recipes/ })).toHaveTextContent("42 recipe files in a .zip");
+    expect(screen.getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy");
+    expect(screen.getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms");
   });
 
   it("renames (design D)", async () => {
