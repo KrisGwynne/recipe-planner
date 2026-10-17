@@ -1,10 +1,13 @@
 import { readFileSync } from "node:fs";
+import { strFromU8, unzipSync } from "fflate";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
 import { recipes } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
 import type { Recipe } from "@/types/recipe";
-import { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipes, saveRecipe } from "./recipes";
+import { recipesZip } from "@/recipes/export";
+import { parseRecipe } from "@/recipes/validate";
+import { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipeFiles, listRecipes, saveRecipe } from "./recipes";
 import { twoHouseholds, type TwoHouseholds } from "./test-fixtures";
 
 const mocks = vi.hoisted(() => ({ db: undefined as unknown as Db }));
@@ -133,6 +136,29 @@ describe("deleteRecipe", () => {
   });
 });
 
+describe("listRecipeFiles", () => {
+  it("gives every stored file, by slug", async () => {
+    await saveRecipe(h.a, tunaPasta);
+    await saveRecipe(h.a, tofooNoodles);
+    expect(await listRecipeFiles(h.a)).toEqual([tofooNoodles, tunaPasta]);
+  });
+
+  it("round-trips: importing the zip's files into another household reproduces the same recipes (PP-164)", async () => {
+    await saveRecipe(h.a, tunaPasta);
+    await saveRecipe(h.a, tofooNoodles);
+    const files = unzipSync(recipesZip(await listRecipeFiles(h.a)));
+    for (const bytes of Object.values(files)) {
+      const parsed = parseRecipe(strFromU8(bytes));
+      if (!parsed.ok) throw new Error("An exported file didn't validate");
+      await saveRecipe(h.b, parsed.recipe);
+    }
+    expect(await listRecipeFiles(h.b)).toEqual(await listRecipeFiles(h.a));
+    const columns = (rows: Awaited<ReturnType<typeof listRecipes>>) =>
+      rows.map(({ id: _id, createdAt: _at, ...rest }) => rest);
+    expect(columns(await listRecipes(h.b))).toEqual(columns(await listRecipes(h.a)));
+  });
+});
+
 describe("isolation", () => {
   let bRecipe: string;
 
@@ -148,6 +174,8 @@ describe("isolation", () => {
 
   it("household A's list doesn't include B's recipes", async () => {
     expect(await listRecipes(h.a)).toEqual([]);
+    expect(await listRecipeFiles(h.a)).toEqual([]);
+    expect(await listRecipeFiles(h.b)).toEqual([tunaPasta]);
     expect(await listRecipes(h.b)).toHaveLength(1);
   });
 

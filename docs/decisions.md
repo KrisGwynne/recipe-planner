@@ -376,3 +376,11 @@ Made while Kris was away (he said to carry on); each is open to change in review
 **"Carb type" and "Protein type"** label the table's carb and protein rows (the design said "Carbs" and "Protein"), so they aren't confused with the nutrient rows of the same names below.
 
 **How it works.** `src/compare/compare.ts` (address, remembered comparison, bar widths), `src/app/(app)/compare/` (page, `compare-view.tsx`, `remember.tsx`, `choose/`). The energy split is the recipe page's `EnergySplit`, which now takes `estimated` to put the ~ on its percentages.
+
+## 2026-10-17: download all recipes (PP-164)
+
+**fflate for the zip** (Kris, 2026-10-17): small, with no dependencies, and it unzips too, so the tests open the zip they're given.
+
+**An empty library greys the row out** (Kris, 2026-10-17): "No recipes to download yet." The "Download all recipes first" link on the Delete household and "delete your account and the household" sheets only shows when there are recipes, and downloading leaves the sheet open, so you can carry on deleting.
+
+**How it works.** `GET /household/download` (a route handler, so the browser downloads it from a plain link) sends `<household> recipes <date>.zip`, the date in UK time, with one `<id>.json` per recipe: the stored file exactly, as the single download gives it (`src/recipes/file.ts`). Anyone in the household can; `listRecipeFiles(ctx)` reads only that household's recipes. Not `/household/recipes.zip`, since the proxy skips paths that end in a file extension, and with it the security headers. A test exports one household, unzips, validates and imports the files into another, and gets the same recipes.

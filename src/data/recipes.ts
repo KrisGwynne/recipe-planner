@@ -59,6 +59,16 @@ export async function getRecipesBySlugs(ctx: HouseholdContext, slugs: string[]) 
     .where(and(eq(recipes.householdId, ctx.householdId), inArray(recipes.slug, slugs)));
 }
 
+/** Every recipe file in the household, by slug, for "Download all recipes" (PP-164). */
+export async function listRecipeFiles(ctx: HouseholdContext): Promise<Recipe[]> {
+  const rows = await getDb()
+    .select({ data: recipes.data })
+    .from(recipes)
+    .where(eq(recipes.householdId, ctx.householdId))
+    .orderBy(asc(recipes.slug));
+  return rows.map((r) => r.data);
+}
+
 /** Every recipe in the household, A to Z, with what cards, filters and search use (not the whole file). */
 export async function listRecipes(ctx: HouseholdContext) {
   return getDb()

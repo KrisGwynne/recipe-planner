@@ -9,7 +9,6 @@ export const metadata: Metadata = { title: "Household" };
 
 // Household settings and account (designs/src/household.html, PP-157). Owners
 // see everything; members see the household and their own account (design C).
-// "Download all recipes" comes with PP-164 (Kris, 2026-10-14).
 export default async function HouseholdPage() {
   const { user, household, ctx } = await requireHousehold();
   const owner = household.role === "owner";

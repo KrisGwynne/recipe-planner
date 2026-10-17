@@ -42,7 +42,7 @@ export {
   unmarkCooked,
   type RecipeHousehold,
 } from "./recipe-household";
-export { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipes, saveRecipe } from "./recipes";
+export { deleteRecipe, getRecipe, getRecipeBySlug, getRecipesBySlugs, listRecipeFiles, listRecipes, saveRecipe } from "./recipes";
 export {
   addEntry,
   copyPlan,

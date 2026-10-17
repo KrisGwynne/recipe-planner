@@ -99,8 +99,8 @@ describe("as an owner (design A, B)", () => {
     expect(screen.getByRole("button", { name: /Leave The Gwynnes/ })).toHaveTextContent("Make someone else an owner first.");
     expect(screen.getByRole("button", { name: /Delete The Gwynnes/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Delete my account…" })).toBeInTheDocument();
-    // Comes with PP-164.
-    expect(screen.queryByText("Download all recipes")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Download all recipes/ })).toHaveAttribute("href", "/household/download");
+    expect(screen.getByRole("link", { name: /Download all recipes/ })).toHaveTextContent("42 recipe files in a .zip");
   });
 
   it("renames (design D)", async () => {
@@ -199,6 +199,7 @@ describe("as an owner (design A, B)", () => {
     expect(button).toBeDisabled();
     fireEvent.change(field, { target: { value: " the gwynnes " } });
     expect(button).toBeEnabled();
+    expect(within(dialog()).getByRole("link", { name: /Download all recipes first/ })).toHaveAttribute("href", "/household/download");
     await act(async () => fireEvent.click(button));
     expect(mocks.actions.deleteHouseholdAction).toHaveBeenCalledWith(" the gwynnes ");
   });
@@ -228,6 +229,11 @@ describe("as a member (design C, H)", () => {
     expect(screen.queryByRole("button", { name: /Delete The Gwynnes/ })).not.toBeInTheDocument();
   });
 
+  it("can download the recipes too (design B)", async () => {
+    await show();
+    expect(screen.getByRole("link", { name: /Download all recipes/ })).toHaveAttribute("href", "/household/download");
+  });
+
   it("names every owner", async () => {
     as("sam", "member", [kris, { ...alex, role: "owner" }, sam]);
     await show();
@@ -250,6 +256,25 @@ describe("as a member (design C, H)", () => {
     await click(/Leave The Gwynnes/);
     await act(async () => fireEvent.click(within(dialog()).getByRole("button", { name: "Leave household" })));
     expect(screen.getByRole("status")).toHaveTextContent("Couldn't leave. Try again.");
+  });
+});
+
+describe("Download all recipes (PP-164)", () => {
+  it("has nothing to download, and no 'first' offer, in an empty library", async () => {
+    as("kris", "owner", [kris]);
+    mocks.householdCounts.mockResolvedValue({ recipes: 0, plans: 0 });
+    await show();
+    expect(screen.queryByRole("link", { name: /Download all recipes/ })).not.toBeInTheDocument();
+    expect(screen.getByText("No recipes to download yet.")).toBeInTheDocument();
+    await click(/Delete The Gwynnes/);
+    expect(within(dialog()).queryByText("Download all recipes first")).not.toBeInTheDocument();
+  });
+
+  it("says 1 recipe file for one", async () => {
+    as("kris", "owner");
+    mocks.householdCounts.mockResolvedValue({ recipes: 1, plans: 0 });
+    await show();
+    expect(screen.getByRole("link", { name: /Download all recipes/ })).toHaveTextContent("1 recipe file in a .zip");
   });
 });
 
@@ -308,6 +333,7 @@ describe("Delete my account (design K, L)", () => {
     );
     const button = within(dialog()).getByRole("button", { name: "Delete account and household" });
     const field = within(dialog()).getByRole("textbox", { name: /to confirm/ });
+    expect(within(dialog()).getByRole("link", { name: /Download all recipes first/ })).toHaveAttribute("href", "/household/download");
     expect(button).toBeDisabled();
     fireEvent.change(field, { target: { value: "the gwynnes" } });
     expect(button).toBeEnabled();
