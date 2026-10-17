@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Compare</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-151</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Compare recipes</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">The Compare tab: pick 2 to 4 recipes and see their calories and macros per serving side by side, where those calories come from, and a table of everything else. Printed and estimated nutrition always look different. Built in PP-173; comparing two meal plans (PP-174) is left for later.</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Choosing recipes</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">Empty to start with. Recipes are picked from the library, or a recipe page's ⋯ menu starts a comparison with that recipe.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-5 pt-6 pb-3">
+          <h1 class="font-display text-[28px] leading-9 font-semibold">Compare</h1>
+          <p class="text-sm text-ink-muted"></p>
+        </div>
+        <div class="flex-1 px-6 flex flex-col items-center justify-center text-center -mt-10">
+          <span class="size-16 rounded-full bg-primary-soft text-primary grid place-items-center"><svg class="size-8 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg></span>
+          <p class="mt-4 font-display text-[22px] leading-7 font-semibold">See recipes side by side</p>
+          <p class="mt-2 text-ink-muted">Pick 2 to 4 recipes to compare their calories, protein, carbs and fat per serving, with times and dietary details in a table.</p>
+          <button class="mt-6 h-12 px-6 rounded-control bg-primary text-on-primary font-semibold">Choose recipes</button>
+          <p class="mt-4 text-sm text-ink-muted">Or open a recipe and choose <b class="text-ink font-medium">Compare with…</b> from its ⋯ menu.</p>
+        </div>
+        <!-- include:compare-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · Nothing chosen yet</p><p class="text-ink-muted mt-1">The Compare tab before anything is picked. One action. With fewer than two recipes in the library, the button is replaced by the note in H.</p></figcaption>
+    </figure>
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          <p class="flex-1 font-display text-[22px] leading-7 font-semibold">Choose recipes</p>
+        </div>
+        <div class="px-5 pt-3 pb-3">
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <svg class="size-5 absolute left-4 top-3.5 fill-none stroke-ink-subtle stroke-2"><use href="#i-search"/></svg>
+              <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface border border-line placeholder:text-ink-subtle" placeholder="Search recipes">
+            </div>
+            <button class="size-12 rounded-full border border-line bg-surface grid place-items-center" aria-label="Filters"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-sliders"/></svg></button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5">
+          <ul class="rounded-card bg-surface border border-line divide-y divide-line overflow-hidden">
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  ">
+              <span class="w-1 self-stretch rounded-full bg-meat"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Chicken, chorizo &amp; butter bean stew</span>
+                <span class="block text-sm text-ink-muted tabular-nums">45 min · 590 kcal · 41g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full border-2 border-line"></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  bg-primary-soft/40">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Char siu Tofoo noodles</span>
+                <span class="block text-sm text-ink-muted tabular-nums">55 min · ~825 kcal · ~31g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  ">
+              <span class="w-1 self-stretch rounded-full bg-vegan"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Chickpea, spinach &amp; coconut curry</span>
+                <span class="block text-sm text-ink-muted tabular-nums">30 min · 480 kcal · 17g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full border-2 border-line"></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  ">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Smoked mackerel &amp; leek pasta bake</span>
+                <span class="block text-sm text-ink-muted tabular-nums">50 min · ~690 kcal · ~33g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full border-2 border-line"></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  ">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Halloumi, beetroot &amp; freekeh salad</span>
+                <span class="block text-sm text-ink-muted tabular-nums">30 min · ~560 kcal · ~24g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full border-2 border-line"></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  bg-primary-soft/40">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Lemony tuna, tomato &amp; caper one-pot pasta</span>
+                <span class="block text-sm text-ink-muted tabular-nums">35 min · 672 kcal · 29g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            </li>
+          </ul>
+        </div>
+        <div class="border-t border-line bg-surface px-5 pt-3 pb-6">
+          <p class="text-sm text-ink-muted tabular-nums">2 chosen · up to 4</p>
+          <button class="mt-2 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Compare 2 recipes</button>
+        </div>
+        
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · Choosing recipes</p><p class="text-ink-muted mt-1">A full-screen picker over the tab bar, opened by Choose recipes, Add a recipe, or a recipe page's "Compare with…" (which opens it with that recipe already ticked). Tapping a row ticks or unticks it; the list keeps the library's search, filters and sort. The button needs at least 2 and says how many. Ticked recipes stay where they are in the list, so nothing jumps.</p></figcaption>
+    </figure>
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          <p class="flex-1 font-display text-[22px] leading-7 font-semibold">Choose recipes</p>
+        </div>
+        <div class="px-5 pt-3 pb-3">
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <svg class="size-5 absolute left-4 top-3.5 fill-none stroke-ink-subtle stroke-2"><use href="#i-search"/></svg>
+              <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface border border-line placeholder:text-ink-subtle" placeholder="Search recipes">
+            </div>
+            <button class="size-12 rounded-full border border-line bg-surface grid place-items-center" aria-label="Filters"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-sliders"/></svg></button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5">
+          <ul class="rounded-card bg-surface border border-line divide-y divide-line overflow-hidden">
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16 opacity-50 ">
+              <span class="w-1 self-stretch rounded-full bg-meat"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Chicken, chorizo &amp; butter bean stew</span>
+                <span class="block text-sm text-ink-muted tabular-nums">45 min · 590 kcal · 41g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full border-2 border-line"></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  bg-primary-soft/40">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Char siu Tofoo noodles</span>
+                <span class="block text-sm text-ink-muted tabular-nums">55 min · ~825 kcal · ~31g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  bg-primary-soft/40">
+              <span class="w-1 self-stretch rounded-full bg-vegan"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Chickpea, spinach &amp; coconut curry</span>
+                <span class="block text-sm text-ink-muted tabular-nums">30 min · 480 kcal · 17g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16 opacity-50 ">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Smoked mackerel &amp; leek pasta bake</span>
+                <span class="block text-sm text-ink-muted tabular-nums">50 min · ~690 kcal · ~33g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full border-2 border-line"></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  bg-primary-soft/40">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Halloumi, beetroot &amp; freekeh salad</span>
+                <span class="block text-sm text-ink-muted tabular-nums">30 min · ~560 kcal · ~24g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            </li>
+            <li class="flex items-center gap-3 px-4 py-3 min-h-16  bg-primary-soft/40">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Lemony tuna, tomato &amp; caper one-pot pasta</span>
+                <span class="block text-sm text-ink-muted tabular-nums">35 min · 672 kcal · 29g protein</span>
+              </span>
+              <span class="size-7 shrink-0 rounded-full bg-primary text-on-primary grid place-items-center"><svg class="size-4 fill-none stroke-current stroke-[3]"><use href="#i-check"/></svg></span>
+            </li>
+          </ul>
+        </div>
+        <div class="border-t border-line bg-surface px-5 pt-3 pb-6">
+          <p class="text-sm text-ink-muted">4 is the most. Untick one to choose another.</p>
+          <button class="mt-2 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Compare 4 recipes</button>
+        </div>
+        
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">I · Picker with four chosen</p><p class="text-ink-muted mt-1">Once four are ticked, the rest dim and can't be ticked; the note says why rather than the tap doing nothing silently.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Comparing</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">The two example recipes: the tuna pasta's nutrition is printed in the magazine, the Tofoo noodles' is estimated. One scrolling page, shown here as three screens.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-5 pt-6 pb-3">
+          <h1 class="font-display text-[28px] leading-9 font-semibold">Compare</h1>
+          <p class="text-sm text-ink-muted">Per serving, as each recipe gives it.</p>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 space-y-4 ">
+        <ul class="rounded-card bg-surface border border-line divide-y divide-line">
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-fish"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Lemony tuna, tomato &amp; caper one-pot pasta</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">35 min · serves 4</span><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-veg"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Char siu Tofoo noodles</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">55 min · serves 2</span><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li><button class="w-full h-12 px-4 flex items-center gap-2 font-semibold text-primary"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Add a recipe</button></li>
+        </ul>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Calories</p><p class="text-xs text-ink-muted">kcal per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-ink" style="width:63.5%"></span><span class="text-sm font-semibold tabular-nums">672</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-surface-2 border border-dashed border-ink-subtle" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~825</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Protein</p><p class="text-xs text-ink-muted">grams per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-veg" style="width:73.0%"></span><span class="text-sm font-semibold tabular-nums">29g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-veg-soft border border-dashed border-veg" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~31g</span></div>
+          </div>
+          </div>
+        </div>
+        </div>
+        <!-- include:compare-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · Two recipes: the top</p><p class="text-ink-muted mt-1">The chosen recipes come first, each with its time, servings and Printed or ~ Estimated badge, so the source of every number is clear before any chart. Then one small chart per nutrient: kcal and grams can't share a scale, so each gets its own, starting at zero, with every value written at the end of its bar. Estimated bars have a dashed outline and a lighter fill, and their numbers a ~, as everywhere else. Recipes are always in the order they were chosen.</p></figcaption>
+    </figure>
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="pt-4"></div>
+        <div class="flex-1 overflow-hidden px-5 space-y-4 ">
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Carbs</p><p class="text-xs text-ink-muted">grams per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-primary" style="width:70.4%"></span><span class="text-sm font-semibold tabular-nums">83g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-primary-soft border border-dashed border-primary" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~92g</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Fat</p><p class="text-xs text-ink-muted">grams per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-warning" style="width:52.8%"></span><span class="text-sm font-semibold tabular-nums">23g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-warning-soft border border-dashed border-warning" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~34g</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <p class="font-semibold">Where the calories come from</p>
+          <div class="mt-1 flex gap-3 text-xs text-ink-muted"><span><span class="inline-block size-2 rounded-full bg-veg mr-1"></span>Protein</span><span><span class="inline-block size-2 rounded-full bg-primary mr-1"></span>Carbs</span><span><span class="inline-block size-2 rounded-full bg-warning mr-1"></span>Fat</span></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm truncate"><span class="font-medium">Lemony tuna, tomato &amp; caper one-pot pasta</span></p>
+            <div class="mt-1.5 flex gap-0.5 h-3 rounded-full overflow-hidden"><span class="bg-veg" style="width:18%"></span><span class="bg-primary" style="width:51%"></span><span class="bg-warning" style="width:31%"></span></div>
+            <p class="mt-1 text-xs text-ink-muted tabular-nums">Protein 18% · Carbs 51% · Fat 31%</p>
+          </div>
+          <div>
+            <p class="text-sm truncate"><span class="font-medium">Char siu Tofoo noodles</span></p>
+            <div class="mt-1.5 flex gap-0.5 h-3 rounded-full overflow-hidden"><span class="bg-veg" style="width:16%"></span><span class="bg-primary" style="width:46%"></span><span class="bg-warning" style="width:38%"></span></div>
+            <p class="mt-1 text-xs text-ink-muted tabular-nums">Protein ~16% · Carbs ~46% · Fat ~38%</p>
+          </div>
+          </div>
+          <p class="mt-3 text-xs text-ink-subtle">Share of calories from protein, carbs and fat (4, 4 and 9 kcal per gram).</p>
+        </div>
+        </div>
+        <!-- include:compare-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Two recipes: further down</p><p class="text-ink-muted mt-1">Carbs and fat, in the same colours as the energy split below them (and on the recipe page): protein green, carbs tomato, fat amber. The energy split is one bar per recipe, using the recipe page's split, with the percentages written underneath; estimated ones get the ~.</p></figcaption>
+    </figure>
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="pt-4"></div>
+        <div class="flex-1 overflow-hidden px-5 space-y-4 ">
+        <h2 class="text-[17px] font-semibold">Side by side</h2>
+        <div class="rounded-card bg-surface border border-line overflow-x-auto ">
+          <table class="w-full text-sm tabular-nums border-collapse ">
+            <thead><tr class="border-b border-line"><th class="sticky left-0 bg-surface w-20 min-w-20"></th><th class=" align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Lemony tuna, tomato &amp; caper one-pot pasta</span></th><th class=" align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Char siu Tofoo noodles</span></th></tr></thead>
+            <tbody class="divide-y divide-line">
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Time</th><td class=" align-top px-2 py-2 "><span class="font-semibold">35 min</span><span class="block text-xs text-ink-muted">5 prep · 30 cook</span></td><td class=" align-top px-2 py-2 "><span class="font-semibold">55 min</span><span class="block text-xs text-ink-muted">15 prep · 10 cook · 30 wait</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Serves</th><td class=" align-top px-2 py-2 ">4</td><td class=" align-top px-2 py-2 ">2</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Carbs</th><td class=" align-top px-2 py-2 ">Pasta</td><td class=" align-top px-2 py-2 ">Noodles</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Protein</th><td class=" align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-fish-soft text-fish text-xs font-semibold"><span class="size-1.5 rounded-full bg-fish"></span>Fish</span><span class="block mt-0.5">Tuna</span></td><td class=" align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-veg-soft text-veg text-xs font-semibold"><span class="size-1.5 rounded-full bg-veg"></span>Veg</span><span class="block mt-0.5">Tofu</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Dietary</th><td class=" align-top px-2 py-2 ">Nut-free</td><td class=" align-top px-2 py-2 ">Vegetarian<br>Dairy-free<br>Nut-free</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Cuisine</th><td class=" align-top px-2 py-2 ">Italian</td><td class=" align-top px-2 py-2 ">Chinese</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Difficulty</th><td class=" align-top px-2 py-2 ">Easy</td><td class=" align-top px-2 py-2 ">Easy</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Spice</th><td class=" align-top px-2 py-2 ">None</td><td class=" align-top px-2 py-2 ">Mild</td></tr>
+              <tr><th colspan="3" class="text-left pl-4 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-muted">Per serving</th></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Nutrition</th><td class=" align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></td><td class=" align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Calories</th><td class=" align-top px-2 py-2 "><span class="font-medium">672 kcal</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~825 kcal</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Protein</th><td class=" align-top px-2 py-2 "><span class="font-medium">29g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~31g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Carbs</th><td class=" align-top px-2 py-2 "><span class="font-medium">83g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~92g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Sugars</th><td class=" align-top px-2 py-2 "><span class="font-medium">12g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~34g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Fat</th><td class=" align-top px-2 py-2 "><span class="font-medium">23g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~34g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Saturates</th><td class=" align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~4g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Fibre</th><td class=" align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~5g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Salt</th><td class=" align-top px-2 py-2 "><span class="font-medium">1.5g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~5.5g</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+        <!-- include:compare-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · Two recipes: the table</p><p class="text-ink-muted mt-1">At the bottom, everything in one table: time (with prep, cook and wait), serves, carbs, protein with its Meat, Fish or Veg badge, dietary flags, cuisine, difficulty and spice, then all eight nutrients per serving with the Printed or ~ Estimated badge. The table is also the way to read the charts' numbers without the charts. Dietary shows only what the recipe's dietary list says, so a Veg badge never claims vegetarian.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Four recipes, and edge cases</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-5 pt-6 pb-3">
+          <h1 class="font-display text-[28px] leading-9 font-semibold">Compare</h1>
+          <p class="text-sm text-ink-muted">Per serving, as each recipe gives it.</p>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 space-y-4 ">
+        <ul class="rounded-card bg-surface border border-line divide-y divide-line">
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-fish"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Lemony tuna, tomato &amp; caper one-pot pasta</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">35 min · serves 4</span><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-veg"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Char siu Tofoo noodles</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">55 min · serves 2</span><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-vegan"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Chickpea, spinach &amp; coconut curry</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">30 min · serves 4</span><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-veg"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Halloumi, beetroot &amp; freekeh salad</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">30 min · serves 2</span><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="px-4 py-3 text-sm text-ink-muted">4 is the most. Remove one to add another.</li>
+        </ul>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Calories</p><p class="text-xs text-ink-muted">kcal per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-ink" style="width:63.5%"></span><span class="text-sm font-semibold tabular-nums">672</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-surface-2 border border-dashed border-ink-subtle" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~825</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Chickpea, spinach &amp; coconut curry</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-ink" style="width:45.4%"></span><span class="text-sm font-semibold tabular-nums">480</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Halloumi, beetroot &amp; freekeh salad</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-surface-2 border border-dashed border-ink-subtle" style="width:52.9%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~560</span></div>
+          </div>
+          </div>
+        </div>
+        </div>
+        <!-- include:compare-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · Four recipes</p><p class="text-ink-muted mt-1">The most there can be. Names truncate to one line in the charts, so each bar's row stays one line tall; the full names are in the list above and in the table. Four rows per chart keeps every chart short enough to read without scrolling.</p></figcaption>
+    </figure>
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="pt-4"></div>
+        <div class="flex-1 overflow-hidden px-5 space-y-4 ">
+        <h2 class="text-[17px] font-semibold">Side by side</h2>
+        <div class="rounded-card bg-surface border border-line overflow-x-auto ">
+          <table class="w-full text-sm tabular-nums border-collapse ">
+            <thead><tr class="border-b border-line"><th class="sticky left-0 bg-surface w-20 min-w-20"></th><th class="min-w-[112px] align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Lemony tuna, tomato &amp; caper one-pot pasta</span></th><th class="min-w-[112px] align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Char siu Tofoo noodles</span></th><th class="min-w-[112px] align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Chickpea, spinach &amp; coconut curry</span></th><th class="min-w-[112px] align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Halloumi, beetroot &amp; freekeh salad</span></th></tr></thead>
+            <tbody class="divide-y divide-line">
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Time</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-semibold">35 min</span><span class="block text-xs text-ink-muted">5 prep · 30 cook</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-semibold">55 min</span><span class="block text-xs text-ink-muted">15 prep · 10 cook · 30 wait</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-semibold">30 min</span><span class="block text-xs text-ink-muted">10 prep · 20 cook</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-semibold">30 min</span><span class="block text-xs text-ink-muted">15 prep · 15 cook</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Serves</th><td class="min-w-[112px] align-top px-2 py-2 ">4</td><td class="min-w-[112px] align-top px-2 py-2 ">2</td><td class="min-w-[112px] align-top px-2 py-2 ">4</td><td class="min-w-[112px] align-top px-2 py-2 ">2</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Carbs</th><td class="min-w-[112px] align-top px-2 py-2 ">Pasta</td><td class="min-w-[112px] align-top px-2 py-2 ">Noodles</td><td class="min-w-[112px] align-top px-2 py-2 ">Rice</td><td class="min-w-[112px] align-top px-2 py-2 ">Grains</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Protein</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-fish-soft text-fish text-xs font-semibold"><span class="size-1.5 rounded-full bg-fish"></span>Fish</span><span class="block mt-0.5">Tuna</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-veg-soft text-veg text-xs font-semibold"><span class="size-1.5 rounded-full bg-veg"></span>Veg</span><span class="block mt-0.5">Tofu</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-vegan-soft text-vegan text-xs font-semibold"><span class="size-1.5 rounded-full bg-vegan"></span>Veg</span><span class="block mt-0.5">Chickpeas</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-veg-soft text-veg text-xs font-semibold"><span class="size-1.5 rounded-full bg-veg"></span>Veg</span><span class="block mt-0.5">Halloumi</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Dietary</th><td class="min-w-[112px] align-top px-2 py-2 ">Nut-free</td><td class="min-w-[112px] align-top px-2 py-2 ">Vegetarian<br>Dairy-free<br>Nut-free</td><td class="min-w-[112px] align-top px-2 py-2 ">Vegan<br>Vegetarian<br>Dairy-free</td><td class="min-w-[112px] align-top px-2 py-2 ">Vegetarian</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Cuisine</th><td class="min-w-[112px] align-top px-2 py-2 ">Italian</td><td class="min-w-[112px] align-top px-2 py-2 ">Chinese</td><td class="min-w-[112px] align-top px-2 py-2 ">Indian</td><td class="min-w-[112px] align-top px-2 py-2 ">Middle Eastern</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Difficulty</th><td class="min-w-[112px] align-top px-2 py-2 ">Easy</td><td class="min-w-[112px] align-top px-2 py-2 ">Easy</td><td class="min-w-[112px] align-top px-2 py-2 ">Easy</td><td class="min-w-[112px] align-top px-2 py-2 ">Easy</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Spice</th><td class="min-w-[112px] align-top px-2 py-2 ">None</td><td class="min-w-[112px] align-top px-2 py-2 ">Mild</td><td class="min-w-[112px] align-top px-2 py-2 ">Medium</td><td class="min-w-[112px] align-top px-2 py-2 ">None</td></tr>
+              <tr><th colspan="5" class="text-left pl-4 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-muted">Per serving</th></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Nutrition</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Calories</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">672 kcal</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~825 kcal</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">480 kcal</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~560 kcal</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Protein</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">29g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~31g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">17g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~24g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Carbs</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">83g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~92g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">52g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~48g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Sugars</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">12g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~34g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~14g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Fat</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">23g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~34g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">22g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~30g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Saturates</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~4g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">14g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~13g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Fibre</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~5g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">11g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~10g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Salt</th><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">1.5g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~5.5g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="font-medium">1.2g</span></td><td class="min-w-[112px] align-top px-2 py-2 "><span class="text-ink-muted">~2.6g</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-ink-muted text-center">Swipe the table to see all four.</p>
+        </div>
+        <!-- include:compare-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · Four recipes: the table</p><p class="text-ink-muted mt-1">The table scrolls sideways with the row labels pinned on the left, so two recipes and a half are always visible and the half shows there's more. Columns are a fixed width, so long names wrap to three lines at most.</p></figcaption>
+    </figure>
+    <figure class="w-[390px] max-w-full space-y-4">
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">One recipe left</p>
+        <ul class="mt-3 rounded-card border border-line divide-y divide-line">
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14"><span class="w-1 self-stretch rounded-full bg-fish"></span><span class="flex-1 min-w-0 font-semibold truncate">Lemony tuna, tomato &amp; caper one-pot pasta</span><button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button></li>
+        </ul>
+        <p class="mt-3 text-ink-muted">Add at least one more recipe to compare.</p>
+        <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Add a recipe</button>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Fewer than two recipes in the library</p>
+        <p class="mt-3 font-display text-xl font-semibold">Import at least two recipes to compare them</p>
+        <p class="mt-1 text-ink-muted">You have 1 so far.</p>
+        <button class="mt-3 h-12 px-5 rounded-control border border-line font-semibold inline-flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-upload"/></svg>Import recipes</button>
+      </div>
+      <div class="rounded-card bg-surface border border-line p-5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">A recipe was deleted</p>
+        <p class="mt-3 text-ink-muted">A comparison that includes a deleted recipe just leaves it out. If that leaves one, it looks like the first card.</p>
+      </div>
+      <figcaption class="text-sm"><p class="font-semibold text-base">H · Edge cases</p><p class="text-ink-muted mt-1">Removing recipes down to one hides the charts and the table rather than comparing a recipe with itself. A library with fewer than two recipes gets this note in place of Choose recipes on A.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Wider screens</h2>
+  <figure class="mt-5 w-[1240px] max-w-full overflow-hidden rounded-2xl border border-line shadow-xl bg-bg">
+    <div class="h-8 bg-surface-2 border-b border-line flex items-center gap-1.5 px-3"><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span><span class="size-3 rounded-full bg-line"></span></div>
+    <div class="flex h-[1320px]">
+      <nav class="w-20 shrink-0 border-r border-line bg-surface flex flex-col items-center gap-2 py-4 text-[11px] font-medium">
+        <span class="size-12 rounded-full bg-primary text-on-primary grid place-items-center mb-3" aria-label="Import"><svg class="size-6 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg></span>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipes</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plans</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-primary"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-chart"/></svg>Compare</a>
+        <a class="flex flex-col items-center gap-0.5 py-2 text-ink-muted mt-auto"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-users"/></svg>Household</a>
+      </nav>
+      <div class="flex-1 min-w-0 p-8 overflow-hidden">
+        <h1 class="font-display text-[28px] font-semibold">Compare</h1>
+        <p class="text-sm text-ink-muted">Per serving, as each recipe gives it.</p>
+        <div class="mt-5 grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-8">
+          <div class="space-y-4">
+        <ul class="rounded-card bg-surface border border-line divide-y divide-line">
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-fish"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Lemony tuna, tomato &amp; caper one-pot pasta</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">35 min · serves 4</span><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-veg"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Char siu Tofoo noodles</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">55 min · serves 2</span><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li class="flex items-center gap-3 pl-4 pr-1 py-2 min-h-14">
+            <span class="w-1 self-stretch rounded-full bg-vegan"></span>
+            <span class="flex-1 min-w-0"><span class="block font-semibold leading-snug line-clamp-2">Chickpea, spinach &amp; coconut curry</span><span class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-muted tabular-nums"><span class="whitespace-nowrap">30 min · serves 4</span><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></span></span>
+            <button class="size-11 shrink-0 rounded-full grid place-items-center text-ink-muted" aria-label="Remove from comparison"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </li>
+          <li><button class="w-full h-12 px-4 flex items-center gap-2 font-semibold text-primary"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Add a recipe</button></li>
+        </ul>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <p class="font-semibold">Where the calories come from</p>
+          <div class="mt-1 flex gap-3 text-xs text-ink-muted"><span><span class="inline-block size-2 rounded-full bg-veg mr-1"></span>Protein</span><span><span class="inline-block size-2 rounded-full bg-primary mr-1"></span>Carbs</span><span><span class="inline-block size-2 rounded-full bg-warning mr-1"></span>Fat</span></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm truncate"><span class="font-medium">Lemony tuna, tomato &amp; caper one-pot pasta</span></p>
+            <div class="mt-1.5 flex gap-0.5 h-3 rounded-full overflow-hidden"><span class="bg-veg" style="width:18%"></span><span class="bg-primary" style="width:51%"></span><span class="bg-warning" style="width:31%"></span></div>
+            <p class="mt-1 text-xs text-ink-muted tabular-nums">Protein 18% · Carbs 51% · Fat 31%</p>
+          </div>
+          <div>
+            <p class="text-sm truncate"><span class="font-medium">Char siu Tofoo noodles</span></p>
+            <div class="mt-1.5 flex gap-0.5 h-3 rounded-full overflow-hidden"><span class="bg-veg" style="width:16%"></span><span class="bg-primary" style="width:46%"></span><span class="bg-warning" style="width:38%"></span></div>
+            <p class="mt-1 text-xs text-ink-muted tabular-nums">Protein ~16% · Carbs ~46% · Fat ~38%</p>
+          </div>
+          <div>
+            <p class="text-sm truncate"><span class="font-medium">Chickpea, spinach &amp; coconut curry</span></p>
+            <div class="mt-1.5 flex gap-0.5 h-3 rounded-full overflow-hidden"><span class="bg-veg" style="width:14%"></span><span class="bg-primary" style="width:44%"></span><span class="bg-warning" style="width:42%"></span></div>
+            <p class="mt-1 text-xs text-ink-muted tabular-nums">Protein 14% · Carbs 44% · Fat 42%</p>
+          </div>
+          </div>
+          <p class="mt-3 text-xs text-ink-subtle">Share of calories from protein, carbs and fat (4, 4 and 9 kcal per gram).</p>
+        </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 content-start">
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Calories</p><p class="text-xs text-ink-muted">kcal per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-ink" style="width:63.5%"></span><span class="text-sm font-semibold tabular-nums">672</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-surface-2 border border-dashed border-ink-subtle" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~825</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Chickpea, spinach &amp; coconut curry</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-ink" style="width:45.4%"></span><span class="text-sm font-semibold tabular-nums">480</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Protein</p><p class="text-xs text-ink-muted">grams per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-veg" style="width:73.0%"></span><span class="text-sm font-semibold tabular-nums">29g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-veg-soft border border-dashed border-veg" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~31g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Chickpea, spinach &amp; coconut curry</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-veg" style="width:42.8%"></span><span class="text-sm font-semibold tabular-nums">17g</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Carbs</p><p class="text-xs text-ink-muted">grams per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-primary" style="width:70.4%"></span><span class="text-sm font-semibold tabular-nums">83g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-primary-soft border border-dashed border-primary" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~92g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Chickpea, spinach &amp; coconut curry</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-primary" style="width:44.1%"></span><span class="text-sm font-semibold tabular-nums">52g</span></div>
+          </div>
+          </div>
+        </div>
+        <div class="rounded-card bg-surface border border-line p-4">
+          <div class="flex items-baseline justify-between gap-3"><p class="font-semibold">Fat</p><p class="text-xs text-ink-muted">grams per serving</p></div>
+          <div class="mt-3 space-y-3">
+          <div>
+            <p class="text-sm text-ink-muted truncate">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-warning" style="width:52.8%"></span><span class="text-sm font-semibold tabular-nums">23g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Char siu Tofoo noodles</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-warning-soft border border-dashed border-warning" style="width:78.0%"></span><span class="text-sm font-medium text-ink-muted tabular-nums">~34g</span></div>
+          </div>
+          <div>
+            <p class="text-sm text-ink-muted truncate">Chickpea, spinach &amp; coconut curry</p>
+            <div class="mt-1 flex items-center gap-2 border-l border-line"><span class="h-3.5 rounded-r-[4px] bg-warning" style="width:50.5%"></span><span class="text-sm font-semibold tabular-nums">22g</span></div>
+          </div>
+          </div>
+        </div>
+          </div>
+        </div>
+        <h2 class="mt-8 text-[17px] font-semibold">Side by side</h2>
+        <div class="mt-2">
+        <div class="rounded-card bg-surface border border-line overflow-x-auto ">
+          <table class="w-full text-sm tabular-nums border-collapse table-fixed">
+            <thead><tr class="border-b border-line"><th class="sticky left-0 bg-surface w-20 min-w-20"></th><th class=" align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Lemony tuna, tomato &amp; caper one-pot pasta</span></th><th class=" align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Char siu Tofoo noodles</span></th><th class=" align-bottom text-left px-2 pt-3 pb-2"><span class="font-display font-semibold leading-snug line-clamp-3">Chickpea, spinach &amp; coconut curry</span></th></tr></thead>
+            <tbody class="divide-y divide-line">
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Time</th><td class=" align-top px-2 py-2 "><span class="font-semibold">35 min</span><span class="block text-xs text-ink-muted">5 prep · 30 cook</span></td><td class=" align-top px-2 py-2 "><span class="font-semibold">55 min</span><span class="block text-xs text-ink-muted">15 prep · 10 cook · 30 wait</span></td><td class=" align-top px-2 py-2 "><span class="font-semibold">30 min</span><span class="block text-xs text-ink-muted">10 prep · 20 cook</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Serves</th><td class=" align-top px-2 py-2 ">4</td><td class=" align-top px-2 py-2 ">2</td><td class=" align-top px-2 py-2 ">4</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Carbs</th><td class=" align-top px-2 py-2 ">Pasta</td><td class=" align-top px-2 py-2 ">Noodles</td><td class=" align-top px-2 py-2 ">Rice</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Protein</th><td class=" align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-fish-soft text-fish text-xs font-semibold"><span class="size-1.5 rounded-full bg-fish"></span>Fish</span><span class="block mt-0.5">Tuna</span></td><td class=" align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-veg-soft text-veg text-xs font-semibold"><span class="size-1.5 rounded-full bg-veg"></span>Veg</span><span class="block mt-0.5">Tofu</span></td><td class=" align-top px-2 py-2 "><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-vegan-soft text-vegan text-xs font-semibold"><span class="size-1.5 rounded-full bg-vegan"></span>Veg</span><span class="block mt-0.5">Chickpeas</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Dietary</th><td class=" align-top px-2 py-2 ">Nut-free</td><td class=" align-top px-2 py-2 ">Vegetarian<br>Dairy-free<br>Nut-free</td><td class=" align-top px-2 py-2 ">Vegan<br>Vegetarian<br>Dairy-free</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Cuisine</th><td class=" align-top px-2 py-2 ">Italian</td><td class=" align-top px-2 py-2 ">Chinese</td><td class=" align-top px-2 py-2 ">Indian</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Difficulty</th><td class=" align-top px-2 py-2 ">Easy</td><td class=" align-top px-2 py-2 ">Easy</td><td class=" align-top px-2 py-2 ">Easy</td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Spice</th><td class=" align-top px-2 py-2 ">None</td><td class=" align-top px-2 py-2 ">Mild</td><td class=" align-top px-2 py-2 ">Medium</td></tr>
+              <tr><th colspan="4" class="text-left pl-4 pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-ink-muted">Per serving</th></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Nutrition</th><td class=" align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></td><td class=" align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center h-6 px-2 rounded-full border border-dashed border-ink-subtle text-ink-muted text-xs font-medium">~ Estimated</span></td><td class=" align-top px-2 py-2 "><span class="shrink-0 inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface-2 text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Calories</th><td class=" align-top px-2 py-2 "><span class="font-medium">672 kcal</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~825 kcal</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">480 kcal</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Protein</th><td class=" align-top px-2 py-2 "><span class="font-medium">29g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~31g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">17g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Carbs</th><td class=" align-top px-2 py-2 "><span class="font-medium">83g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~92g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">52g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Sugars</th><td class=" align-top px-2 py-2 "><span class="font-medium">12g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~34g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">9g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Fat</th><td class=" align-top px-2 py-2 "><span class="font-medium">23g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~34g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">22g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Saturates</th><td class=" align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~4g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">14g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Fibre</th><td class=" align-top px-2 py-2 "><span class="font-medium">9g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~5g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">11g</span></td></tr>
+              <tr><th scope="row" class="sticky left-0 bg-surface w-20 min-w-20 align-top text-left font-medium text-ink-muted pl-3 pr-1 py-2">Salt</th><td class=" align-top px-2 py-2 "><span class="font-medium">1.5g</span></td><td class=" align-top px-2 py-2 "><span class="text-ink-muted">~5.5g</span></td><td class=" align-top px-2 py-2 "><span class="font-medium">1.2g</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        </div>
+      </div>
+    </div>
+  </figure>
+  <p class="mt-3 text-sm text-ink-muted max-w-3xl">From tablet width: the chosen recipes and the energy split on the left, the four nutrient charts in a 2 × 2 grid on the right, and the full table underneath, wide enough that four recipes fit without scrolling. Three recipes here.</p>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 17 October 2026.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>One small chart per nutrient (C, D), not one grouped bar chart, since kcal and grams can't share a scale. Each starts at zero with its values written on the bars; bars use the energy split's colours (protein green, carbs tomato, fat amber, kcal ink).</li>
+    <li>Charts for kcal, protein, carbs and fat. Sugars, saturates, fibre and salt are in the table only.</li>
+    <li>Compare remembers the last comparison on this device, so leaving the tab and coming back keeps it. The comparison is also in the page address, so Back and shared links work.</li>
+    <li>No written differences ("153 kcal fewer") for now.</li>
+    <li>No "Select to compare" mode in the library for now: recipes come in through the picker and the recipe page's "Compare with…".</li>
+    <li>Settled in the design: 2 to 4 recipes, in the order chosen; per serving as printed; estimated nutrition gets the dashed outline and ~ everywhere, including the bars; a deleted recipe drops out of a comparison; one recipe left hides the charts; the table scrolls sideways with four recipes on a phone.</li>
+  </ul>
+</section>
+
+</main>
+</body>
+</html>
