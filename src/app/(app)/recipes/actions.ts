@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { markCooked, requireHousehold, setFavourite, setNotes, setRating, unmarkCooked } from "@/data";
+import { redirect } from "next/navigation";
+import { deleteRecipe, markCooked, requireHousehold, setFavourite, setNotes, setRating, unmarkCooked } from "@/data";
 import { today } from "@/plans/plan";
 
 // The household's favourite, rating, notes and "Cooked today" (PP-169), from
@@ -50,4 +51,15 @@ export async function markCookedAction(recipeId: string): Promise<string | null>
 export async function unmarkCookedAction(recipeId: string, day: string): Promise<boolean> {
   const { ctx } = await requireHousehold();
   return attempt(() => unmarkCooked(ctx, recipeId, day));
+}
+
+/**
+ * Deletes the recipe, its household data and its plan entries (PP-165), then
+ * goes to the library. False if it isn't the household's.
+ */
+export async function deleteRecipeAction(recipeId: string): Promise<boolean> {
+  const { ctx } = await requireHousehold();
+  if (!(await attempt(() => deleteRecipe(ctx, recipeId)))) return false;
+  revalidatePath("/plans", "layout");
+  redirect("/recipes");
 }

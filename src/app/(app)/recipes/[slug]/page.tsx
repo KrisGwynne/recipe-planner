@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { RecipeView } from "@/components/recipe/recipe-view";
-import { getRecipeBySlug, getRecipeHousehold, listPlans, requireHousehold } from "@/data";
-import { defaultPlanName, defaultStartDate, plansToAddTo, today } from "@/plans/plan";
+import { getRecipeBySlug, getRecipeHousehold, listPlans, recipePlanUses, requireHousehold } from "@/data";
+import { defaultPlanName, defaultStartDate, mealName, plansToAddTo, today } from "@/plans/plan";
 import { AddToPlan } from "./add-to-plan";
 import { CookedTodayButton, HouseholdSummary, OurNotes, RecipeHousehold } from "./household";
 import { RecipeHeader } from "./recipe-header";
@@ -36,7 +36,7 @@ export default async function RecipePage({ params, searchParams }: Props) {
   const [{ slug }, query] = await Promise.all([params, searchParams]);
   const [row, plans] = await Promise.all([findRecipe(slug), listPlans(ctx)]);
   if (!row) notFound();
-  const household = await getRecipeHousehold(ctx, row.id);
+  const [household, uses] = await Promise.all([getRecipeHousehold(ctx, row.id), recipePlanUses(ctx, row.id)]);
   if (!household) notFound();
   const todayDate = today();
   const startDate = defaultStartDate(plans, todayDate);
@@ -45,7 +45,13 @@ export default async function RecipePage({ params, searchParams }: Props) {
       <RecipeHousehold recipeId={row.id} initial={household} today={todayDate} me={user.name ?? null}>
         <RecipeView
           recipe={row.data}
-          header={<RecipeHeader recipe={row.data} />}
+          header={
+            <RecipeHeader
+              recipe={row.data}
+              recipeId={row.id}
+              plans={uses.map((use) => ({ name: use.name, meals: use.meals.map((m) => mealName(use, m.dayIndex, m.slot)) }))}
+            />
+          }
           initialServings={servingsParam(query.servings)}
           household={<HouseholdSummary />}
           notes={<OurNotes />}
