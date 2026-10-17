@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { eq } from "drizzle-orm";
 import type { Db } from "@/db";
 import { users } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
@@ -12,13 +13,14 @@ const mocks = vi.hoisted(() => ({
   redirect: vi.fn((url: string) => {
     throw new Error(`redirect ${url}`);
   }),
+  signOut: vi.fn(),
 }));
 vi.mock("@/db", () => ({ getDb: () => mocks.db }));
-vi.mock("@/auth", () => ({ requireUser: async () => mocks.user, signOut: vi.fn() }));
+vi.mock("@/auth", () => ({ requireUser: async () => mocks.user, signOut: mocks.signOut }));
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
 
 const { default: WelcomePage } = await import("./page");
-const { createHouseholdAction } = await import("./actions");
+const { createHouseholdAction, deleteAccountAction } = await import("./actions");
 
 const form = (name: string) => {
   const data = new FormData();
@@ -30,7 +32,10 @@ beforeEach(async () => {
   mocks.db = await createTestDb();
   await mocks.db.insert(users).values({ id: "kris", name: "Kris Gwynne", email: "kris@example.com" });
   mocks.user.image = null;
+  mocks.signOut.mockReset();
 });
+
+const kris = async () => mocks.db.select().from(users).where(eq(users.id, "kris"));
 
 describe("welcome page", () => {
   it("welcomes the user by first name and asks for a household name", async () => {
@@ -97,5 +102,38 @@ describe("createHouseholdAction", () => {
     await createHousehold("kris", "Our kitchen");
     await expect(createHouseholdAction({ name: "" }, form("Another"))).rejects.toThrow("redirect /recipes");
     expect(await getMembership("kris")).toMatchObject({ name: "Our kitchen" });
+  });
+});
+
+describe("delete my account (household designs N and O)", () => {
+  it("sits beside Sign out and asks first, without any household wording", async () => {
+    render(await WelcomePage());
+    fireEvent.click(screen.getByRole("button", { name: "Delete my account…" }));
+    const sheet = screen.getByRole("dialog", { name: "Delete your account?" });
+    expect(sheet).toHaveTextContent("Your sign-in details are deleted. Signing in with Google again starts from scratch.");
+    expect(sheet).not.toHaveTextContent(/household/i);
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(await kris()).toHaveLength(1);
+  });
+
+  it("deletes the account and signs out to the sign-in page's note", async () => {
+    render(await WelcomePage());
+    fireEvent.click(screen.getByRole("button", { name: "Delete my account…" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete my account" }));
+    await waitFor(() => expect(mocks.signOut).toHaveBeenCalledWith({ redirectTo: "/sign-in?deleted=1" }));
+    expect(await kris()).toEqual([]);
+  });
+
+  it("deletes nothing and says so if they've joined a household meanwhile", async () => {
+    render(await WelcomePage());
+    fireEvent.click(screen.getByRole("button", { name: "Delete my account…" }));
+    await createHousehold("kris", "Our kitchen");
+    fireEvent.click(screen.getByRole("button", { name: "Delete my account" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Couldn't delete your account. Try again."));
+    expect(mocks.signOut).not.toHaveBeenCalled();
+    expect(await kris()).toHaveLength(1);
+    expect(await deleteAccountAction()).toBe(false);
   });
 });

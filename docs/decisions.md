@@ -426,3 +426,7 @@ Made while Kris was away; open to change in review.
 **"Delete my account…" sits beside Sign out on "Start a household"** (N), on one row in the same grey, not red. The page keeps its height and a first-time user isn't met with a red button. It's shown to everyone on that page, including people who have just signed in for the first time.
 
 **The confirmation is design K's plain sheet without the household wording** (O): "Your sign-in details are deleted. Signing in with Google again starts from scratch." Afterwards the sign-in page shows M's note, as from the Household tab.
+
+## 2026-10-17: delete my account without a household (PP-183)
+
+**How it works.** `deleteAccountWithoutHousehold(userId)` in `src/data/households.ts` is one SQL statement: it deletes the signed-in user's `users` row only if they're in no household (accounts, sessions, departure note and invite links go by cascade). Like `getMembership`, it takes the signed-in user's id, since there's no household context. `/welcome`'s `deleteAccountAction` then signs out to `/sign-in?deleted=1`, as the Household tab's does. There's no toast outside the app shell, so a failure (they joined a household in another tab) shows in the sheet.

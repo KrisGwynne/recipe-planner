@@ -7,6 +7,7 @@ export {
   AlreadyInHouseholdError,
   createHousehold,
   deleteAccount,
+  deleteAccountWithoutHousehold,
   deleteHousehold,
   getDeparture,
   getHousehold,
