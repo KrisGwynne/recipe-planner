@@ -14,16 +14,17 @@ import {
   problemsForClaude,
   shouldRead,
   tooManyFiles,
+  tooManyImports,
   type ImportFile,
   type ReviewItem,
 } from "@/recipes/review";
 import type { Problem } from "@/recipes/validate";
-import type { ImportResult } from "./actions";
+import type { ImportResponse, ImportResult } from "./actions";
 import { NewRecipe, ProblemList, ReviewRow, UpdateDetail, UnchangedNote } from "./review-parts";
 
 type Actions = {
   review: (files: ImportFile[]) => Promise<ReviewItem[]>;
-  save: (files: ImportFile[]) => Promise<ImportResult[]>;
+  save: (files: ImportFile[]) => Promise<ImportResponse>;
 };
 
 /**
@@ -40,6 +41,8 @@ export function ImportFlow({ review, save }: Actions) {
   const [batchProblem, setBatchProblem] = useState<Problem | null>(null);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
+  /** Screen I's "Too many imports for now", when the hourly limit stopped this import (shown on the review, or on Done if some were saved). */
+  const [limited, setLimited] = useState<Problem | null>(null);
 
   const view = params.get("view");
   const index = Number(params.get("i"));
@@ -68,9 +71,27 @@ export function ImportFlow({ review, save }: Actions) {
     const names = new Set(ready.map((i) => i.file));
     setBusy(true);
     setFailed(false);
+    setLimited(null);
     try {
       const saved: ImportResult[] = [];
-      for (const request of inRequests(files.filter((f) => names.has(f.name)))) saved.push(...(await save(request)));
+      let retryMinutes: number | null = null;
+      for (const request of inRequests(files.filter((f) => names.has(f.name)))) {
+        const response = await save(request);
+        if (response.limited) {
+          retryMinutes = response.limited.retryMinutes;
+          break;
+        }
+        saved.push(...response.results);
+      }
+      if (retryMinutes !== null) {
+        const savedCount = saved.filter((r) => r.saved).length;
+        if (savedCount === 0) {
+          setLimited(tooManyImports(retryMinutes));
+          return;
+        }
+        // A later request went over: what was saved stays, and Done says when to try the rest.
+        setLimited(tooManyImports(retryMinutes, savedCount));
+      }
       setResults(saved);
       window.history.replaceState(null, "", "?view=done");
     } catch {
@@ -81,13 +102,25 @@ export function ImportFlow({ review, save }: Actions) {
   }
 
   function startAgain() {
+    setLimited(null);
     setFiles([]);
     setItems([]);
     setResults([]);
     window.history.replaceState(null, "", "/import");
   }
 
-  const error = failed ? (
+  const limitCard = limited && (
+    <div role="alert" className="mt-3 rounded-card border border-warning/40 bg-warning-soft p-4">
+      <p className="font-semibold text-warning flex items-center gap-2">
+        <Icon name="clock" className="size-5" />
+        {limited.title}
+      </p>
+      <p className="mt-1 text-sm">{limited.detail}</p>
+    </div>
+  );
+  const error = limited ? (
+    limitCard
+  ) : failed ? (
     <p role="alert" className="mt-3 text-sm text-danger">
       Something went wrong and nothing was saved. Check your connection and try again.
     </p>
@@ -99,7 +132,7 @@ export function ImportFlow({ review, save }: Actions) {
       ...items.filter((i) => i.status === "problems").map((i) => ({ file: i.file, name: i.name, problems: i.problems })),
       ...results.flatMap((r) => (r.saved ? [] : [{ file: r.file, name: r.name, problems: r.problems }])),
     ];
-    return <Done results={results} notImported={notImported} onMore={startAgain} />;
+    return <Done results={results} notImported={notImported} limit={limitCard} onMore={startAgain} />;
   }
   if (view === "file" && items[index]) {
     const item = items[index];
@@ -440,10 +473,13 @@ function ActionBar({ children }: { children: ReactNode }) {
 function Done({
   results,
   notImported,
+  limit,
   onMore,
 }: {
   results: ImportResult[];
   notImported: { file: string; name: string | null; problems: Problem[] }[];
+  /** The hourly limit stopped the rest (screen I). */
+  limit?: ReactNode;
   onMore: () => void;
 }) {
   const saved = results.filter((r) => r.saved);
@@ -456,6 +492,7 @@ function Done({
         <h1 className="font-display text-[26px] font-semibold mt-5">
           {saved.length === 1 ? "1 recipe imported" : `${saved.length} recipes imported`}
         </h1>
+        {limit && <div className="text-left">{limit}</div>}
         {saved.length > 0 && (
           <ul className="mt-5 text-left rounded-card bg-surface border border-line divide-y divide-line">
             {saved.map((r) => (

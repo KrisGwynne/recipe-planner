@@ -50,6 +50,13 @@
       "when": 1792011412299,
       "tag": "0006_household_departures",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792265267830,
+      "tag": "0007_import_counts",
+      "breakpoints": true
     }
   ]
 }

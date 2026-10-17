@@ -392,3 +392,17 @@ Made while Kris was away; open to change in review.
 **"Delete recipe…" is last in the recipe page's ⋯ menu, in red** (as PP-168 asked), and opens import design H: the plans and meals it'll disappear from ("This week: Tue dinner"), or, in no plan, the same sheet without the list. Deleting goes to the library. Anyone in the household can delete a recipe, as before.
 
 **How it works.** `recipePlanUses(ctx, recipeId)` in `src/data/plans.ts` lists the household's plans the recipe is in and their meals, in date order. `deleteRecipeAction` uses the existing `deleteRecipe`; the database's cascades remove its plan entries, household data and cooking history (tested: nothing is left behind).
+
+## 2026-10-17: rate-limiting imports (PP-163)
+
+Made while Kris was away; open to change in review.
+
+**200 recipes per person per hour** (`IMPORTS_PER_HOUR` in `src/recipes/review.ts`, beside the other import limits). Counted per person, since the ticket says per user, and in recipes saved rather than requests or files sent. An import is at most 50 files, so moving a big library takes a few goes, not an afternoon.
+
+**The window starts with the first import** and lasts an hour; after that the count starts again. "Try again in about N minutes" is the time left in it.
+
+**Over the limit, a request saves nothing** (screen I's card, on the review). Large imports go in several requests, so if a later one goes over, what was saved stays and the Done screen shows the card saying how many were saved and when to try the rest; those files aren't listed as having problems, since they don't.
+
+**Only saving is limited.** Checking files (the review) reads but saves nothing, so it isn't counted.
+
+**How it works.** `import_counts` (migration 0007, a new table: additive) holds one row per person: when their hour started and how many recipes they've saved in it. `reserveImports(ctx, n)` in `src/data/import-limits.ts` adds `n` only if it fits, in one statement, so two imports at once can't both slip under. It runs before anything is saved. Deleting the account deletes the row.
