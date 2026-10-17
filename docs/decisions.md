@@ -430,3 +430,13 @@ Made while Kris was away; open to change in review.
 ## 2026-10-17: delete my account without a household (PP-183)
 
 **How it works.** `deleteAccountWithoutHousehold(userId)` in `src/data/households.ts` is one SQL statement: it deletes the signed-in user's `users` row only if they're in no household (accounts, sessions, departure note and invite links go by cascade). Like `getMembership`, it takes the signed-in user's id, since there's no household context. `/welcome`'s `deleteAccountAction` then signs out to `/sign-in?deleted=1`, as the Household tab's does. There's no toast outside the app shell, so a failure (they joined a household in another tab) shows in the sheet.
+
+## 2026-10-17: charts draw in (PP-184)
+
+**Decided on Claude's recommendations while Kris was away** (2026-10-17); open to change. Motion can't be shown in a static design, so it's described here and in the compare design's Decisions.
+
+**Bars are revealed from their start over 0.6s** (ease-out), rather than growing, so the rounded ends keep their shape and the values beside them stay put. In a compare chart each recipe's bar starts 80ms after the one above. The energy split (recipe page, plan nutrition, Compare) draws in the same way, as one bar.
+
+**When a comparison changes, bars slide to their new length** (0.3s) rather than redrawing.
+
+**Nothing moves with reduced motion on** (`motion-safe:`). It's CSS only (`--animate-bar-in` in `src/app/globals.css`), with no animation library.
