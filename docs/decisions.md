@@ -418,3 +418,11 @@ Made while Kris was away; open to change in review.
 ## 2026-10-17: landing page, privacy policy and terms (PP-159)
 
 **How it works.** `/` renders the sign-in page (onboarding A) for signed-out visitors and sends signed-in ones to `/recipes`, as `/sign-in` does. `/privacy` and `/terms` are public pages with their own back header (`src/components/legal/`), from `designs/src/legal.html`; their text lives in the pages, so a change to what the app stores means a change there too. The Household tab ends with Privacy · Terms links (household design B). A test checks neither page names anyone or gives an email address.
+
+## 2026-10-17: delete my account without a household, design (PP-183)
+
+**Kris asked Claude to go with its recommendations while he was away** (2026-10-17), so these were decided without a review and are open to change. Design: `designs/src/household.html` N and O.
+
+**"Delete my account…" sits beside Sign out on "Start a household"** (N), on one row in the same grey, not red. The page keeps its height and a first-time user isn't met with a red button. It's shown to everyone on that page, including people who have just signed in for the first time.
+
+**The confirmation is design K's plain sheet without the household wording** (O): "Your sign-in details are deleted. Signing in with Google again starts from scratch." Afterwards the sign-in page shows M's note, as from the Household tab.
