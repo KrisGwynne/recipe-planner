@@ -433,6 +433,54 @@
   </div>
 </section>
 
+<!-- ============ Without a household (PP-183) ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Deleting your account without a household</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">Added for PP-183. Someone who isn't in a household (they left, were removed, saw it deleted, or never made one) only sees "Start a household", so the Household tab's "Delete my account…" can't be reached. These two screens give them a way.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- N. Start a household, with Delete my account -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="flex-1 px-6 pt-14">
+          <span class="size-14 rounded-full bg-surface-2 border border-line text-ink grid place-items-center text-xl font-semibold">K</span>
+          <h1 class="font-display text-[28px] leading-[34px] font-semibold mt-5">Welcome, Kris</h1>
+          <p class="mt-2 text-[17px] leading-[26px] text-ink-muted">Recipes and meal plans live in a household, so everyone you cook with sees the same things. Start one now; you can invite people next.</p>
+          <div class="mt-5 rounded-control bg-surface-2 px-4 py-3 text-sm flex gap-3"><svg class="size-5 shrink-0 fill-none stroke-ink-muted stroke-2"><use href="#i-alert"/></svg><span>You're no longer in <b>The Gwynnes</b>. Start your own household, or open an invite link to join one.</span></div>
+          <label class="block mt-6">
+            <span class="font-semibold">Household name</span>
+            <input class="mt-2 w-full h-12 px-4 rounded-control bg-surface border-2 border-line text-[17px] placeholder:text-ink-subtle" placeholder="e.g. Our kitchen">
+            <span class="mt-1.5 block text-sm text-ink-subtle">Only members see this. You can change it later.</span>
+          </label>
+        </div>
+        <div class="px-6 pb-8">
+          <button class="w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Create household</button>
+          <div class="mt-2 flex items-center justify-center text-sm font-medium text-ink-muted">
+            <button class="h-11 px-3">Sign out</button>
+            <span aria-hidden="true" class="text-ink-subtle">·</span>
+            <button class="h-11 px-3">Delete my account…</button>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">N · Start a household, with Delete my account</p><p class="text-ink-muted mt-1">Onboarding B, with "Delete my account…" beside Sign out on one row, in the same quiet grey, so the page stays the same height and a brand-new user isn't met with something red. The "…" says it asks first. Shown to everyone on this page, including someone who has just signed in for the first time.</p></figcaption>
+    </figure>
+
+    <!-- O. The confirmation -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Delete your account?</p>
+          <p class="text-ink-muted mt-1">Your sign-in details are deleted. Signing in with Google again starts from scratch.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Delete my account</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">O · Delete my account, without a household</p><p class="text-ink-muted mt-1">K's plain confirmation without the household sentence, since there's no household to leave and no recipes to lose. Afterwards you're signed out and the sign-in page shows "Your account has been deleted" (M). Anything you added to a household you used to be in stays there, no longer saying who, as with K.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
 <!-- ============ Wider screens ============ -->
 <section>
   <h2 class="font-display text-2xl font-semibold">Wider screens</h2>
@@ -502,6 +550,12 @@
     <li>Typing the household's name is asked for only when the household and its recipes would be deleted (J, L). Everything else uses a plain confirmation.</li>
     <li>Everyone in the household sees each other's Google email in the member list.</li>
     <li>Invite links can only be copied when they're made. The open links list offers Cancel only.</li>
+  </ul>
+  <p class="text-sm text-ink-muted mt-4">N and O added for PP-183 on 17 October 2026. Kris asked Claude to go with its recommendations while he was away, so these are open to change when he reviews them.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>"Delete my account…" sits beside Sign out on "Start a household", in the same grey, not red (N).</li>
+    <li>It's shown to everyone on that page, including first-time users.</li>
+    <li>The confirmation is K's plain sheet, without the household wording (O).</li>
   </ul>
 </section>
 </main>
