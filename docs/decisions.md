@@ -350,3 +350,15 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Invite links you made stop working when your account goes** (Kris, 2026-10-17): they're deleted with it (the existing cascade on `household_invites.created_by`). What else you added stays without your name: recipes, notes, plans and cooking history (set null).
 
 **How it works.** `deleteAccount(ctx, confirmName?)` in `src/data/households.ts` is one SQL statement with the rules inside it: a member, or an owner while another owner stays, deletes their `users` row (accounts, sessions, membership and departures go by cascade); the only person in the household also deletes the household, only if the typed name matches; the only owner with others in the household deletes nothing. `deleteAccountAction` then calls Auth.js's `signOut` to clear the cookie (it copes with the session row being gone already) and goes to the sign-in page. Signing in with Google again makes a new user. The typed-name part of the Delete household sheet is shared as `TypeNameToConfirm`.
+
+## 2026-10-17: compare design approved (PP-151)
+
+**One small chart per nutrient** (Kris, 2026-10-17), not one grouped bar chart: kcal is in the hundreds and grams in the tens, so on one axis the macro bars would be slivers. Each chart starts at zero, writes every value on its bar, and keeps the recipes in the order they were chosen. Bars use the energy split's colours (protein `veg`, carbs `primary`, fat `warning`, kcal `ink`), so no new tokens. Design: `designs/src/compare.html`.
+
+**Charts for kcal, protein, carbs and fat only** (Kris, 2026-10-17). Sugars, saturates, fibre and salt are in the table, which also has times, serves, carbs, protein, dietary, cuisine, difficulty, spice and the Printed or ~ Estimated badge.
+
+**Compare remembers the last comparison on this device** (Kris, 2026-10-17), so leaving the tab and coming back keeps it. The chosen recipes are also in the page address, so Back and shared links work.
+
+**Left out for now** (Kris, 2026-10-17): written differences between two recipes ("153 kcal fewer"), and a "Select to compare" mode in the library. Recipes come in through the picker and the recipe page's "Compare with…", which opens the picker with that recipe ticked.
+
+**Details settled in the design:** 2 to 4 recipes; per serving, as printed; estimated nutrition gets the dashed outline and ~ on bars, splits and table cells; the energy split reuses the recipe page's; a deleted recipe drops out of a comparison; with one recipe left the charts and table are hidden; fewer than two recipes in the library shows "Import at least two recipes to compare them"; on a phone the table scrolls sideways with its labels pinned; from tablet width charts are a 2 × 2 grid beside the recipes and energy split.
