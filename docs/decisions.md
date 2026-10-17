@@ -440,3 +440,15 @@ Made while Kris was away; open to change in review.
 **When a comparison changes, bars slide to their new length** (0.3s) rather than redrawing.
 
 **Nothing moves with reduced motion on** (`motion-safe:`). It's CSS only (`--animate-bar-in` in `src/app/globals.css`), with no animation library.
+
+## 2026-10-17: step timers and Keep screen on (PP-178)
+
+Built from recipe design D and foundations' timer states. **The details the design left open were decided on Claude's recommendations while Kris was away** (2026-10-17); open to change:
+
+- **Timers last for the visit**, like the step ticks: leaving the recipe page stops them.
+- **Tapping "Time's up" clears it** back to the timer button. Stop (✕) does the same for a running or paused timer.
+- **The alarm is three short beeps made with Web Audio**, plus a buzz where the phone supports vibration, so there's no sound file and nothing for the CSP to allow. A browser only lets a page make sound after a tap, so starting a timer gets the sound ready. A phone that's locked or has the app in the background can't ring: the timer shows "Time's up" when you come back (no notifications or service worker).
+- **"Keep screen on" only shows for recipes with timers, on browsers that support Wake Lock** (Safari 16.4+, Chrome). It turns on with the first timer and stays on until you turn it off. The browser drops the lock whenever the page is hidden, so it's asked for again each time the page is shown.
+- **Off-screen timers get a pill each**, finished ones first and then the soonest to end, with the step number, as in design D ("Step 5 · 4:10 · Show"). A paused timer says "paused". Tapping a pill scrolls to the step.
+
+**How it works.** A running timer stores when it ends, not how long is left (`src/recipes/timers.ts`). The page redraws four times a second while one runs and catches up whenever it's shown again, so a locked phone shows the right time. Screen readers hear the time left and an announcement when a timer ends. The controls are in `src/components/recipe/step-timers.tsx`.

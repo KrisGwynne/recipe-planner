@@ -7,6 +7,7 @@ import { cx } from "@/lib/cx";
 import { approx, formatMinutes } from "@/lib/format";
 import { deriveColumns, totalMins } from "@/recipes/derive";
 import { EnergySplit } from "./energy-split";
+import { KeepScreenOn, StepTimerControl, TimerPills, useStepTimers, useWakeLock } from "./step-timers";
 import { groupIngredients, gramsTotal, notesFor, scaledAmount, scaledBanner } from "@/recipes/quantity";
 import { toRecipeSummary } from "@/recipes/summary";
 import type { Recipe, Variation } from "@/types/recipe";
@@ -52,6 +53,9 @@ export function RecipeView({
   const [current, setCurrent] = useState<string>("ingredients");
   const [scrolled, setScrolled] = useState(false);
   const top = useRef<HTMLDivElement>(null);
+  const timers = useStepTimers();
+  const canKeepAwake = useWakeLock(timers.keepOn);
+  const [offScreen, setOffScreen] = useState<Set<number>>(new Set());
 
   // The title joins the top bar once the page has scrolled past it; the
   // section links follow the section on screen.
@@ -76,6 +80,24 @@ export function RecipeView({
     };
   }, []);
 
+  // Which steps with a timer are off screen, for the pills (design D).
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver((entries) => {
+      setOffScreen((current) => {
+        const next = new Set(current);
+        for (const entry of entries) {
+          const step = Number((entry.target as HTMLElement).dataset.step);
+          if (entry.isIntersecting) next.delete(step);
+          else next.add(step);
+        }
+        return next;
+      });
+    });
+    for (const el of document.querySelectorAll<HTMLElement>("#method li[data-step]")) observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const toggle = (set: Set<number>, i: number) => {
     const next = new Set(set);
     if (next.has(i)) next.delete(i);
@@ -86,6 +108,7 @@ export function RecipeView({
   const n = recipe.nutrition_per_serving;
   const estimated = n.source === "estimated";
   const nextStep = recipe.method.findIndex((_, i) => !done.has(i));
+  const hasTimers = recipe.method.some((step) => step.timer_mins);
   const scaledNote = scaledBanner(recipe.serves, servings);
   const carbs = summary.carbs;
 
@@ -272,16 +295,19 @@ export function RecipeView({
           ))}
         </section>
 
-        {/* D. Method (timers: PP-178) */}
+        {/* D. Method, with step timers (PP-178) */}
         <section id="method" aria-labelledby="method-title" className="mt-8 scroll-mt-28">
-          <h2 id="method-title" className="text-[17px] font-semibold">
-            Method
-          </h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="method-title" className="text-[17px] font-semibold">
+              Method
+            </h2>
+            {canKeepAwake && hasTimers && <KeepScreenOn on={timers.keepOn} onChange={timers.setKeepOn} />}
+          </div>
           <ol className="mt-3 space-y-4">
             {recipe.method.map((step, i) => {
               const isDone = done.has(i);
               return (
-                <li key={i}>
+                <li key={i} id={`step-${i + 1}`} data-step={step.timer_mins ? i : undefined} className="scroll-mt-32">
                   <button
                     type="button"
                     aria-pressed={isDone}
@@ -302,10 +328,23 @@ export function RecipeView({
                     </span>
                     <span className="flex-1 text-[17px] leading-[26px]">{step.text}</span>
                   </button>
+                  {step.timer_mins && (
+                    <div className="pl-11">
+                      <StepTimerControl step={i} mins={step.timer_mins} timers={timers} />
+                    </div>
+                  )}
                 </li>
               );
             })}
           </ol>
+          <TimerPills
+            steps={[...offScreen].filter((step) => timers.timers.has(step))}
+            timers={timers}
+            onShow={(step) => document.getElementById(`step-${step + 1}`)?.scrollIntoView({ behavior: "smooth", block: "center" })}
+          />
+          <p aria-live="assertive" className="sr-only">
+            {timers.announcement}
+          </p>
         </section>
 
         {/* E. Nutrition and variations */}
