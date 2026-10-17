@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
-import { mealPlanEntries, mealPlans } from "@/db/schema";
+import { mealPlanEntries, mealPlans, recipeCooks, recipeHouseholdData } from "@/db/schema";
 import { createTestDb } from "@/db/test-db";
 import type { PlanInput } from "@/plans/plan";
 import type { Recipe } from "@/types/recipe";
@@ -13,10 +13,12 @@ import {
   getPlan,
   listPlans,
   moveEntry,
+  recipePlanUses,
   removeEntry,
   setEntryPortions,
   updatePlan,
 } from "./plans";
+import { markCooked, setNotes, setRating } from "./recipe-household";
 import { deleteRecipe, saveRecipe } from "./recipes";
 import { twoHouseholds, type TwoHouseholds } from "./test-fixtures";
 
@@ -229,6 +231,51 @@ describe("entries", () => {
 
 // Acting as household A, nothing of household B's can be read, changed or
 // deleted by id, and B's recipes can't go into A's plans (PP-155, PP-170).
+describe("recipePlanUses (import design H)", () => {
+  it("lists the plans a recipe is in, by date, with its meals in order", async () => {
+    const later = await createPlan(h.a, { ...thisWeek, name: "Half-term", startDate: "2026-10-26" });
+    const week = await createPlan(h.a, thisWeek);
+    await addEntry(h.a, later, { dayIndex: 3, slot: "dinner", recipeId: tuna });
+    await addEntry(h.a, later, { dayIndex: 0, slot: "lunch", recipeId: tuna });
+    await addEntry(h.a, week, { dayIndex: 1, slot: "dinner", recipeId: tuna });
+    // The same meal twice (a second portion) is named once; other recipes don't count.
+    await addEntry(h.a, week, { dayIndex: 1, slot: "dinner", recipeId: tuna });
+    await addEntry(h.a, week, { dayIndex: 2, slot: "dinner", recipeId: tofoo });
+    expect(await recipePlanUses(h.a, tuna)).toEqual([
+      { id: week, name: "This week", startDate: "2026-10-12", meals: [{ dayIndex: 1, slot: "dinner" }] },
+      {
+        id: later,
+        name: "Half-term",
+        startDate: "2026-10-26",
+        meals: [
+          { dayIndex: 0, slot: "lunch" },
+          { dayIndex: 3, slot: "dinner" },
+        ],
+      },
+    ]);
+  });
+
+  it("is empty for a recipe in no plan, or an id that isn't one", async () => {
+    expect(await recipePlanUses(h.a, tofoo)).toEqual([]);
+    expect(await recipePlanUses(h.a, "not-a-uuid")).toEqual([]);
+  });
+
+  it("deleting a planned recipe leaves no plan entries or household data behind (PP-165)", async () => {
+    const week = await createPlan(h.a, thisWeek);
+    await addEntry(h.a, week, { dayIndex: 1, slot: "dinner", recipeId: tuna });
+    await addEntry(h.a, week, { dayIndex: 2, slot: "dinner", recipeId: tofoo });
+    await setRating(h.a, tuna, 4);
+    await setNotes(h.a, tuna, "Extra capers");
+    await markCooked(h.a, tuna, "2026-10-02");
+    expect(await deleteRecipe(h.a, tuna)).toBe(true);
+    const entries = await mocks.db.select({ recipeId: mealPlanEntries.recipeId }).from(mealPlanEntries);
+    expect(entries).toEqual([{ recipeId: tofoo }]);
+    expect(await mocks.db.select().from(recipeHouseholdData)).toEqual([]);
+    expect(await mocks.db.select().from(recipeCooks)).toEqual([]);
+    expect(await recipePlanUses(h.a, tuna)).toEqual([]);
+  });
+});
+
 describe("household isolation", () => {
   let bPlan: string;
   let bRecipe: string;
@@ -240,6 +287,11 @@ describe("household isolation", () => {
     bPlan = await createPlan(h.b, { ...thisWeek, name: "B's week" });
     bEntry = (await addEntry(h.b, bPlan, { dayIndex: 0, slot: "dinner", recipeId: bRecipe }))!;
     aPlan = await createPlan(h.a, thisWeek);
+  });
+
+  it("A can't see which of B's plans B's recipe is in", async () => {
+    expect(await recipePlanUses(h.a, bRecipe)).toEqual([]);
+    expect(await recipePlanUses(h.b, bRecipe)).toHaveLength(1);
   });
 
   async function bUnchanged() {

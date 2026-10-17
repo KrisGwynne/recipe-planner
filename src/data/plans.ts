@@ -267,3 +267,36 @@ export async function removeEntry(ctx: HouseholdContext, entryId: string): Promi
   `);
   return rows(result).length > 0;
 }
+
+export type PlanUse = { id: string; name: string; startDate: string; meals: { dayIndex: number; slot: Slot }[] };
+
+/**
+ * The household's plans a recipe is in, and the meals it's planned for, in
+ * date order (for the warning before deleting it, import design H). Empty if
+ * it's in none, or isn't the household's.
+ */
+export async function recipePlanUses(ctx: HouseholdContext, recipeId: string): Promise<PlanUse[]> {
+  if (!uuid.safeParse(recipeId).success) return [];
+  const found = await getDb()
+    .select({
+      id: mealPlans.id,
+      name: mealPlans.name,
+      startDate: mealPlans.startDate,
+      dayIndex: mealPlanEntries.dayIndex,
+      slot: mealPlanEntries.slot,
+    })
+    .from(mealPlanEntries)
+    .innerJoin(mealPlans, eq(mealPlans.id, mealPlanEntries.planId))
+    .where(and(eq(mealPlans.householdId, ctx.householdId), eq(mealPlanEntries.recipeId, recipeId)))
+    .orderBy(asc(mealPlans.startDate), asc(mealPlans.name), asc(mealPlanEntries.dayIndex));
+  const uses = new Map<string, PlanUse>();
+  for (const row of found) {
+    const use = uses.get(row.id) ?? { id: row.id, name: row.name, startDate: row.startDate, meals: [] };
+    if (!use.meals.some((m) => m.dayIndex === row.dayIndex && m.slot === row.slot)) use.meals.push({ dayIndex: row.dayIndex, slot: row.slot });
+    uses.set(row.id, use);
+  }
+  for (const use of uses.values()) {
+    use.meals.sort((a, b) => a.dayIndex - b.dayIndex || SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot));
+  }
+  return [...uses.values()];
+}

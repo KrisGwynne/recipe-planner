@@ -54,7 +54,9 @@ export {
   removeEntry,
   setEntryPortions,
   updatePlan,
+  recipePlanUses,
   type Plan,
   type PlanEntry,
   type PlanSummary,
+  type PlanUse,
 } from "./plans";

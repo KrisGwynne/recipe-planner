@@ -384,3 +384,11 @@ Made while Kris was away (he said to carry on); each is open to change in review
 **An empty library greys the row out** (Kris, 2026-10-17): "No recipes to download yet." The "Download all recipes first" link on the Delete household and "delete your account and the household" sheets only shows when there are recipes, and downloading leaves the sheet open, so you can carry on deleting.
 
 **How it works.** `GET /household/download` (a route handler, so the browser downloads it from a plain link) sends `<household> recipes <date>.zip`, the date in UK time, with one `<id>.json` per recipe: the stored file exactly, as the single download gives it (`src/recipes/file.ts`). Anyone in the household can; `listRecipeFiles(ctx)` reads only that household's recipes. Not `/household/recipes.zip`, since the proxy skips paths that end in a file extension, and with it the security headers. A test exports one household, unzips, validates and imports the files into another, and gets the same recipes.
+
+## 2026-10-17: delete a recipe (PP-165)
+
+Made while Kris was away; open to change in review.
+
+**"Delete recipe…" is last in the recipe page's ⋯ menu, in red** (as PP-168 asked), and opens import design H: the plans and meals it'll disappear from ("This week: Tue dinner"), or, in no plan, the same sheet without the list. Deleting goes to the library. Anyone in the household can delete a recipe, as before.
+
+**How it works.** `recipePlanUses(ctx, recipeId)` in `src/data/plans.ts` lists the household's plans the recipe is in and their meals, in date order. `deleteRecipeAction` uses the existing `deleteRecipe`; the database's cascades remove its plan entries, household data and cooking history (tested: nothing is left behind).
