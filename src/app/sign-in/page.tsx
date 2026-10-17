@@ -15,18 +15,27 @@ const features: { icon: IconName; text: string }[] = [
 ];
 
 // Onboarding design A. Google is the only way in, so this one button signs
-// up and signs in. Signed-in visitors go straight on.
+// up and signs in. Signed-in visitors go straight on. After deleting an
+// account (PP-158) it says so (household design M).
 export default async function SignInPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const redirectTo = safeCallbackPath((await searchParams).callbackUrl);
+  const params = await searchParams;
+  const redirectTo = safeCallbackPath(params.callbackUrl);
+  const deleted = params.deleted === "1";
   if (await auth()) redirect(redirectTo);
 
   return (
     <main className="mx-auto max-w-md min-h-dvh flex flex-col md:justify-center">
       <div className="flex-1 px-6 pt-14 md:flex-none">
+        {deleted && (
+          <p role="status" className="mb-8 rounded-control bg-veg-soft text-veg px-4 py-3 text-sm font-medium flex gap-3">
+            <Icon name="check" className="size-5 shrink-0" strokeWidth={2.5} />
+            Your account has been deleted.
+          </p>
+        )}
         <span className="size-14 rounded-2xl bg-primary text-on-primary grid place-items-center shadow-lg">
           <Icon name="book" className="size-8" />
         </span>

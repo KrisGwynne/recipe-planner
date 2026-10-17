@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
     revokeInviteAction: vi.fn(),
     leaveAction: vi.fn(),
     deleteHouseholdAction: vi.fn(),
+    deleteAccountAction: vi.fn(),
   },
 }));
 vi.mock("@/data", () => ({
@@ -97,9 +98,9 @@ describe("as an owner (design A, B)", () => {
     expect(screen.getByRole("button", { name: "Sign out" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Leave The Gwynnes/ })).toHaveTextContent("Make someone else an owner first.");
     expect(screen.getByRole("button", { name: /Delete The Gwynnes/ })).toBeInTheDocument();
-    // Comes with PP-164 and PP-158.
+    expect(screen.getByRole("button", { name: "Delete my account…" })).toBeInTheDocument();
+    // Comes with PP-164.
     expect(screen.queryByText("Download all recipes")).not.toBeInTheDocument();
-    expect(screen.queryByText(/Delete my account/)).not.toBeInTheDocument();
   });
 
   it("renames (design D)", async () => {
@@ -249,5 +250,68 @@ describe("as a member (design C, H)", () => {
     await click(/Leave The Gwynnes/);
     await act(async () => fireEvent.click(within(dialog()).getByRole("button", { name: "Leave household" })));
     expect(screen.getByRole("status")).toHaveTextContent("Couldn't leave. Try again.");
+  });
+});
+
+describe("Delete my account (design K, L)", () => {
+  const open = async () => {
+    await show();
+    await click("Delete my account…");
+  };
+
+  it("deletes a member's account after asking (design K)", async () => {
+    as("sam", "member");
+    await open();
+    expect(dialog()).toHaveAccessibleName("Delete your account?");
+    expect(dialog()).toHaveTextContent(
+      "You'll leave The Gwynnes and your sign-in details are deleted. Its recipes and plans stay with Kris and Alex. Signing in with Google again starts from scratch.",
+    );
+    await act(async () => fireEvent.click(within(dialog()).getByRole("button", { name: "Delete my account" })));
+    expect(mocks.actions.deleteAccountAction).toHaveBeenCalledWith(undefined);
+  });
+
+  it("lets an owner go while another owner stays", async () => {
+    as("kris", "owner", [kris, { ...sam, role: "owner" }]);
+    await open();
+    expect(dialog()).toHaveAccessibleName("Delete your account?");
+    expect(dialog()).toHaveTextContent("stay with Sam.");
+  });
+
+  it("says so when it fails", async () => {
+    as("sam", "member");
+    mocks.actions.deleteAccountAction.mockResolvedValue(false);
+    await open();
+    await act(async () => fireEvent.click(within(dialog()).getByRole("button", { name: "Delete my account" })));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Couldn't delete your account. Try again.");
+  });
+
+  it("asks the only owner to choose another owner first, and deletes nothing (design L)", async () => {
+    as("kris", "owner");
+    await open();
+    expect(dialog()).toHaveAccessibleName("Choose another owner first");
+    expect(dialog()).toHaveTextContent(
+      "You're the only owner of The Gwynnes. Make Sam or Alex an owner before deleting your account, so the household isn't left without one.",
+    );
+    expect(within(dialog()).queryByRole("button", { name: /Delete/ })).not.toBeInTheDocument();
+    await act(async () => fireEvent.click(within(dialog()).getByRole("button", { name: "Choose an owner" })));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(mocks.actions.deleteAccountAction).not.toHaveBeenCalled();
+  });
+
+  it("deletes the household too when you're the only person in it, once its name is typed (design L)", async () => {
+    as("kris", "owner", [kris]);
+    await open();
+    expect(dialog()).toHaveAccessibleName("Delete your account and The Gwynnes?");
+    expect(dialog()).toHaveTextContent(
+      "You're the only person in The Gwynnes, so it goes too: 42 recipes and 3 meal plans. This can't be undone.",
+    );
+    const button = within(dialog()).getByRole("button", { name: "Delete account and household" });
+    const field = within(dialog()).getByRole("textbox", { name: /to confirm/ });
+    expect(button).toBeDisabled();
+    fireEvent.change(field, { target: { value: "the gwynnes" } });
+    expect(button).toBeEnabled();
+    await act(async () => fireEvent.click(button));
+    expect(mocks.actions.deleteAccountAction).toHaveBeenCalledWith("the gwynnes");
   });
 });

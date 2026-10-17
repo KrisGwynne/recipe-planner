@@ -30,6 +30,14 @@ describe("sign-in page", () => {
     expect(screen.getByRole("link", { name: "privacy policy" })).toHaveAttribute("href", "/privacy");
   });
 
+  it("says when an account has just been deleted", async () => {
+    mocks.auth.mockResolvedValue(null);
+    render(await SignInPage(params({})));
+    expect(screen.queryByText("Your account has been deleted.")).not.toBeInTheDocument();
+    render(await SignInPage(params({ deleted: "1" })));
+    expect(screen.getByRole("status")).toHaveTextContent("Your account has been deleted.");
+  });
+
   it("sends signed-in visitors on to where they were going", async () => {
     mocks.auth.mockResolvedValue({ user: { id: "u1" } });
     await expect(SignInPage(params({ callbackUrl: "/plans" }))).rejects.toThrow("redirect /plans");

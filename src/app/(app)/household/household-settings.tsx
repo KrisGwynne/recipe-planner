@@ -13,6 +13,7 @@ import { formatShortDate, today } from "@/plans/plan";
 import { createInviteAction } from "../../welcome/invite/actions";
 import { InviteLink } from "../../welcome/invite/invite-link";
 import {
+  deleteAccountAction,
   deleteHouseholdAction,
   leaveAction,
   removeMemberAction,
@@ -22,7 +23,7 @@ import {
   type RenameState,
 } from "./actions";
 
-// The Household tab (designs/src/household.html A to J). Everything here is
+// The Household tab (designs/src/household.html A to L). Everything here is
 // changed through server actions that check the role again; members get the
 // page without the owner's controls (design C).
 
@@ -47,7 +48,8 @@ type Open =
   | { kind: "remove"; member: Member }
   | { kind: "leave" }
   | { kind: "last-owner" }
-  | { kind: "delete" };
+  | { kind: "delete" }
+  | { kind: "delete-account" };
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -98,7 +100,7 @@ export function HouseholdSettings({
   me: string;
   members: Member[];
   invites: Invite[];
-  /** Your account card, with Sign out (a server form). */
+  /** The top of your account card: who you are, and Sign out (a server form). */
   account: ReactNode;
 }) {
   const router = useRouter();
@@ -130,6 +132,13 @@ export function HouseholdSettings({
   async function cancelLink(id: string) {
     if (await revokeInviteAction(id)) toast("Link cancelled");
     else toast("Couldn't cancel that link. Try again.");
+  }
+
+  async function deleteMyAccount(confirmName?: string): Promise<boolean> {
+    // On success the action signs out and goes on to the sign-in page.
+    if (await deleteAccountAction(confirmName)) return true;
+    toast("Couldn't delete your account. Try again.");
+    return false;
   }
 
   async function leave() {
@@ -256,7 +265,16 @@ export function HouseholdSettings({
       {/* Account, then leave or delete */}
       <div>
         <h2 className="text-[17px] font-semibold">Your account</h2>
-        <div className="mt-2">{account}</div>
+        <div className="mt-2 rounded-card bg-surface border border-line divide-y divide-line overflow-hidden">
+          {account}
+          <button
+            type="button"
+            onClick={() => setOpen({ kind: "delete-account" })}
+            className="w-full h-13 px-4 flex items-center font-semibold text-left text-danger hover:bg-surface-2"
+          >
+            Delete my account…
+          </button>
+        </div>
 
         {!(alone && !owner) && (
           <>
@@ -417,6 +435,54 @@ export function HouseholdSettings({
       {open?.kind === "delete" && (
         <DeleteSheet household={household} others={others.map(shortName)} onClose={close} />
       )}
+
+      {open?.kind === "delete-account" &&
+        (alone ? (
+          // Design L: the household goes too.
+          <Sheet title={`Delete your account and ${household.name}?`} onClose={close}>
+            <p className="text-ink-muted">
+              You&apos;re the only person in {household.name}, so it goes too: {counted(household.recipes, "recipe")} and{" "}
+              {counted(household.plans, "meal plan")}. This can&apos;t be undone.
+            </p>
+            <TypeNameToConfirm
+              name={household.name}
+              action="Delete account and household"
+              onConfirm={deleteMyAccount}
+              onClose={close}
+            />
+          </Sheet>
+        ) : lastOwner ? (
+          // Design L: not without another owner.
+          <Sheet title="Choose another owner first" onClose={close}>
+            <p className="text-ink-muted">
+              You&apos;re the only owner of {household.name}. Make {listNames(others.map(shortName), "or")} an owner before
+              deleting your account, so the household isn&apos;t left without one.
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                close();
+                document.getElementById("members")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className={buttonClasses("primary", "mt-5 w-full")}
+            >
+              Choose an owner
+            </button>
+          </Sheet>
+        ) : (
+          // Design K.
+          <Confirm
+            title="Delete your account?"
+            action="Delete my account"
+            onConfirm={async () => {
+              if (!(await deleteMyAccount())) close();
+            }}
+            onClose={close}
+          >
+            You&apos;ll leave {household.name} and your sign-in details are deleted. Its recipes and plans stay with{" "}
+            {listNames(others.map(shortName))}. Signing in with Google again starts from scratch.
+          </Confirm>
+        ))}
     </div>
   );
 }
@@ -507,17 +573,12 @@ function DeleteSheet({
   onClose: () => void;
 }) {
   const toast = useToast();
-  const [typed, setTyped] = useState("");
-  const [busy, setBusy] = useState(false);
-  const matches = typed.trim().toLowerCase() === household.name.trim().toLowerCase();
 
-  async function remove() {
-    setBusy(true);
+  async function remove(typed: string): Promise<boolean> {
     // On success the action goes on to /welcome.
-    if (!(await deleteHouseholdAction(typed))) {
-      setBusy(false);
-      toast("Couldn't delete the household. Try again.");
-    }
+    if (await deleteHouseholdAction(typed)) return true;
+    toast("Couldn't delete the household. Try again.");
+    return false;
   }
 
   return (
@@ -539,9 +600,41 @@ function DeleteSheet({
             : "The household itself"}
         </li>
       </ul>
+      <TypeNameToConfirm name={household.name} action="Delete household" onConfirm={remove} onClose={onClose} />
+    </Sheet>
+  );
+}
+
+/**
+ * Where the household and its recipes go (designs J and L): the button stays
+ * off until the name matches, ignoring case and spaces at the ends.
+ */
+function TypeNameToConfirm({
+  name,
+  action,
+  onConfirm,
+  onClose,
+}: {
+  name: string;
+  action: string;
+  /** True when it worked (and the page is moving on). */
+  onConfirm: (typed: string) => Promise<boolean>;
+  onClose: () => void;
+}) {
+  const [typed, setTyped] = useState("");
+  const [busy, setBusy] = useState(false);
+  const matches = typed.trim().toLowerCase() === name.trim().toLowerCase();
+
+  async function confirm() {
+    setBusy(true);
+    if (!(await onConfirm(typed))) setBusy(false);
+  }
+
+  return (
+    <>
       <label className="block mt-4">
         <span className="text-sm font-medium">
-          Type <b>{household.name}</b> to confirm
+          Type <b>{name}</b> to confirm
         </span>
         <input
           value={typed}
@@ -551,12 +644,12 @@ function DeleteSheet({
           className="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px] focus:outline-none focus:border-2 focus:border-primary"
         />
       </label>
-      <button type="button" disabled={!matches || busy} onClick={remove} className={buttonClasses("danger", "mt-5 w-full")}>
-        Delete household
+      <button type="button" disabled={!matches || busy} onClick={confirm} className={buttonClasses("danger", "mt-5 w-full")}>
+        {action}
       </button>
       <button type="button" onClick={onClose} className="mt-2 w-full h-12 rounded-control font-semibold hover:bg-surface-2">
         Cancel
       </button>
-    </Sheet>
+    </>
   );
 }
