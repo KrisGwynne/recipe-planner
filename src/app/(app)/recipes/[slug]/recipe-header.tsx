@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "@/components/icon";
 import { chooseHref } from "@/compare/compare";
+import { recipeFileText } from "@/recipes/file";
 import type { Recipe } from "@/types/recipe";
 import { Sheet } from "@/components/ui/sheet";
 import { FavouriteButton } from "./household";
@@ -27,7 +28,7 @@ export function RecipeHeader({ recipe }: { recipe: Recipe }) {
   }
 
   function download() {
-    const blob = new Blob([`${JSON.stringify(recipe, null, 2)}\n`], { type: "application/json" });
+    const blob = new Blob([recipeFileText(recipe)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
