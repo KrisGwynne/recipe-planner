@@ -236,6 +236,23 @@ export async function deleteAccount(ctx: HouseholdContext, confirmName = ""): Pr
   return rows(result).length > 0;
 }
 
+/**
+ * Deletes the signed-in user's account when they're in no household (PP-183,
+ * designs N and O): someone on "Start a household". Pass only the signed-in
+ * user's id. The cascades take their Google link, sessions, departure note and
+ * any invite links they made; what they added to a household they used to be
+ * in stays, no longer saying who. False, deleting nothing, if they're in a
+ * household after all: that goes through deleteAccount.
+ */
+export async function deleteAccountWithoutHousehold(userId: string): Promise<boolean> {
+  const result = await getDb().execute(sql`
+    delete from ${users}
+    where "id" = ${userId} and not exists (select 1 from ${householdMembers} where "user_id" = ${userId})
+    returning "id"
+  `);
+  return rows(result).length > 0;
+}
+
 /** The household the signed-in user last left (for /welcome's note), or null. */
 export async function getDeparture(userId: string): Promise<string | null> {
   const [row] = await getDb()

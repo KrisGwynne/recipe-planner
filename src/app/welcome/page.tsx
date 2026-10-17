@@ -6,13 +6,15 @@ import { Icon } from "@/components/icon";
 import { getDeparture, getMembership } from "@/data";
 import { firstName } from "@/lib/format";
 import { CreateHouseholdForm } from "./create-household-form";
+import { DeleteAccount } from "./delete-account";
 
 export const metadata: Metadata = { title: "Welcome" };
 
 // Onboarding design B: for anyone signed in without a household (after first
 // sign-in, or after leaving one). People with a household go to the app.
 // After leaving, being removed or the household being deleted, a note says so
-// (household design M), the same whichever it was.
+// (household design M), the same whichever it was. Sign out and Delete my
+// account… share the bottom row (household design N, PP-183).
 export default async function WelcomePage() {
   const user = await requireUser();
   if (await getMembership(user.id)) redirect("/recipes");
@@ -39,17 +41,23 @@ export default async function WelcomePage() {
           </p>
         )}
       </CreateHouseholdForm>
-      <form
-        className="px-6 pb-[max(2rem,env(safe-area-inset-bottom))]"
-        action={async () => {
-          "use server";
-          await signOut({ redirectTo: "/sign-in" });
-        }}
-      >
-        <button type="submit" className="mt-2 w-full h-11 text-sm font-medium text-ink-muted">
-          Sign out
-        </button>
-      </form>
+      {/* Sign out and Delete my account… on one quiet row (household design N). */}
+      <div className="mt-2 px-6 pb-[max(2rem,env(safe-area-inset-bottom))] flex items-center justify-center text-sm font-medium text-ink-muted">
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/sign-in" });
+          }}
+        >
+          <button type="submit" className="h-11 px-3">
+            Sign out
+          </button>
+        </form>
+        <span aria-hidden="true" className="text-ink-subtle">
+          ·
+        </span>
+        <DeleteAccount className="h-11 px-3" />
+      </div>
     </main>
   );
 }

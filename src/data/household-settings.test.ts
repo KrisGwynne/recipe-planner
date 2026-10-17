@@ -19,6 +19,7 @@ import type { Recipe } from "@/types/recipe";
 import { ForbiddenError, contextFor } from "./context";
 import {
   deleteAccount,
+  deleteAccountWithoutHousehold,
   deleteHousehold,
   getDeparture,
   getHousehold,
@@ -265,6 +266,40 @@ describe("deleteAccount", () => {
     expect(await getMembership("alex")).toMatchObject({ householdId: h.b.householdId, role: "owner" });
     expect(await authRows("alex")).toHaveLength(2);
     expect(await mocks.db.select().from(recipes)).toHaveLength(1);
+  });
+});
+
+describe("deleteAccountWithoutHousehold", () => {
+  const userIds = async () => (await mocks.db.select({ id: users.id }).from(users)).map((u) => u.id).sort();
+
+  it("deletes the account, sign-in and departure note of someone in no household (designs N and O)", async () => {
+    const recipe = await saveRecipe(h.aMember, tuna);
+    await leaveHousehold(h.aMember);
+    await mocks.db.insert(accounts).values({ userId: "sam", type: "oidc", provider: "google", providerAccountId: "google-sam" });
+    await mocks.db.insert(sessions).values({ sessionToken: "session-sam", userId: "sam", expires: new Date(Date.now() + 86_400_000) });
+    expect(await getDeparture("sam")).toBe("Household A");
+
+    expect(await deleteAccountWithoutHousehold("sam")).toBe(true);
+    expect(await userIds()).toEqual(["alex", "kris"]);
+    expect(await mocks.db.select().from(accounts)).toEqual([]);
+    expect(await mocks.db.select().from(sessions)).toEqual([]);
+    expect(await getDeparture("sam")).toBeNull();
+    // What they added to the household they left stays there.
+    expect(await mocks.db.select({ id: recipes.id, by: recipes.createdBy }).from(recipes)).toEqual([{ id: recipe.id, by: null }]);
+  });
+
+  it("deletes someone who has never been in a household", async () => {
+    await mocks.db.insert(users).values({ id: "new", name: "New Person", email: "new@example.com" });
+    expect(await deleteAccountWithoutHousehold("new")).toBe(true);
+    expect(await userIds()).toEqual(["alex", "kris", "sam"]);
+  });
+
+  it("deletes nothing for someone in a household, owner or member", async () => {
+    expect(await deleteAccountWithoutHousehold("sam")).toBe(false);
+    expect(await deleteAccountWithoutHousehold("kris")).toBe(false);
+    expect(await deleteAccountWithoutHousehold("alex")).toBe(false);
+    expect(await userIds()).toEqual(["alex", "kris", "sam"]);
+    expect(await getMembership("sam")).toMatchObject({ householdId: h.a.householdId });
   });
 });
 

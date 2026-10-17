@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { requireUser } from "@/auth";
-import { AlreadyInHouseholdError, createHousehold, householdName } from "@/data";
+import { requireUser, signOut } from "@/auth";
+import { AlreadyInHouseholdError, createHousehold, deleteAccountWithoutHousehold, householdName } from "@/data";
 
 export type CreateHouseholdState = { name: string; error?: string };
 
@@ -24,4 +24,17 @@ export async function createHouseholdAction(
     redirect("/recipes");
   }
   redirect("/welcome/invite");
+}
+
+/**
+ * Delete my account from "Start a household" (household designs N and O), then
+ * sign out to the sign-in page's note (design M). False if they're in a
+ * household after all (another tab): that goes through the Household tab.
+ */
+export async function deleteAccountAction(): Promise<boolean> {
+  const user = await requireUser();
+  if (!(await deleteAccountWithoutHousehold(user.id))) return false;
+  // The session row went with the account; this clears the cookie.
+  await signOut({ redirectTo: "/sign-in?deleted=1" });
+  return true;
 }
