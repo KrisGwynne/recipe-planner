@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { signOut } from "@/auth";
 import {
+  deleteAccount,
   deleteHousehold,
   householdName,
   leaveHousehold,
@@ -74,4 +76,17 @@ export async function deleteHouseholdAction(confirmName: string): Promise<boolea
   const { ctx } = await requireHousehold();
   if (!(await attempt(() => deleteHousehold(ctx, confirmName)))) return false;
   redirect("/welcome");
+}
+
+/**
+ * Delete my account (designs K and L), then sign out to the sign-in page's
+ * note (design M). `confirmName` is only needed when the household goes too.
+ * False for the only owner with others in the household, or a wrong name.
+ */
+export async function deleteAccountAction(confirmName?: string): Promise<boolean> {
+  const { ctx } = await requireHousehold();
+  if (!(await attempt(() => deleteAccount(ctx, confirmName)))) return false;
+  // The session row went with the account; this clears the cookie.
+  await signOut({ redirectTo: "/sign-in?deleted=1" });
+  return true;
 }

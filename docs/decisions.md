@@ -338,3 +338,15 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Two owners leaving at the same instant could leave none** (Kris, 2026-10-14). Each change is one SQL statement with the "always an owner" rule inside it (the Neon HTTP driver has no transactions), which covers everything but exact races. Households are small enough to accept that rather than add locking.
 
 **How it works.** The functions are in `src/data/households.ts` (`renameHousehold`, `setRole`, `removeMember`, `leaveHousehold`, `deleteHousehold`, `householdCounts`, `getDeparture`); the page is `src/app/(app)/household/`. Deleting a household checks the typed name on the server too, and the database's cascades take its recipes, recipe data, plans and invites. After leaving or deleting, the action goes to `/welcome`. Onboarding screen C links to Household settings again.
+
+## 2026-10-17: delete my account (PP-158)
+
+**"Your account has been deleted" comes from `/sign-in?deleted=1`** (Kris, 2026-10-17). Anyone can type the parameter, but all it does is show the note, so a one-time cookie isn't worth it.
+
+**Only from the Household tab for now** (Kris, 2026-10-17), as in the design. Someone with no household only sees "Start a household" and can't delete their account yet; that's PP-183 (Low).
+
+**"Download all recipes first" waits for PP-164** (Kris, 2026-10-17) on the "delete your account and the household" sheet too, as on Delete household.
+
+**Invite links you made stop working when your account goes** (Kris, 2026-10-17): they're deleted with it (the existing cascade on `household_invites.created_by`). What else you added stays without your name: recipes, notes, plans and cooking history (set null).
+
+**How it works.** `deleteAccount(ctx, confirmName?)` in `src/data/households.ts` is one SQL statement with the rules inside it: a member, or an owner while another owner stays, deletes their `users` row (accounts, sessions, membership and departures go by cascade); the only person in the household also deletes the household, only if the typed name matches; the only owner with others in the household deletes nothing. `deleteAccountAction` then calls Auth.js's `signOut` to clear the cookie (it copes with the session row being gone already) and goes to the sign-in page. Signing in with Google again makes a new user. The typed-name part of the Delete household sheet is shared as `TypeNameToConfirm`.

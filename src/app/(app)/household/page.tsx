@@ -9,8 +9,7 @@ export const metadata: Metadata = { title: "Household" };
 
 // Household settings and account (designs/src/household.html, PP-157). Owners
 // see everything; members see the household and their own account (design C).
-// "Download all recipes" comes with PP-164 and "Delete my account" with
-// PP-158 (Kris, 2026-10-14).
+// "Download all recipes" comes with PP-164 (Kris, 2026-10-14).
 export default async function HouseholdPage() {
   const { user, household, ctx } = await requireHousehold();
   const owner = household.role === "owner";
@@ -35,7 +34,7 @@ export default async function HouseholdPage() {
           createdBy: i.createdById === user.id ? null : (i.createdBy ?? ""),
         }))}
         account={
-          <div className="rounded-card bg-surface border border-line divide-y divide-line">
+          <>
             <div className="flex items-center gap-3 px-4 py-3">
               <Avatar name={user.name ?? user.email} image={user.image} size={40} className="shrink-0" />
               <span className="flex-1 min-w-0">
@@ -49,11 +48,11 @@ export default async function HouseholdPage() {
                 await signOut({ redirectTo: "/sign-in" });
               }}
             >
-              <button type="submit" className="w-full h-13 px-4 flex items-center font-semibold text-left hover:bg-surface-2 rounded-b-card">
+              <button type="submit" className="w-full h-13 px-4 flex items-center font-semibold text-left hover:bg-surface-2">
                 Sign out
               </button>
             </form>
-          </div>
+          </>
         }
       />
     </Page>

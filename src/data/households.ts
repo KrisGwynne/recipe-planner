@@ -198,6 +198,44 @@ export async function deleteHousehold(ctx: HouseholdContext, confirmName: string
   return rows(result).length > 0;
 }
 
+/**
+ * Deletes the signed-in user's account (PP-158, designs K and L): the user row,
+ * and through its cascades their Google link, sessions, membership and the
+ * invite links they made. What they added stays, no longer saying who. Signing
+ * in again starts from scratch.
+ *
+ * A member, or an owner while another owner stays, just goes. The only person
+ * in the household takes it with them, and only when `confirmName` matches its
+ * name (as deleteHousehold). The only owner with others in it can't: false.
+ */
+export async function deleteAccount(ctx: HouseholdContext, confirmName = ""): Promise<boolean> {
+  const result = await getDb().execute(sql`
+    with me as (
+      select "role" from ${householdMembers} where "household_id" = ${ctx.householdId} and "user_id" = ${ctx.userId}
+    ),
+    others as (
+      select count(*)::int as "people", (count(*) filter (where "role" = 'owner'))::int as "owners"
+      from ${householdMembers} where "household_id" = ${ctx.householdId} and "user_id" <> ${ctx.userId}
+    ),
+    deleted_household as (
+      delete from ${households}
+      where "id" = ${ctx.householdId} and exists (select 1 from me) and (select "people" from others) = 0
+        and lower(trim("name")) = lower(trim(${confirmName}))
+      returning "id"
+    ),
+    deleted_user as (
+      delete from ${users}
+      where "id" = ${ctx.userId} and exists (select 1 from me) and (
+        exists (select 1 from deleted_household)
+        or ((select "people" from others) > 0 and ((select "role" from me) = 'member' or (select "owners" from others) > 0))
+      )
+      returning "id"
+    )
+    select "id" from deleted_user
+  `);
+  return rows(result).length > 0;
+}
+
 /** The household the signed-in user last left (for /welcome's note), or null. */
 export async function getDeparture(userId: string): Promise<string | null> {
   const [row] = await getDb()

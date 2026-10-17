@@ -6,6 +6,7 @@ export { ForbiddenError, requireOwner, type HouseholdContext, type Role } from "
 export {
   AlreadyInHouseholdError,
   createHousehold,
+  deleteAccount,
   deleteHousehold,
   getDeparture,
   getHousehold,
