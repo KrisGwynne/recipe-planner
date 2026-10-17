@@ -195,6 +195,9 @@ describe("the recipe page", () => {
     render(await RecipePage(params(tuna.id)));
     fireEvent.click(screen.getByRole("button", { name: "More" }));
     const menu = screen.getByRole("dialog");
+    // Compare comes first, with this recipe ticked (PP-173).
+    expect(within(menu).getAllByRole("listitem")[0]).toHaveTextContent("Compare with…");
+    expect(within(menu).getByRole("link", { name: "Compare with…" })).toHaveAttribute("href", `/compare/choose?r=${tuna.id}`);
     expect(within(menu).getByRole("button", { name: "Download recipe file (.json)" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: /Replace with a new version/ })).toHaveAttribute("href", "/import");
   });

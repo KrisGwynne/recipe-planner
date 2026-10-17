@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icon } from "@/components/icon";
+import { chooseHref } from "@/compare/compare";
 import type { Recipe } from "@/types/recipe";
 import { Sheet } from "@/components/ui/sheet";
 import { FavouriteButton } from "./household";
@@ -13,7 +14,7 @@ const iconButton =
 
 /**
  * The recipe page's top bar: back, the favourite heart and ⋯ (design A, G).
- * Compare (PP-173) and delete (PP-165) join the menu with their tickets.
+ * "Compare with…" comes first (PP-173); delete (PP-165) joins with its ticket.
  */
 export function RecipeHeader({ recipe }: { recipe: Recipe }) {
   const router = useRouter();
@@ -53,6 +54,13 @@ export function RecipeHeader({ recipe }: { recipe: Recipe }) {
       {menu && (
         <Sheet title={recipe.name} onClose={() => setMenu(false)}>
           <ul className="divide-y divide-line">
+            <li>
+              {/* The slug is the recipe's id. */}
+              <Link href={chooseHref([recipe.id])} className="w-full min-h-13 py-3 flex items-center gap-3 font-medium">
+                <Icon name="chart" className="size-5 text-ink-muted" />
+                Compare with…
+              </Link>
+            </li>
             <li>
               <button type="button" onClick={download} className="w-full min-h-13 py-3 flex items-center gap-3 text-left font-medium">
                 <Icon name="download" className="size-5 text-ink-muted" />

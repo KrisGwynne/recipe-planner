@@ -362,3 +362,17 @@ Revisit (per-preview branches with migrations on deploy, PP-142) when anyone oth
 **Left out for now** (Kris, 2026-10-17): written differences between two recipes ("153 kcal fewer"), and a "Select to compare" mode in the library. Recipes come in through the picker and the recipe page's "Compare with…", which opens the picker with that recipe ticked.
 
 **Details settled in the design:** 2 to 4 recipes; per serving, as printed; estimated nutrition gets the dashed outline and ~ on bars, splits and table cells; the energy split reuses the recipe page's; a deleted recipe drops out of a comparison; with one recipe left the charts and table are hidden; fewer than two recipes in the library shows "Import at least two recipes to compare them"; on a phone the table scrolls sideways with its labels pinned; from tablet width charts are a 2 × 2 grid beside the recipes and energy split.
+
+## 2026-10-17: compare recipes (PP-173)
+
+Made while Kris was away (he said to carry on); each is open to change in review.
+
+**No chart library.** The approved design is horizontal bars with their values written on them, which plain HTML and CSS draw exactly, in both themes and under the CSP, without adding Recharts (which the ticket named before the design changed).
+
+**The address holds slugs**: `/compare?r=<slug>&r=<slug>`, in the order chosen, at most four. They're looked up within the household, so another household's recipe or a deleted one drops out. `/compare?r=` is an empty comparison chosen on purpose (removing the last recipe); plain `/compare`, the tab, goes back to the last comparison remembered on the device (`localStorage`, every read and write allowed to fail).
+
+**The picker is its own page**, `/compare/choose?r=...`, like the plan's recipe picker: ticks are kept on the page until "Compare N recipes", which replaces the picker in history, so Back doesn't return to it. The recipe page's "Compare with…" opens it with that recipe ticked.
+
+**"Carb type" and "Protein type"** label the table's carb and protein rows (the design said "Carbs" and "Protein"), so they aren't confused with the nutrient rows of the same names below.
+
+**How it works.** `src/compare/compare.ts` (address, remembered comparison, bar widths), `src/app/(app)/compare/` (page, `compare-view.tsx`, `remember.tsx`, `choose/`). The energy split is the recipe page's `EnergySplit`, which now takes `estimated` to put the ~ on its percentages.
