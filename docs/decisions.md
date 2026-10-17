@@ -376,3 +376,11 @@ Made while Kris was away (he said to carry on); each is open to change in review
 **"Carb type" and "Protein type"** label the table's carb and protein rows (the design said "Carbs" and "Protein"), so they aren't confused with the nutrient rows of the same names below.
 
 **How it works.** `src/compare/compare.ts` (address, remembered comparison, bar widths), `src/app/(app)/compare/` (page, `compare-view.tsx`, `remember.tsx`, `choose/`). The energy split is the recipe page's `EnergySplit`, which now takes `estimated` to put the ~ on its percentages.
+
+## 2026-10-17: privacy policy and terms design approved (PP-159)
+
+**No name or email address on the privacy policy or terms** (Kris, 2026-10-17): they say "a personal project run from the UK". Rights requests are covered by what the app already does (download all recipes, change household data, delete my account or household); Google profile details are changed in Google. Design: `designs/src/legal.html`.
+
+**The database is with Neon in London, and there are no backups** (Kris, 2026-10-17). Both pages say so: deleted data is gone for good, so keep a download of anything you'd miss.
+
+**The landing page is onboarding A** (Kris, 2026-10-17), the existing sign-in page, at `/` for signed-out visitors; signed-in visitors go to their recipes. The terms keep the nutrition disclaimer ("a guide, not medical or dietary advice").
