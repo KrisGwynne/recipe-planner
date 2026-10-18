@@ -11,13 +11,14 @@ import { ActiveFilterChip } from "@/components/ui/chip";
 import { useToast } from "@/components/ui/toast";
 import { cx } from "@/lib/cx";
 import { approx, formatMinutes } from "@/lib/format";
-import type { AvailableLeftovers } from "@/data";
+import type { AvailableFromFreezer, AvailableLeftovers } from "@/data";
 import { daysOld, mealLabel } from "@/plans/leftovers";
-import { formatDay, formatPortions, mealName, planDay, slotLabels, type Slot } from "@/plans/plan";
+import { formatDay, formatPortions, formatShortDate, mealName, planDay, slotLabels, today, type Slot } from "@/plans/plan";
 import { browsingCategory } from "@/recipes/derive";
 import { SORTS, activeFilters, applyState, type LibraryRecipe } from "@/recipes/library-filter";
 import { toRecipeSummary } from "@/recipes/summary";
 import { addEntryAction, addLeftoversAction, removeEntryAction } from "../../actions";
+import { addFromFreezerAction } from "../../freezer/actions";
 
 type PickerRecipe = LibraryRecipe & { id: string; serves: number };
 
@@ -29,7 +30,8 @@ type PickerRecipe = LibraryRecipe & { id: string; serves: number };
  * it with 1 portion each and goes back, with an Undo toast.
  *
  * Leftovers not yet planned come first (leftovers design D), oldest first,
- * whatever the meal filter; while searching, only the ones that match.
+ * then what's in the freezer (PP-189), the oldest and "Show N more";
+ * both whatever the meal filter, and while searching only the ones that match.
  */
 export function RecipePicker({
   plan,
@@ -38,6 +40,7 @@ export function RecipePicker({
   recipes,
   inPlan,
   leftovers,
+  freezer,
 }: {
   plan: { id: string; name: string; startDate: string; people: number };
   dayIndex: number;
@@ -45,6 +48,7 @@ export function RecipePicker({
   recipes: PickerRecipe[];
   inPlan: Record<string, string[]>;
   leftovers: AvailableLeftovers[];
+  freezer: AvailableFromFreezer[];
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -64,7 +68,22 @@ export function RecipePicker({
   }
 
   const words = state.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
-  const waiting = leftovers.filter((l) => words.every((w) => l.recipe.name.toLowerCase().includes(w)));
+  const matches = (name: string) => words.every((w) => name.toLowerCase().includes(w));
+  const waiting = leftovers.filter((l) => matches(l.recipe.name));
+  const frozen = freezer.filter((f) => matches(f.recipe.name));
+  const [allFrozen, setAllFrozen] = useState(false);
+
+  function addFromFreezer(item: AvailableFromFreezer) {
+    startAdding(async () => {
+      const id = await addFromFreezerAction(plan.id, { dayIndex, slot, itemId: item.itemId });
+      if (!id) {
+        toast("Couldn't add that from the freezer. Try again.");
+        return;
+      }
+      toast(`Added to ${where}`, { undo: () => void removeEntryAction(plan.id, id) });
+      backToPlan();
+    });
+  }
 
   function addLeftovers(from: AvailableLeftovers) {
     startAdding(async () => {
@@ -143,8 +162,38 @@ export function RecipePicker({
                     </li>
                   ))}
                 </ul>
-                <h2 className="mt-4 text-xs font-semibold uppercase tracking-wider text-ink-muted">Recipes</h2>
               </section>
+            )}
+            {frozen.length > 0 && (
+              <section aria-labelledby="freezer-heading" className="mt-4">
+                <h2 id="freezer-heading" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                  In the freezer
+                </h2>
+                <ul
+                  aria-busy={adding}
+                  className="mt-2 rounded-card bg-surface border border-line divide-y divide-line overflow-hidden"
+                >
+                  {(allFrozen ? frozen : frozen.slice(0, 1)).map((item) => (
+                    <li key={item.itemId}>
+                      <FreezerRow item={item} disabled={adding} onAdd={() => addFromFreezer(item)} />
+                    </li>
+                  ))}
+                  {!allFrozen && frozen.length > 1 && (
+                    <li>
+                      <button
+                        type="button"
+                        onClick={() => setAllFrozen(true)}
+                        className="w-full h-12 text-sm font-semibold text-primary hover:bg-surface-2"
+                      >
+                        Show {frozen.length - 1} more
+                      </button>
+                    </li>
+                  )}
+                </ul>
+              </section>
+            )}
+            {(waiting.length > 0 || frozen.length > 0) && (
+              <h2 className="mt-4 text-xs font-semibold uppercase tracking-wider text-ink-muted">Recipes</h2>
             )}
             {chips.length > 0 && (
               <div className="mt-3 flex gap-2 overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0 md:flex-wrap">
@@ -250,6 +299,33 @@ function LeftoversRow({
               · {old} days old by {formatDay(mealDate).split(" ")[0]}
             </span>
           )}
+        </span>
+      </span>
+      <Icon name="plus" className="size-6 text-primary shrink-0" />
+    </button>
+  );
+}
+
+/** Something in the freezer (leftovers design D): "2 free · frozen 21 Sep". */
+function FreezerRow({ item, disabled, onAdd }: { item: AvailableFromFreezer; disabled: boolean; onAdd: () => void }) {
+  const category = categoryOf(browsingCategory(item.recipe.proteinType, item.recipe.dietary));
+  return (
+    <button
+      type="button"
+      onClick={onAdd}
+      disabled={disabled}
+      className="w-full flex items-center gap-3 px-4 py-3 min-h-16 text-left hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+    >
+      <span className="w-1 self-stretch flex flex-col rounded-full overflow-hidden" aria-hidden="true">
+        {categoryDotClasses(category).map((dot) => (
+          <span key={dot} className={cx("flex-1", dot)} />
+        ))}
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="block font-semibold">{item.recipe.name}</span>
+        <span className="sr-only">{categoryLabels[category]}</span>
+        <span className="block text-sm text-ink-muted tabular-nums">
+          {formatPortions(item.free)} free · frozen {formatShortDate(item.frozenOn, today())}
         </span>
       </span>
       <Icon name="plus" className="size-6 text-primary shrink-0" />

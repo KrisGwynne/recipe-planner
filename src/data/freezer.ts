@@ -2,6 +2,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
+import { MAX_FROZEN } from "@/plans/freezer";
 import { MAX_PORTIONS, MIN_PORTIONS, today, type Slot } from "@/plans/plan";
 import type { ProteinType } from "@/recipes/derive";
 import type { DietaryFlag, Recipe } from "@/types/recipe";
@@ -28,8 +29,6 @@ import {
 // and the count can be corrected by hand (Kris, 2026-10-18). Ids from the
 // client are only looked up within ctx.householdId.
 
-/** Servings in the freezer go in halves, up to 50 (the add sheet's stepper, design J). */
-export const MAX_FROZEN = 50;
 const frozenServings = z
   .number()
   .min(MIN_PORTIONS)

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { availableLeftovers, getPlan, listRecipes, requireHousehold } from "@/data";
+import { availableFromFreezer, availableLeftovers, getPlan, listRecipes, requireHousehold } from "@/data";
 import { SLOTS, mealName, type Slot } from "@/plans/plan";
 import { RecipePicker } from "./recipe-picker";
 
@@ -28,7 +28,8 @@ export default async function AddRecipePage({ params, searchParams }: Props) {
   if (!Number.isInteger(dayIndex) || dayIndex < 0 || dayIndex >= plan.days) notFound();
   if (typeof slot !== "string" || !(SLOTS as readonly string[]).includes(slot)) notFound();
 
-  const leftovers = await availableLeftovers(ctx, plan.id, { dayIndex, slot: slot as Slot });
+  const at = { dayIndex, slot: slot as Slot };
+  const [leftovers, freezer] = await Promise.all([availableLeftovers(ctx, plan.id, at), availableFromFreezer(ctx, plan.id, at)]);
 
   // "In this plan: Thu dinner" on each recipe already planned.
   const inPlan: Record<string, string[]> = {};
@@ -46,6 +47,7 @@ export default async function AddRecipePage({ params, searchParams }: Props) {
       recipes={recipes}
       inPlan={inPlan}
       leftovers={leftovers}
+      freezer={freezer}
     />
   );
 }

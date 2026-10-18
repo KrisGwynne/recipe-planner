@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { RecipeView } from "@/components/recipe/recipe-view";
+import { categoryOf } from "@/components/ui/badge";
 import { getRecipeBySlug, getRecipeHousehold, listPlans, recipePlanUses, requireHousehold } from "@/data";
 import { defaultPlanName, defaultStartDate, mealName, plansToAddTo, today } from "@/plans/plan";
+import { browsingCategory } from "@/recipes/derive";
+import type { DietaryFlag } from "@/types/recipe";
 import { AddToPlan } from "./add-to-plan";
 import { CookedTodayButton, HouseholdSummary, OurNotes, RecipeHousehold } from "./household";
 import { RecipeHeader } from "./recipe-header";
@@ -50,6 +53,13 @@ export default async function RecipePage({ params, searchParams }: Props) {
               recipe={row.data}
               recipeId={row.id}
               plans={uses.map((use) => ({ name: use.name, meals: use.meals.map((m) => mealName(use, m.dayIndex, m.slot)) }))}
+              freezer={{
+                id: row.id,
+                name: row.name,
+                serves: row.serves,
+                category: categoryOf(browsingCategory(row.proteinType, row.dietary as DietaryFlag[])),
+              }}
+              today={todayDate}
             />
           }
           initialServings={servingsParam(query.servings)}

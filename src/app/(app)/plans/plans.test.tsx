@@ -3,7 +3,18 @@ import { act, fireEvent, render, screen, waitFor, within } from "@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
 import { createTestDb } from "@/db/test-db";
-import { addEntry, addLeftovers, createPlan, getPlan, listPlans, saveRecipe } from "@/data";
+import {
+  addEntry,
+  addFromFreezer,
+  addLeftovers,
+  addToFreezer,
+  createPlan,
+  freezeLeftovers,
+  getPlan,
+  listFreezer,
+  listPlans,
+  saveRecipe,
+} from "@/data";
 import { twoHouseholds, type TwoHouseholds } from "@/data/test-fixtures";
 import { ToastProvider } from "@/components/ui/toast";
 import type { Recipe } from "@/types/recipe";
@@ -47,6 +58,7 @@ const { default: PlansPage } = await import("./page");
 const { default: PlanPage } = await import("./[id]/page");
 const { default: AddRecipePage } = await import("./[id]/add/page");
 const { default: NutritionPage } = await import("./[id]/nutrition/page");
+const { default: FreezerPage } = await import("./freezer/page");
 const { default: RecipePage } = await import("../recipes/[slug]/page");
 const {
   addEntryAction,
@@ -646,6 +658,169 @@ describe("leftovers (PP-180)", () => {
     expect(screen.getByRole("dialog", { name: 'Delete "This week"?' })).toHaveTextContent(
       "It has 1 meal planned. 1 leftovers meal in another plan eats from it and will go too. The recipes stay in your library.",
     );
+  });
+});
+
+describe("the freezer (PP-189)", () => {
+  const dayCard = (dayIndex: number) => document.getElementById(`day-${dayIndex}`)!;
+  // Today is Tue 13 Oct. Tuna pasta serves 4; 2 people at 1 each leave 2.
+  let id: string;
+  let cook: string;
+  const openFreezer = async () => render(<ToastProvider>{await FreezerPage()}</ToastProvider>);
+
+  beforeEach(async () => {
+    id = await createPlan(h.a, thisWeek);
+    // Wed dinner, still to come.
+    cook = (await addEntry(h.a, id, { dayIndex: 2, slot: "dinner", recipeId: tuna }))!;
+  });
+
+  it("freezes a cook's leftovers from its sheet, with the recipe's warning (B, F)", async () => {
+    await openPlan(id);
+    fireEvent.click(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Freeze" }));
+    const sheet = screen.getByRole("dialog", { name: "Freeze the leftovers" });
+    expect(sheet).toHaveTextContent("Lemony tuna, tomato & caper one-pot pasta · Wed 14 dinner");
+    expect(sheet).toHaveTextContent("They go on the freezer list on Wed 14 Oct, after dinner.");
+    // The tuna pasta's file says it doesn't freeze.
+    expect(sheet).toHaveTextContent("The recipe says this doesn't freeze wellYou can still freeze it.");
+    expect(within(sheet).getByRole("button", { name: "More servings" })).toBeDisabled();
+    await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Freeze 2 servings" })));
+    await waitFor(() => expect(screen.getByText("2 servings to freeze")).toBeInTheDocument());
+    expect((await getPlan(h.a, id))!.entries[0].frozen).toMatchObject({ servings: 2, frozenOn: "2026-10-14" });
+  });
+
+  it("shows what's frozen and meals from the freezer on the plan (A, E)", async () => {
+    const item = (await freezeLeftovers(h.a, cook, 2))!;
+    await addFromFreezer(h.a, id, { dayIndex: 4, slot: "dinner", itemId: item });
+    await openPlan(id);
+    expect(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ })).toHaveTextContent("2 to freeze");
+    expect(within(dayCard(4)).getByRole("button", { name: /Lemony tuna/ })).toHaveTextContent("From the freezer");
+
+    fireEvent.click(within(dayCard(4)).getByRole("button", { name: /Lemony tuna/ }));
+    const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
+    expect(within(sheet).getByRole("link", { name: "From the freezer · frozen 14 Oct" })).toHaveAttribute("href", "/plans/freezer");
+    expect(sheet).toHaveTextContent("2 people × 1 = 2, all that's left");
+  });
+
+  it("asks before removing a cook whose leftovers are going in the freezer (L)", async () => {
+    await freezeLeftovers(h.a, cook, 2);
+    await openPlan(id);
+    fireEvent.click(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+    const confirm = screen.getByRole("dialog", { name: "Remove Wed dinner?" });
+    expect(confirm).toHaveTextContent("2 servings are going in the freezer. Removing the lemony tuna, tomato & caper one-pot pasta removes that too.");
+    await act(async () => fireEvent.click(within(confirm).getByRole("button", { name: "Remove all" })));
+    await waitFor(async () => expect(await listFreezer(h.a)).toEqual([]));
+  });
+
+  it("lists the freezer in the recipe picker, oldest first, the rest behind Show more (D)", async () => {
+    await addToFreezer(h.a, { recipeId: tuna, servings: 4, frozenOn: "2026-09-21" });
+    await addToFreezer(h.a, { recipeId: tuna, servings: 2, frozenOn: "2026-10-04" });
+    await openPicker(id, { day: "3", slot: "lunch", meal: "lunch" });
+    const section = screen.getByRole("region", { name: "In the freezer" });
+    expect(within(section).getAllByRole("button").map((b) => b.textContent)).toEqual([
+      expect.stringContaining("4 free · frozen 21 Sep"),
+      "Show 1 more",
+    ]);
+    fireEvent.click(within(section).getByRole("button", { name: "Show 1 more" }));
+    expect(within(section).getAllByRole("button", { name: /Lemony tuna/ })).toHaveLength(2);
+
+    await act(async () => fireEvent.click(within(section).getAllByRole("button", { name: /Lemony tuna/ })[0]));
+    await waitFor(() => expect(screen.getByText("Added to Thu lunch")).toBeInTheDocument());
+    expect((await getPlan(h.a, id))!.entries.find((e) => e.dayIndex === 3)).toMatchObject({ fromFreezer: { frozenOn: "2026-09-21" } });
+  });
+
+  it("has a Freezer row on the Plans tab (G)", async () => {
+    await addToFreezer(h.a, { recipeId: tuna, servings: 3, frozenOn: "2026-10-04" });
+    await freezeLeftovers(h.a, cook, 2);
+    render(await PlansPage());
+    expect(screen.getByRole("link", { name: /Freezer/ })).toHaveTextContent("Freezer3 servings of 1 recipe · 2 going in Wed");
+    expect(screen.getByRole("link", { name: /Freezer/ })).toHaveAttribute("href", "/plans/freezer");
+  });
+
+  it("is empty with one action, which adds by hand (J, K)", async () => {
+    await openFreezer();
+    expect(screen.getByText("Nothing in the freezer")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Add to freezer" }));
+    const list = screen.getByRole("dialog", { name: "Add to freezer" });
+    fireEvent.change(within(list).getByRole("searchbox", { name: "Search recipes" }), { target: { value: "tuna" } });
+    fireEvent.click(within(list).getByRole("button", { name: /Lemony tuna/ }));
+
+    const sheet = screen.getByRole("dialog", { name: "Add to freezer" });
+    expect(sheet).toHaveTextContent("The recipe makes 4");
+    expect(within(sheet).getByLabelText("Frozen on")).toHaveValue("2026-10-13");
+    fireEvent.click(within(sheet).getByRole("button", { name: "Fewer servings" }));
+    await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Add 3½ servings" })));
+    await waitFor(() => expect(screen.getByText("3½ servings added to the freezer")).toBeInTheDocument());
+    expect(await listFreezer(h.a)).toMatchObject([{ inFreezer: 3.5, frozenOn: "2026-10-13" }]);
+  });
+
+  it("lists what's in, oldest first, and what's going in (H)", async () => {
+    const item = (await addToFreezer(h.a, { recipeId: tuna, servings: 4, frozenOn: "2026-09-21" }))!;
+    await addFromFreezer(h.a, id, { dayIndex: 3, slot: "dinner", itemId: item });
+    await freezeLeftovers(h.a, cook, 2);
+    await openFreezer();
+    expect(screen.getByText("4 servings of 1 recipe · 2 going in Wed")).toBeInTheDocument();
+    expect(within(screen.getByRole("list", { name: "In the freezer" })).getByRole("button")).toHaveTextContent(
+      "Frozen 21 Sep · 3 weeks ago" + "2 for Thu 15 dinner" + "4servings",
+    );
+    expect(within(screen.getByRole("region", { name: "Going in" })).getByRole("button")).toHaveTextContent(
+      "Wed 14 Oct · from This week's dinner" + "2servings",
+    );
+  });
+
+  it("corrects the count, not below what's planned, and takes it all out after asking (I)", async () => {
+    const item = (await addToFreezer(h.a, { recipeId: tuna, servings: 4, frozenOn: "2026-09-21" }))!;
+    await addFromFreezer(h.a, id, { dayIndex: 3, slot: "dinner", itemId: item });
+    await openFreezer();
+    fireEvent.click(within(screen.getByRole("list", { name: "In the freezer" })).getByRole("button"));
+    const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
+    expect(sheet).toHaveTextContent("2 planned, so not below that");
+    // In halves, from 4 down to the 2 planned.
+    for (let i = 0; i < 4; i++) {
+      await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Fewer in the freezer" })));
+    }
+    expect(within(sheet).getByRole("button", { name: "Fewer in the freezer" })).toBeDisabled();
+    await waitFor(async () => expect((await listFreezer(h.a))[0].inFreezer).toBe(2));
+
+    fireEvent.click(within(sheet).getByRole("button", { name: "Take it all out" }));
+    const confirm = screen.getByRole("dialog", { name: "Take it all out?" });
+    expect(confirm).toHaveTextContent("2 servings are planned for Thu 15 dinner. Those meals will be cooked instead.");
+    await act(async () => fireEvent.click(within(confirm).getByRole("button", { name: "Take it all out" })));
+    await waitFor(async () => expect(await listFreezer(h.a)).toEqual([]));
+    expect((await getPlan(h.a, id))!.entries.find((e) => e.dayIndex === 3)?.fromFreezer).toBeNull();
+  });
+
+  it("takes something out with Undo putting it back (I)", async () => {
+    await addToFreezer(h.a, { recipeId: tuna, servings: 3, frozenOn: "2026-10-04" });
+    await openFreezer();
+    fireEvent.click(within(screen.getByRole("list", { name: "In the freezer" })).getByRole("button"));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Take it all out" })));
+    await waitFor(() => expect(screen.getByText(`${tunaPasta.name} taken out`)).toBeInTheDocument());
+    expect(await listFreezer(h.a)).toEqual([]);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Undo" })));
+    await waitFor(async () => expect(await listFreezer(h.a)).toMatchObject([{ inFreezer: 3, frozenOn: "2026-10-04" }]));
+  });
+
+  it("adds to the freezer from a recipe page's menu (J)", async () => {
+    render(
+      <ToastProvider>
+        {await RecipePage({ params: Promise.resolve({ slug: tunaPasta.id }), searchParams: Promise.resolve({}) })}
+      </ToastProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add to freezer…" }));
+    const sheet = screen.getByRole("dialog", { name: "Add to freezer" });
+    expect(sheet).toHaveTextContent(tunaPasta.name);
+    await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Add 4 servings" })));
+    await waitFor(async () => expect(await listFreezer(h.a)).toMatchObject([{ inFreezer: 4 }]));
+  });
+
+  it("doesn't show another household's freezer", async () => {
+    const bRecipe = (await saveRecipe(h.b, tunaPasta)).id;
+    await addToFreezer(h.b, { recipeId: bRecipe, servings: 3, frozenOn: "2026-10-04" });
+    await openFreezer();
+    expect(screen.getByText("Nothing in the freezer")).toBeInTheDocument();
   });
 });
 

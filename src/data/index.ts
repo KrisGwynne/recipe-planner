@@ -69,7 +69,6 @@ export {
   type PlanUse,
 } from "./plans";
 export {
-  MAX_FROZEN,
   addFromFreezer,
   addToFreezer,
   availableFromFreezer,

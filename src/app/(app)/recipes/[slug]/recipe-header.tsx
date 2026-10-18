@@ -9,6 +9,7 @@ import { chooseHref } from "@/compare/compare";
 import { recipeFileText } from "@/recipes/file";
 import type { Recipe } from "@/types/recipe";
 import { Sheet } from "@/components/ui/sheet";
+import { AddToFreezerSheet, type FreezerRecipe } from "@/components/plans/add-to-freezer-sheet";
 import { deleteRecipeAction } from "../actions";
 import { FavouriteButton } from "./household";
 
@@ -19,19 +20,26 @@ const iconButton =
  * The recipe page's top bar: back, the favourite heart and ⋯ (design A, G).
  * "Compare with…" comes first (PP-173) and "Delete recipe…" last, in red
  * (PP-165). `plans` are the meal plans it's in, with the meals ("Tue dinner").
+ * "Add to freezer…" puts servings in the freezer by hand (PP-189, leftovers
+ * design J).
  */
 export function RecipeHeader({
   recipe,
   recipeId,
   plans,
+  freezer,
+  today,
 }: {
   recipe: Recipe;
   recipeId: string;
   plans: { name: string; meals: string[] }[];
+  freezer: FreezerRecipe;
+  today: string;
 }) {
   const router = useRouter();
   const [menu, setMenu] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [freezing, setFreezing] = useState(false);
 
   function back() {
     // Back to the filtered library if that's where we came from.
@@ -81,6 +89,19 @@ export function RecipeHeader({
               </button>
             </li>
             <li>
+              <button
+                type="button"
+                onClick={() => {
+                  setMenu(false);
+                  setFreezing(true);
+                }}
+                className="w-full min-h-13 py-3 flex items-center gap-3 text-left font-medium"
+              >
+                <Icon name="snow" className="size-5 text-ink-muted" />
+                Add to freezer…
+              </button>
+            </li>
+            <li>
               <Link href="/import" className="w-full min-h-13 py-3 flex items-center gap-3 font-medium">
                 <Icon name="upload" className="size-5 text-ink-muted" />
                 <span>
@@ -110,6 +131,7 @@ export function RecipeHeader({
           </button>
         </Sheet>
       )}
+      {freezing && <AddToFreezerSheet recipe={freezer} today={today} onClose={() => setFreezing(false)} />}
       {deleting && (
         <DeleteRecipeSheet name={recipe.name} recipeId={recipeId} plans={plans} onClose={() => setDeleting(false)} />
       )}

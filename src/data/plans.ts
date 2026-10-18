@@ -4,7 +4,7 @@ import { getDb } from "@/db";
 import { mealPlanEntries, mealPlans, recipes } from "@/db/schema";
 import type { Frozen, FreezerSource, LeftoversMeal, LeftoversSource } from "@/plans/leftovers";
 import type { ProteinType } from "@/recipes/derive";
-import type { DietaryFlag } from "@/types/recipe";
+import type { DietaryFlag, Recipe } from "@/types/recipe";
 import { MAX_PORTIONS, MIN_PORTIONS, SLOTS, planInput, portions, today, type PlanInput, type Slot } from "@/plans/plan";
 import type { HouseholdContext } from "./context";
 import {
@@ -143,6 +143,8 @@ export async function getPlan(ctx: HouseholdContext, id: string) {
           carbsG: recipes.carbsG,
           fatG: recipes.fatG,
           nutritionSource: recipes.nutritionSource,
+          // For the freeze sheet (PP-189): its notes, and whether it freezes.
+          storage: sql<Recipe["storage"]>`${recipes.data}->'storage'`,
         },
       })
       .from(mealPlanEntries)

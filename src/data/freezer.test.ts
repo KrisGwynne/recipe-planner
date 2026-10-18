@@ -37,7 +37,7 @@ const tunaPasta: Recipe = JSON.parse(
   readFileSync(new URL("../../examples/lemony-tuna-tomato-caper-pasta.json", import.meta.url), "utf8"),
 );
 // A big batch: serves 8, so 2 people at 1 each leave 6.
-const chilli: Recipe = { ...tunaPasta, slug: "big-chilli", name: "Smoky beef & bean chilli", serves: 8 };
+const chilli: Recipe = { ...tunaPasta, id: "big-chilli", name: "Smoky beef & bean chilli", serves: 8 };
 
 const thisWeek: PlanInput = { name: "This week", startDate: "2026-10-12", days: 7, people: 2 };
 // Mon 12 Oct is day 0.
