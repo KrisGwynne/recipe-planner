@@ -127,6 +127,15 @@ describe("comparing the two examples (design C to E)", () => {
     expect(bars[1].style.width).toBe("78%");
   });
 
+  it("draws the bars in one after another, unless reduced motion is on (PP-184)", async () => {
+    render(await page(both));
+    const bars = within(screen.getByRole("figure", { name: /Protein/ }))
+      .getAllByRole("listitem")
+      .map((item) => item.querySelector("span[aria-hidden]") as HTMLElement);
+    expect(bars[0]).toHaveClass("motion-safe:animate-bar-in");
+    expect(bars.map((bar) => bar.style.animationDelay)).toEqual(["0ms", "80ms"]);
+  });
+
   it("shows where the calories come from, with the ~ for estimates", async () => {
     render(await page(both));
     const split = screen.getAllByRole("region", { name: "Where the calories come from" })[0];

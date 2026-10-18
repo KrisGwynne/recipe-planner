@@ -114,6 +114,9 @@ export function Chosen({ compared }: { compared: Compared[] }) {
   );
 }
 
+/** How far apart the bars in a chart start drawing in (PP-184). */
+const BAR_STAGGER_MS = 80;
+
 /** One chart per nutrient (design C, D): kcal and grams don't share a scale. Every value is written on its bar. */
 function NutrientChart({ chart, compared }: { chart: (typeof CHARTS)[number]; compared: Compared[] }) {
   const values = compared.map((c) => c.recipe.nutrition_per_serving[chart.key]);
@@ -135,8 +138,12 @@ function NutrientChart({ chart, compared }: { chart: (typeof CHARTS)[number]; co
               <div className="mt-1 flex items-center gap-2 border-l border-line">
                 <span
                   aria-hidden="true"
-                  className={cx("h-3.5 rounded-r-[4px]", estimated ? chart.estimated : chart.bar)}
-                  style={{ width: `${widths[i]}%` }}
+                  className={cx(
+                    "h-3.5 rounded-r-[4px] motion-safe:animate-bar-in motion-safe:transition-[width] motion-safe:duration-300",
+                    estimated ? chart.estimated : chart.bar,
+                  )}
+                  // Each recipe's bar starts a little after the one above (PP-184).
+                  style={{ width: `${widths[i]}%`, animationDelay: `${i * BAR_STAGGER_MS}ms` }}
                 />
                 <span className={cx("text-sm tabular-nums", estimated ? "font-medium text-ink-muted" : "font-semibold")}>
                   {amount(values[i], estimated, chart.suffix)}
