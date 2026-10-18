@@ -1,13 +1,26 @@
 import "server-only";
 import { and, asc, eq, sql } from "drizzle-orm";
-import { z } from "zod";
 import { getDb } from "@/db";
 import { mealPlanEntries, mealPlans, recipes } from "@/db/schema";
-import type { LeftoversMeal, LeftoversSource } from "@/plans/leftovers";
+import type { Frozen, FreezerSource, LeftoversMeal, LeftoversSource } from "@/plans/leftovers";
 import type { ProteinType } from "@/recipes/derive";
-import type { DietaryFlag } from "@/types/recipe";
-import { MAX_DAYS, MAX_PORTIONS, MIN_PORTIONS, SLOTS, planInput, portions, type PlanInput, type Slot } from "@/plans/plan";
+import type { DietaryFlag, Recipe } from "@/types/recipe";
+import { MAX_PORTIONS, MIN_PORTIONS, SLOTS, planInput, portions, today, type PlanInput, type Slot } from "@/plans/plan";
 import type { HouseholdContext } from "./context";
+import {
+  dayIndex,
+  freeSql,
+  frozenFrom,
+  inFreezerBy,
+  leftSql,
+  plannedFrom,
+  position,
+  previousPlan,
+  rows,
+  slot,
+  targetPosition,
+  uuid,
+} from "./plan-sql";
 
 // A household's meal plans and their entries (PP-170). Anyone in the
 // household can make, change and delete plans (meal plans design). Plan,
@@ -21,43 +34,10 @@ import type { HouseholdContext } from "./context";
 // it has left is the recipe's servings less its own and its leftovers
 // meals'. The rules (earlier cook, not more than is left) are checked in the
 // same statement as each change.
-
-const uuid = z.uuid();
-const dayIndex = z.number().int().min(0).max(MAX_DAYS - 1);
-const slot = z.enum(SLOTS);
-
-function rows<T>(result: unknown): T[] {
-  return (result as { rows: T[] }).rows;
-}
-
-// A meal's place in time: its date, then breakfast, lunch, dinner, snack.
-// `e` is the entry's alias and `p` its plan's.
-function position(e: string, p: string) {
-  return `(${p}.start_date + ${e}.day_index, array_position(array['breakfast','lunch','dinner','snack']::text[], ${e}.slot))`;
-}
-
-/** The target meal's place, as position(). */
-function targetPosition(p: string, day: number, meal: Slot) {
-  return sql`(${sql.raw(p)}.start_date + ${day}::int, array_position(array['breakfast','lunch','dinner','snack']::text[], ${meal}::text))`;
-}
-
-/** Servings planned as leftovers of cook `c`, leaving out entry `except` if given. */
-function plannedFrom(c: string, except?: string) {
-  return sql`coalesce((
-    select sum(lp.people * l.portions_per_person) from meal_plan_entries l join meal_plans lp on lp.id = l.plan_id
-    where l.leftovers_of = ${sql.raw(c)}.id ${except ? sql`and l.id <> ${sql.raw(except)}.id` : sql``}
-  ), 0)::float8`;
-}
-
-/** What cook `c` (in plan `cp`, recipe `r`) has left over, which can be below 0 when a plan's people go up. */
-function leftSql(c: string, cp: string, r: string, except?: string) {
-  return sql`(${sql.raw(r)}.serves - ${sql.raw(cp)}.people * ${sql.raw(c)}.portions_per_person - ${plannedFrom(c, except)})::float8`;
-}
-
-/** The plan just before plan `p`: the latest one in the household starting earlier. */
-function previousPlan(p: string) {
-  return sql`(select pp.id from meal_plans pp where pp.household_id = ${sql.raw(p)}.household_id and pp.start_date < ${sql.raw(p)}.start_date order by pp.start_date desc, pp.created_at desc limit 1)`;
-}
+//
+// The freezer (PP-189, freezer.ts): a cook's leftovers can be frozen, and a
+// meal can come from the freezer instead of being cooked. Frozen servings
+// count against what a cook has left.
 
 const planColumns = {
   id: mealPlans.id,
@@ -133,8 +113,8 @@ type LinkRow = {
 /**
  * The household's plan with this id and its entries (day, then meal, then the
  * order added), or null. Each entry says where its leftovers go (a cook's
- * `leftoversTo`, in any plan) or where it comes from (a leftovers meal's
- * `leftoversOf`, PP-180).
+ * `leftoversTo`, in any plan, and `frozen`) or where it comes from (a
+ * leftovers meal's `leftoversOf`, PP-180, or `fromFreezer`, PP-189).
  */
 export async function getPlan(ctx: HouseholdContext, id: string) {
   if (!uuid.safeParse(id).success) return null;
@@ -144,7 +124,7 @@ export async function getPlan(ctx: HouseholdContext, id: string) {
     .from(mealPlans)
     .where(and(eq(mealPlans.householdId, ctx.householdId), eq(mealPlans.id, id)));
   if (!plan) return null;
-  const [found, links] = await Promise.all([
+  const [found, links, freezer] = await Promise.all([
     db
       .select({
         id: mealPlanEntries.id,
@@ -163,6 +143,8 @@ export async function getPlan(ctx: HouseholdContext, id: string) {
           carbsG: recipes.carbsG,
           fatG: recipes.fatG,
           nutritionSource: recipes.nutritionSource,
+          // For the freeze sheet (PP-189): its notes, and whether it freezes.
+          storage: sql<Recipe["storage"]>`${recipes.data}->'storage'`,
         },
       })
       .from(mealPlanEntries)
@@ -187,10 +169,18 @@ export async function getPlan(ctx: HouseholdContext, id: string) {
       join recipes r on r.id = c.recipe_id
       where lp.household_id = ${ctx.householdId} and cp.household_id = ${ctx.householdId}
         and (l.plan_id = ${plan.id} or c.plan_id = ${plan.id})
-      order by ${sql.raw(position("l", "lp"))}, l.created_at
+      order by ${position("l", "lp")}, l.created_at
+    `),
+    // Each meal from the freezer, and each cook's frozen leftovers (PP-189).
+    db.execute(sql`
+      select e.id as entry_id, f.id as item_id, (e.from_freezer = f.id) as eats,
+        to_char(f.frozen_on, 'YYYY-MM-DD') as frozen_on, f.servings, ${freeSql("f")} as free
+      from meal_plan_entries e join freezer_items f on f.id = e.from_freezer or f.from_entry = e.id
+      where e.plan_id = ${plan.id} and f.household_id = ${ctx.householdId}
     `),
   ]);
   const linkRows = rows<LinkRow>(links);
+  const freezerRows = rows<{ entry_id: string; item_id: string; eats: boolean; frozen_on: string; servings: number; free: number }>(freezer);
   const entries = found.map((entry) => {
     const from = linkRows.find((link) => link.leftover_id === entry.id);
     const leftoversOf: LeftoversSource | null = from
@@ -206,7 +196,11 @@ export async function getPlan(ctx: HouseholdContext, id: string) {
         slot: link.leftover_slot,
         servings: link.leftover_servings,
       }));
-    return { ...entry, leftoversOf, leftoversTo };
+    const eats = freezerRows.find((row) => row.entry_id === entry.id && row.eats);
+    const fromFreezer: FreezerSource | null = eats ? { itemId: eats.item_id, frozenOn: eats.frozen_on, free: eats.free } : null;
+    const into = freezerRows.find((row) => row.entry_id === entry.id && !row.eats);
+    const frozen: Frozen | null = into ? { itemId: into.item_id, frozenOn: into.frozen_on, servings: into.servings } : null;
+    return { ...entry, leftoversOf, leftoversTo, fromFreezer, frozen };
   });
   return { ...plan, entries };
 }
@@ -240,12 +234,15 @@ export async function createPlan(ctx: HouseholdContext, input: PlanInput): Promi
 /**
  * Changes a plan's name, dates or people. Entries are stored by day number,
  * so a new start date moves them with it; fewer days removes the entries on
- * the days cut off (the edit sheet warns first). Null if there's no such plan.
+ * the days cut off (the edit sheet warns first). Frozen leftovers follow
+ * their cook's new date; ones from removed days that haven't gone in yet are
+ * taken off the freezer list (PP-189). Null if there's no such plan.
  */
 export async function updatePlan(
   ctx: HouseholdContext,
   id: string,
   input: PlanInput,
+  todayDate: string = today(),
 ): Promise<{ removedEntries: number } | null> {
   if (!uuid.safeParse(id).success) return null;
   const { name, startDate, days, people } = planInput.parse(input);
@@ -254,7 +251,14 @@ export async function updatePlan(
       update meal_plans
       set name = ${name}, start_date = ${startDate}, days = ${days}, people = ${people}, updated_at = now()
       where id = ${id} and household_id = ${ctx.householdId}
-      returning id, days
+      returning id, days, start_date
+    ), not_going_in as (
+      delete from freezer_items f using meal_plan_entries e, updated u
+      where f.from_entry = e.id and e.plan_id = u.id and e.day_index >= u.days and f.frozen_on > ${todayDate}::date
+    ), moved_freezing as (
+      update freezer_items f set frozen_on = u.start_date + e.day_index
+      from meal_plan_entries e, updated u
+      where f.from_entry = e.id and e.plan_id = u.id and e.day_index < u.days
     ), removed as (
       delete from meal_plan_entries e using updated u
       where e.plan_id = u.id and e.day_index >= u.days
@@ -266,14 +270,23 @@ export async function updatePlan(
   return row.updated === 0 ? null : { removedEntries: row.removed };
 }
 
-/** Deletes a plan and its entries. False if there's none (or it's another household's). */
-export async function deletePlan(ctx: HouseholdContext, id: string): Promise<boolean> {
+/**
+ * Deletes a plan and its entries. Frozen leftovers from it that haven't gone
+ * in yet are taken off the freezer list; ones already in stay (PP-189).
+ * False if there's none (or it's another household's).
+ */
+export async function deletePlan(ctx: HouseholdContext, id: string, todayDate: string = today()): Promise<boolean> {
   if (!uuid.safeParse(id).success) return false;
-  const deleted = await getDb()
-    .delete(mealPlans)
-    .where(and(eq(mealPlans.householdId, ctx.householdId), eq(mealPlans.id, id)))
-    .returning({ id: mealPlans.id });
-  return deleted.length > 0;
+  const result = await getDb().execute(sql`
+    with not_going_in as (
+      delete from freezer_items f using meal_plan_entries e, meal_plans p
+      where f.from_entry = e.id and e.plan_id = p.id and p.id = ${id} and p.household_id = ${ctx.householdId}
+        and f.frozen_on > ${todayDate}::date
+    )
+    delete from meal_plans where id = ${id} and household_id = ${ctx.householdId}
+    returning id
+  `);
+  return rows(result).length > 0;
 }
 
 /**
@@ -281,7 +294,8 @@ export async function deletePlan(ctx: HouseholdContext, id: string): Promise<boo
  * every entry of the plan `id` on the same day and meal, in the same order.
  * Entries on days past the new plan's length are left out. Leftovers meals
  * come along with their cooks in the same plan; ones eating from the plan
- * before aren't copied (leftovers design). Returns the new plan's id, or null
+ * before or from the freezer aren't copied, nor is freezing (leftovers
+ * design). Returns the new plan's id, or null
  * if there's no such plan.
  */
 export async function copyPlan(ctx: HouseholdContext, id: string, input: PlanInput): Promise<string | null> {
@@ -298,7 +312,7 @@ export async function copyPlan(ctx: HouseholdContext, id: string, input: PlanInp
     ), kept as materialized (
       select e.*, gen_random_uuid() as new_id
       from meal_plan_entries e join source s on e.plan_id = s.id
-      where e.day_index < ${days}
+      where e.day_index < ${days} and e.from_freezer is null
     ), copied as (
       insert into meal_plan_entries (id, plan_id, day_index, slot, recipe_id, portions_per_person, leftovers_of, created_at)
       select k.new_id, n.id, k.day_index, k.slot, k.recipe_id, k.portions_per_person, cook.new_id, k.created_at
@@ -338,8 +352,9 @@ export async function addEntry(
 
 /**
  * Sets an entry's portions each. A leftovers meal can't take more than its
- * cook has left; a cook with leftovers planned can't go up past what they
- * need (leftovers design B and E). False if it isn't allowed or there's no
+ * cook has left, nor a meal from the freezer more than's free there; a cook
+ * with leftovers planned or frozen can't go up past what they need
+ * (leftovers design B and E). False if it isn't allowed or there's no
  * such entry in the household.
  */
 export async function setEntryPortions(ctx: HouseholdContext, entryId: string, portionsPerPerson: number): Promise<boolean> {
@@ -356,10 +371,16 @@ export async function setEntryPortions(ctx: HouseholdContext, entryId: string, p
           from meal_plan_entries c join meal_plans cp on cp.id = c.plan_id join recipes r on r.id = c.recipe_id
           where c.id = e.leftovers_of
         ))
-        or (e.leftovers_of is null and (
+        or (e.from_freezer is not null and p.people * ${amount} <= (
+          select ${freeSql("f", "e")} from freezer_items f where f.id = e.from_freezer
+        ))
+        or (e.from_freezer is null and e.leftovers_of is null and (
           ${amount} <= e.portions_per_person
-          or not exists (select 1 from meal_plan_entries l where l.leftovers_of = e.id)
-          or (select r.serves from recipes r where r.id = e.recipe_id) - p.people * ${amount} - ${plannedFrom("e")} >= 0
+          or (
+            not exists (select 1 from meal_plan_entries l where l.leftovers_of = e.id)
+            and not exists (select 1 from freezer_items fz where fz.from_entry = e.id)
+          )
+          or (select r.serves from recipes r where r.id = e.recipe_id) - p.people * ${amount} - ${plannedFrom("e")} - ${frozenFrom("e")} >= 0
         ))
       )
     returning e.id
@@ -370,8 +391,9 @@ export async function setEntryPortions(ctx: HouseholdContext, entryId: string, p
 /**
  * Moves an entry to another day and meal of its plan (design G, "Move to…").
  * It goes after anything already in that meal. A leftovers meal stays after
- * its cook, and a cook before its leftovers (leftovers design B and E).
- * False if it isn't allowed, there's no such entry in the household or the
+ * its cook, and a cook before its leftovers (leftovers design B and E); a
+ * meal from the freezer stays after it goes in, and frozen leftovers move
+ * with their cook (PP-189). False if it isn't allowed, there's no such entry in the household or the
  * day is outside the plan.
  */
 export async function moveEntry(
@@ -382,19 +404,30 @@ export async function moveEntry(
   if (!uuid.safeParse(entryId).success) return false;
   const day = dayIndex.parse(to.dayIndex);
   const meal = slot.parse(to.slot);
+  const target = targetPosition("p", day, meal);
   const result = await getDb().execute(sql`
-    update meal_plan_entries e set day_index = ${day}, slot = ${meal}, created_at = now()
-    from meal_plans p
-    where e.id = ${entryId} and e.plan_id = p.id and p.household_id = ${ctx.householdId} and ${day} < p.days
-      and not exists (
-        select 1 from meal_plan_entries c join meal_plans cp on cp.id = c.plan_id
-        where c.id = e.leftovers_of and ${sql.raw(position("c", "cp"))} >= ${targetPosition("p", day, meal)}
-      )
-      and not exists (
-        select 1 from meal_plan_entries l join meal_plans lp on lp.id = l.plan_id
-        where l.leftovers_of = e.id and ${sql.raw(position("l", "lp"))} <= ${targetPosition("p", day, meal)}
-      )
-    returning e.id
+    with moved as (
+      update meal_plan_entries e set day_index = ${day}, slot = ${meal}, created_at = now()
+      from meal_plans p
+      where e.id = ${entryId} and e.plan_id = p.id and p.household_id = ${ctx.householdId} and ${day} < p.days
+        and not exists (
+          select 1 from meal_plan_entries c join meal_plans cp on cp.id = c.plan_id
+          where c.id = e.leftovers_of and ${position("c", "cp")} >= ${target}
+        )
+        and not exists (
+          select 1 from meal_plan_entries l join meal_plans lp on lp.id = l.plan_id
+          where l.leftovers_of = e.id and ${position("l", "lp")} <= ${target}
+        )
+        and not exists (select 1 from freezer_items f where f.id = e.from_freezer and not ${inFreezerBy("f", target)})
+        and not exists (
+          select 1 from freezer_items f join meal_plan_entries m on m.from_freezer = f.id join meal_plans mp on mp.id = m.plan_id
+          where f.from_entry = e.id and ${position("m", "mp")} <= ${target}
+        )
+      returning e.id, p.start_date + e.day_index as day
+    ), freezing as (
+      update freezer_items f set frozen_on = m.day from moved m where f.from_entry = m.id
+    )
+    select id from moved
   `);
   return rows(result).length > 0;
 }
@@ -419,7 +452,7 @@ export async function addLeftovers(
     insert into meal_plan_entries (plan_id, day_index, slot, recipe_id, portions_per_person, leftovers_of)
     select p.id, ${day}, ${meal}, c.recipe_id, x.amount, c.id
     from meal_plans p
-    join meal_plan_entries c on c.id = ${entry.cookId} and c.leftovers_of is null
+    join meal_plan_entries c on c.id = ${entry.cookId} and c.leftovers_of is null and c.from_freezer is null
     join meal_plans cp on cp.id = c.plan_id and cp.household_id = p.household_id
     join recipes r on r.id = c.recipe_id
     cross join lateral (select ${leftSql("c", "cp", "r")} as left_over) rest
@@ -428,7 +461,7 @@ export async function addLeftovers(
     ) x
     where p.id = ${planId} and p.household_id = ${ctx.householdId} and ${day} < p.days
       and (cp.id = p.id or cp.id = ${previousPlan("p")})
-      and ${sql.raw(position("c", "cp"))} < ${targetPosition("p", day, meal)}
+      and ${position("c", "cp")} < ${targetPosition("p", day, meal)}
       and x.amount >= ${MIN_PORTIONS}::float8 and x.amount <= ${MAX_PORTIONS}::float8
       and p.people * x.amount <= rest.left_over
     returning id
@@ -474,13 +507,13 @@ export async function availableLeftovers(
       rest.left_over as left, r.id as recipe_id, r.slug, r.name, r.protein_type, r.dietary, r.kcal, r.protein_g, r.nutrition_source
     from meal_plans p
     join meal_plans cp on cp.household_id = p.household_id and (cp.id = p.id or cp.id = ${previousPlan("p")})
-    join meal_plan_entries c on c.plan_id = cp.id and c.leftovers_of is null
+    join meal_plan_entries c on c.plan_id = cp.id and c.leftovers_of is null and c.from_freezer is null
     join recipes r on r.id = c.recipe_id
     cross join lateral (select ${leftSql("c", "cp", "r")} as left_over) rest
     where p.id = ${planId} and p.household_id = ${ctx.householdId}
-      and ${sql.raw(position("c", "cp"))} < ${targetPosition("p", day, meal)}
+      and ${position("c", "cp")} < ${targetPosition("p", day, meal)}
       and rest.left_over >= p.people * ${MIN_PORTIONS}::float8
-    order by ${sql.raw(position("c", "cp"))}, c.created_at
+    order by ${position("c", "cp")}, c.created_at
   `);
   type Row = Omit<AvailableLeftovers, "recipe"> & {
     recipe_id: string;
@@ -513,12 +546,18 @@ export async function availableLeftovers(
 
 /**
  * Takes an entry out of its plan; a cook's leftovers meals go with it (the
- * sheet asks first, leftovers design L). False if there's no such entry in
- * the household.
+ * sheet asks first, leftovers design L), and so do its frozen leftovers if
+ * they haven't gone in yet (PP-189). False if there's no such entry in the
+ * household.
  */
-export async function removeEntry(ctx: HouseholdContext, entryId: string): Promise<boolean> {
+export async function removeEntry(ctx: HouseholdContext, entryId: string, todayDate: string = today()): Promise<boolean> {
   if (!uuid.safeParse(entryId).success) return false;
   const result = await getDb().execute(sql`
+    with not_going_in as (
+      delete from freezer_items f using meal_plan_entries e, meal_plans p
+      where f.from_entry = e.id and e.id = ${entryId} and e.plan_id = p.id and p.household_id = ${ctx.householdId}
+        and f.frozen_on > ${todayDate}::date
+    )
     delete from meal_plan_entries e using meal_plans p
     where e.id = ${entryId} and e.plan_id = p.id and p.household_id = ${ctx.householdId}
     returning e.id

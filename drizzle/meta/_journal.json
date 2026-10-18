@@ -64,6 +64,13 @@
       "when": 1792356231857,
       "tag": "0008_leftovers",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792357372433,
+      "tag": "0009_freezer",
+      "breakpoints": true
     }
   ]
 }

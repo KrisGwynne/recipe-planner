@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Icon } from "@/components/icon";
 import { Page } from "@/components/page";
-import { listPlans, requireHousehold, type PlanSummary } from "@/data";
+import { listFreezer, listPlans, requireHousehold, type PlanSummary } from "@/data";
 import { cx } from "@/lib/cx";
+import { freezerSummary } from "@/plans/freezer";
 import { kcal } from "@/plans/nutrition";
 import { defaultPlanName, defaultStartDate, formatRange, groupPlans, meals, planDay, today } from "@/plans/plan";
 import { NewPlan } from "./new-plan";
@@ -11,11 +12,13 @@ import { PastPlans } from "./past-plans";
 
 export const metadata: Metadata = { title: "Meal plans" };
 
-// The Plans tab (designs/src/meal-plans.html, A and B; PP-170).
+// The Plans tab (designs/src/meal-plans.html, A and B; PP-170), with the
+// freezer's row under the current plans (designs/src/leftovers.html G; PP-189).
 export default async function PlansPage() {
   const { ctx } = await requireHousehold();
-  const plans = await listPlans(ctx);
   const todayDate = today();
+  const [plans, freezer] = await Promise.all([listPlans(ctx), listFreezer(ctx, todayDate)]);
+  const freezerRow = <FreezerRow text={freezerSummary(freezer).text} />;
   const startDate = defaultStartDate(plans, todayDate);
   const newPlan = {
     initial: { name: defaultPlanName(startDate), startDate, days: 7, people: 2 },
@@ -36,6 +39,7 @@ export default async function PlansPage() {
             leftovers.
           </p>
           <NewPlan {...newPlan} variant="empty" />
+          <div className="mt-10 text-left">{freezerRow}</div>
         </div>
       </Page>
     );
@@ -52,6 +56,7 @@ export default async function PlansPage() {
             ))}
           </Group>
         )}
+        <div className="pb-2">{freezerRow}</div>
         {upcoming.length > 0 && (
           <Group label="Coming up">
             {upcoming.map((plan) => (
@@ -82,6 +87,25 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
       <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-muted">{label}</h2>
       {children}
     </section>
+  );
+}
+
+/** The freezer's row (leftovers design G): what's in it now and what's on its way. */
+function FreezerRow({ text }: { text: string }) {
+  return (
+    <Link
+      href="/plans/freezer"
+      className="flex items-center gap-3 rounded-card bg-surface border border-line px-4 min-h-16 py-3 hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-primary"
+    >
+      <span className="size-10 shrink-0 rounded-full bg-surface-2 grid place-items-center">
+        <Icon name="snow" className="size-5" />
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="block font-semibold">Freezer</span>
+        <span className="block text-sm text-ink-muted tabular-nums">{text}</span>
+      </span>
+      <Icon name="chevron-right" className="size-5 text-ink-subtle" />
+    </Link>
   );
 }
 

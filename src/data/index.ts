@@ -68,3 +68,16 @@ export {
   type PlanSummary,
   type PlanUse,
 } from "./plans";
+export {
+  addFromFreezer,
+  addToFreezer,
+  availableFromFreezer,
+  freezeLeftovers,
+  listFreezer,
+  removeFromFreezer,
+  setFreezerCount,
+  unfreezeLeftovers,
+  type AvailableFromFreezer,
+  type FreezerItem,
+  type FreezerMeal,
+} from "./freezer";

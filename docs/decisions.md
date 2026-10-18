@@ -482,3 +482,15 @@ Built from recipe design D and foundations' timer states. **The details the desi
 **"Cooked today" is unchanged**: the recipe page still offers it from a leftovers meal, and it's still up to you.
 
 **How it works.** `meal_plan_entries.leftovers_of` points a leftovers meal at its cook (migration 0008, additive); it keeps the cook's recipe, so nutrition and the plan list need no changes, and deleting the cook (or its plan, or the days it's on) deletes its leftovers meals by cascade. Each rule (earlier cook, this plan or the one before, never more than is left, a cook's portions and moves) is checked inside the one SQL statement that makes the change, since the Neon HTTP driver has no transactions (`src/data/plans.ts`). What a cook has left is the recipe's servings less its own and its leftovers meals', each counted with its own plan's people. `getPlan` gives each cook its `leftoversTo` and each leftovers meal its `leftoversOf`; `availableLeftovers` feeds the picker and `nextPlan` the Plan them sheet. The sums and labels are in `src/plans/leftovers.ts`. Copy to a new plan doesn't yet say how many leftovers meals it left out (the copy opens straight away).
+
+## 2026-10-18: the freezer (PP-189)
+
+Built from the approved leftovers design (F to K). **The details below were Claude's, while Kris reviewed PP-180** ("get on with the next"); open to change.
+
+- **Servings still going in are changed from their cook**, not the freezer: their sheet (I) says when they go in and links to the plan, with Plan it and Recipe but no count or "Take it all out".
+- **The count steps in halves from ½** (or what's planned, if more); taking everything out is "Take it all out". **Undo** puts a batch back only when nothing was planned from it; otherwise the sheet asks first, and those meals become cooks.
+- **Add to freezer (J) chooses the recipe from a search list in the sheet**, rather than the full recipe picker with filters, since only the name matters here.
+- **The Freezer row also shows on the empty Plans tab**, under "Create a plan", so the freezer can be used before any plan exists.
+- **Plan it offers the current and coming plans**, greying out days before the batch goes in.
+
+**How it works.** `freezer_items` (migration 0009, additive) holds each batch: servings put in, a correction by hand (`adjustment`), the day it went in and, when frozen from a cook, that cook (`from_entry`, one batch per cook). `meal_plan_entries.from_freezer` marks a meal eaten from a batch. Nothing is stored when a meal eats from it: what's in a batch is servings + adjustment less the meals planned from it whose day has passed (`src/data/plan-sql.ts`), and what's free is that less every meal planned from it. Frozen servings count against the cook's leftovers. A batch frozen from a cook follows the cook when it moves or its plan's dates change; removing the cook (or its days, or its plan) takes the batch off the list only if it hasn't gone in yet. The data functions are in `src/data/freezer.ts`, the wording in `src/plans/freezer.ts`, the page at `/plans/freezer`.

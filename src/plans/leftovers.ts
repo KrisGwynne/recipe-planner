@@ -11,12 +11,30 @@ export type LeftoversMeal = { entryId: string; planId: string; date: string; day
 /** Where a leftovers meal comes from, and what its cook still has left besides. */
 export type LeftoversSource = { entryId: string; planId: string; date: string; slot: Slot; left: number };
 
+/** The freezer item a meal eats from (PP-189), and what it has that no meal is planned to eat. */
+export type FreezerSource = { itemId: string; frozenOn: string; free: number };
+
+/** A cook's leftovers frozen (PP-189): the freezer item and how many went in. */
+export type Frozen = { itemId: string; frozenOn: string; servings: number };
+
 type Cook = {
   portionsPerPerson: number;
   recipe: { serves: number };
   leftoversOf: LeftoversSource | null;
   leftoversTo: LeftoversMeal[];
+  fromFreezer?: FreezerSource | null;
+  frozen?: Frozen | null;
 };
+
+/** Whether a planned recipe is eaten from somewhere (leftovers or the freezer) rather than cooked. */
+export function eatenFrom(entry: Pick<Cook, "leftoversOf" | "fromFreezer">): boolean {
+  return Boolean(entry.leftoversOf || entry.fromFreezer);
+}
+
+/** Servings a cook's leftovers are spoken for: planned as leftovers meals or frozen. */
+function spokenFor(entry: Cook): number {
+  return plannedLeftovers(entry) + (entry.frozen?.servings ?? 0);
+}
 
 /** Servings planned as leftovers of a cook. */
 export function plannedLeftovers(entry: Pick<Cook, "leftoversTo">): number {
@@ -29,11 +47,11 @@ export function plannedLeftovers(entry: Pick<Cook, "leftoversTo">): number {
  * leftovers meal, which has no leftovers of its own.
  */
 export function unplanned(entry: Cook, people: number): number {
-  if (entry.leftoversOf) return 0;
+  if (eatenFrom(entry)) return 0;
   const left = entry.recipe.serves - servingsPlanned(people, entry.portionsPerPerson);
   // A cook planned past what it makes, with nothing planned from it, isn't flagged (2026-10-14).
-  if (entry.leftoversTo.length === 0) return Math.max(0, left);
-  return left - plannedLeftovers(entry);
+  if (spokenFor(entry) === 0) return Math.max(0, left);
+  return left - spokenFor(entry);
 }
 
 /** Portions each, in halves, that `servings` covers for `people`. */
@@ -43,18 +61,21 @@ function halvesFor(servings: number, people: number): number {
 
 /**
  * The most portions each a cook can go up to: anything while nothing is
- * planned from it, else no more than leaves its planned leftovers whole
- * (leftovers design B). Never below where it is now.
+ * planned from it, else no more than leaves its planned and frozen leftovers
+ * whole (leftovers design B). Never below where it is now.
  */
 export function maxCookPortions(entry: Cook, people: number): number {
-  if (entry.leftoversTo.length === 0) return MAX_PORTIONS;
-  const room = halvesFor(entry.recipe.serves - plannedLeftovers(entry), people);
+  if (spokenFor(entry) === 0) return MAX_PORTIONS;
+  const room = halvesFor(entry.recipe.serves - spokenFor(entry), people);
   return Math.min(MAX_PORTIONS, Math.max(entry.portionsPerPerson, room, MIN_PORTIONS));
 }
 
-/** The most portions each a leftovers meal can have: its own plus what the cook has left (design E). */
+/**
+ * The most portions each a leftovers meal can have: its own plus what the
+ * cook has left (design E), or for a meal from the freezer, what's free there.
+ */
 export function maxLeftoverPortions(entry: Cook, people: number): number {
-  const left = entry.leftoversOf?.left ?? 0;
+  const left = entry.leftoversOf?.left ?? entry.fromFreezer?.free ?? 0;
   const room = halvesFor(servingsPlanned(people, entry.portionsPerPerson) + left, people);
   return Math.min(MAX_PORTIONS, Math.max(entry.portionsPerPerson, room));
 }

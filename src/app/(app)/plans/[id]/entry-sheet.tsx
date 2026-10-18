@@ -9,6 +9,7 @@ import { Sheet } from "@/components/ui/sheet";
 import { Stepper } from "@/components/ui/stepper";
 import { useToast } from "@/components/ui/toast";
 import type { LeftoversSource, PlanEntry } from "@/data";
+import { MAX_FROZEN, frozenLabel } from "@/plans/freezer";
 import { cx } from "@/lib/cx";
 import { approx } from "@/lib/format";
 import {
@@ -25,6 +26,7 @@ import {
   SLOTS,
   formatDay,
   formatPortions,
+  formatShortDate,
   mealName,
   planDay,
   recipeServings,
@@ -35,6 +37,7 @@ import {
 } from "@/plans/plan";
 import { toPlanGrid } from "@/plans/plan-grid";
 import { addEntryAction, addLeftoversAction, moveEntryAction, removeEntryAction, setPortionsAction } from "../actions";
+import { addFromFreezerAction, freezeLeftoversAction, unfreezeLeftoversAction } from "../freezer/actions";
 import type { BoardPlan, NextPlan } from "./plan-board";
 
 const tile = "h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-primary";
@@ -57,9 +60,11 @@ function dayAndMeal(meal: { date: string; slot: Slot }): string {
  * with Plan them for the rest) or where it comes from (a leftovers meal),
  * what each person gets, then Recipe (scaled to the planned servings), Move
  * (G) and Remove (with Undo, or asking first when leftovers are planned
- * from it, design L).
+ * from it or going in the freezer, design L). A cook's leftovers can be
+ * frozen (design F, PP-189); a meal from the freezer says so (design E).
  */
 export function EntrySheet({
+  today,
   plan,
   next,
   entry,
@@ -67,6 +72,7 @@ export function EntrySheet({
   onOpen,
   onClose,
 }: {
+  today: string;
   plan: BoardPlan;
   next: NextPlan;
   entry: PlanEntry;
@@ -76,13 +82,17 @@ export function EntrySheet({
 }) {
   const toast = useToast();
   const [portions, setPortions] = useState(entry.portionsPerPerson);
-  const [mode, setMode] = useState<"sheet" | "moving" | "planning" | "removing">("sheet");
+  const [mode, setMode] = useState<"sheet" | "moving" | "planning" | "freezing" | "removing">("sheet");
   const [, startSaving] = useTransition();
   const where = mealName(plan, entry.dayIndex, entry.slot);
   const people = plan.people === 1 ? "1 person" : `${plan.people} people`;
   const from = entry.leftoversOf;
+  const freezer = entry.fromFreezer;
+  // Frozen leftovers still to go in go with the cook (design L); ones already in stay.
+  const goingIn = entry.frozen && entry.frozen.frozenOn > today ? entry.frozen : null;
+  const asksFirst = entry.leftoversTo.length > 0 || goingIn !== null;
   const current = { ...entry, portionsPerPerson: portions };
-  const max = from ? maxLeftoverPortions(entry, plan.people) : maxCookPortions(entry, plan.people);
+  const max = from || freezer ? maxLeftoverPortions(entry, plan.people) : maxCookPortions(entry, plan.people);
   const notPlanned = unplanned(current, plan.people);
 
   function change(value: number) {
@@ -99,7 +109,7 @@ export function EntrySheet({
       return;
     }
     // Leftovers meals planned from a cook go with it; the sheet asked first, so there's no Undo.
-    if (entry.leftoversTo.length > 0) {
+    if (asksFirst) {
       toast(`Removed from ${where}`);
       return;
     }
@@ -108,7 +118,9 @@ export function EntrySheet({
       undo: () =>
         void (from
           ? addLeftoversAction(plan.id, { ...at, cookId: from.entryId })
-          : addEntryAction(plan.id, { ...at, recipeId: entry.recipe.id })),
+          : freezer
+            ? addFromFreezerAction(plan.id, { ...at, itemId: freezer.itemId })
+            : addEntryAction(plan.id, { ...at, recipeId: entry.recipe.id })),
     });
   }
 
@@ -125,6 +137,7 @@ export function EntrySheet({
         current={{ dayIndex: entry.dayIndex, slot: entry.slot }}
         portions={{ serves: entry.recipe.serves, each: portions }}
         blocked={(_grid, cell) =>
+          (freezer !== null && planDay(plan, cell.dayIndex) < freezer.frozenOn) ||
           (cookHere !== undefined && order(cell) <= order(cookHere)) ||
           (firstLeftovers.length > 0 && order(cell) >= Math.min(...firstLeftovers))
         }
@@ -160,13 +173,30 @@ export function EntrySheet({
     );
   }
 
+  if (mode === "freezing") {
+    return (
+      <FreezeSheet
+        entry={entry}
+        when={`${formatDay(planDay(plan, entry.dayIndex))}, after ${entry.slot}`}
+        where={`${dayAndMeal({ date: planDay(plan, entry.dayIndex), slot: entry.slot })}`}
+        most={notPlanned + (entry.frozen?.servings ?? 0)}
+        onDone={() => setMode("sheet")}
+      />
+    );
+  }
+
   if (mode === "removing") {
     const meals = entry.leftoversTo.map(dayAndMeal);
+    const parts = [
+      ...(meals.length > 0 ? [`its leftovers are planned for ${andList(meals)}`] : []),
+      ...(goingIn ? [`${servings(goingIn.servings)} ${goingIn.servings <= 1 ? "is" : "are"} going in the freezer`] : []),
+    ];
+    const sentence = andList(parts);
     return (
       <Sheet title={`Remove ${where}?`} onClose={() => setMode("sheet")}>
         <p className="text-ink-muted">
-          Its leftovers are planned for {andList(meals)}. Removing the {entry.recipe.name.toLowerCase()} removes{" "}
-          {meals.length === 1 ? "that" : "those"} too.
+          {sentence.charAt(0).toUpperCase() + sentence.slice(1)}. Removing the {entry.recipe.name.toLowerCase()} removes{" "}
+          {meals.length + (goingIn ? 1 : 0) === 1 ? "that" : "those"} too.
         </p>
         <button type="button" onClick={remove} className={buttonClasses("danger", "mt-5 w-full")}>
           Remove all
@@ -194,12 +224,21 @@ export function EntrySheet({
       </p>
 
       {from && <Source plan={plan} from={from} onOpen={onOpen} />}
+      {freezer && (
+        <Link href="/plans/freezer" className={cx(row, "mt-3 rounded-control bg-surface-2")}>
+          <Icon name="snow" className="size-5 text-ink-muted" />
+          <span className="flex-1 text-sm">
+            From the freezer · frozen {formatShortDate(freezer.frozenOn, today)}
+          </span>
+          <Icon name="chevron-right" className="size-5 text-ink-subtle" />
+        </Link>
+      )}
 
       <div className="mt-4">
         <Stepper
           label="Portions each"
           hint={
-            from ? (
+            from || freezer ? (
               `${people} × ${formatPortions(portions)} = ${formatPortions(planned)}${portions >= max ? ", all that's left" : ""}`
             ) : (
               <>
@@ -221,13 +260,15 @@ export function EntrySheet({
         />
       </div>
 
-      {!from && (
+      {!from && !freezer && (
         <Leftovers
           plan={plan}
+          today={today}
           entry={current}
           notPlanned={notPlanned}
           onOpen={onOpen}
           onPlan={() => setMode("planning")}
+          onFreeze={() => setMode("freezing")}
         />
       )}
       <EachPersonGets entry={current} />
@@ -243,7 +284,7 @@ export function EntrySheet({
         </button>
         <button
           type="button"
-          onClick={entry.leftoversTo.length > 0 ? () => setMode("removing") : remove}
+          onClick={asksFirst ? () => setMode("removing") : remove}
           className={cx(tile, "text-danger")}
         >
           <Icon name="trash" className="size-5" />
@@ -279,27 +320,32 @@ function Source({ plan, from, onOpen }: { plan: BoardPlan; from: LeftoversSource
 
 /**
  * A cook's leftovers (leftovers design B): what's left over, each leftovers
- * meal planned from it (tap to open it), then, in amber, what isn't planned
- * yet with Plan them, or what's planned past what's left. Not shown when it
- * leaves nothing over.
+ * meal planned from it (tap to open it) and what's frozen (tap to change it),
+ * then, in amber, what isn't planned yet with Plan them and Freeze, or
+ * what's planned past what's left. Not shown when it leaves nothing over.
  */
 function Leftovers({
   plan,
+  today,
   entry,
   notPlanned,
   onOpen,
   onPlan,
+  onFreeze,
 }: {
   plan: BoardPlan;
+  today: string;
   entry: PlanEntry;
   notPlanned: number;
   onOpen: (entryId: string) => void;
   onPlan: () => void;
+  onFreeze: () => void;
 }) {
   const eaten = servingsPlanned(plan.people, entry.portionsPerPerson);
   const left = Math.max(0, entry.recipe.serves - eaten);
-  if (left === 0 && entry.leftoversTo.length === 0) return null;
+  if (left === 0 && entry.leftoversTo.length === 0 && !entry.frozen) return null;
   const canPlan = startingPortions(notPlanned, plan.people) !== null;
+  const canFreeze = notPlanned >= MIN_PORTIONS && !entry.frozen;
   return (
     <div role="status" className="mt-4 rounded-card border border-line overflow-hidden">
       <div className="px-3 pt-3 pb-2">
@@ -336,14 +382,33 @@ function Leftovers({
           })}
         </ul>
       )}
+      {entry.frozen && (
+        <button type="button" onClick={onFreeze} className={cx(row, "border-t border-line")}>
+          <Icon name="snow" className="size-5 text-ink-muted" />
+          <span className="flex-1">
+            <b>{formatPortions(entry.frozen.servings)}</b> {frozenLabel(entry.frozen, today).split(" ").slice(1).join(" ")}
+          </span>
+          <Icon name="chevron-right" className="size-5 text-ink-subtle" />
+        </button>
+      )}
       {notPlanned > 0 && (
         <div className="px-3 py-3 border-t border-line bg-warning-soft">
           <p className="font-semibold text-warning">{formatPortions(notPlanned)} not planned yet</p>
-          {canPlan && (
-            <button type="button" onClick={onPlan} className={buttonClasses("secondary", "mt-2 w-full bg-surface")}>
-              <Icon name="calendar" className="size-5" />
-              Plan them
-            </button>
+          {(canPlan || canFreeze) && (
+            <div className={cx("mt-2 grid gap-2", canPlan && canFreeze && "grid-cols-2")}>
+              {canPlan && (
+                <button type="button" onClick={onPlan} className={buttonClasses("secondary", "w-full bg-surface")}>
+                  <Icon name="calendar" className="size-5" />
+                  Plan them
+                </button>
+              )}
+              {canFreeze && (
+                <button type="button" onClick={onFreeze} className={buttonClasses("secondary", "w-full bg-surface")}>
+                  <Icon name="snow" className="size-5" />
+                  Freeze
+                </button>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -354,6 +419,97 @@ function Leftovers({
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Freeze the leftovers (leftovers design F): servings start at all that
+ * isn't planned (or what's frozen already), in halves. The recipe's storage
+ * notes show, or an amber note when it says it doesn't freeze. Opened again
+ * from the cook, it changes or undoes the freezing.
+ */
+function FreezeSheet({
+  entry,
+  when,
+  where,
+  most,
+  onDone,
+}: {
+  entry: PlanEntry;
+  when: string;
+  where: string;
+  most: number;
+  onDone: () => void;
+}) {
+  const toast = useToast();
+  const [amount, setAmount] = useState(entry.frozen?.servings ?? Math.min(most, MAX_FROZEN));
+  const [saving, startSaving] = useTransition();
+  const storage = entry.recipe.storage;
+
+  function save() {
+    startSaving(async () => {
+      const id = await freezeLeftoversAction(entry.id, amount);
+      onDone();
+      toast(id ? `${servings(amount)} to freeze` : "Couldn't freeze them. Try again.");
+    });
+  }
+
+  function undo() {
+    startSaving(async () => {
+      const done = await unfreezeLeftoversAction(entry.id);
+      onDone();
+      toast(done ? "Not freezing them" : "Meals are planned from them, so they stay in the freezer.");
+    });
+  }
+
+  return (
+    <Sheet title="Freeze the leftovers" onClose={onDone}>
+      <p className="-mt-1 text-sm text-ink-muted truncate">
+        {entry.recipe.name} · {where}
+      </p>
+      <div className="mt-4">
+        <Stepper
+          label="Servings"
+          hint={`${formatPortions(most)} not planned`}
+          value={amount}
+          min={MIN_PORTIONS}
+          max={Math.min(most, MAX_FROZEN)}
+          step={0.5}
+          format={formatPortions}
+          onChange={setAmount}
+        />
+      </div>
+      <p className="mt-4 text-sm text-ink-muted">They go on the freezer list on {when}.</p>
+      {storage.freezable === false ? (
+        <div role="note" className="mt-3 rounded-card border border-warning/40 bg-warning-soft p-3 text-sm">
+          <p className="font-semibold text-warning flex items-center gap-2">
+            <Icon name="alert" className="size-5" />
+            The recipe says this doesn&apos;t freeze well
+          </p>
+          <p className="mt-0.5 text-ink">You can still freeze it.</p>
+        </div>
+      ) : (
+        storage.notes && (
+          <div className="mt-3 rounded-card bg-surface-2 p-3 text-sm">
+            <p className="text-xs text-ink-muted">From the recipe</p>
+            <p className="mt-1">{storage.notes}</p>
+          </div>
+        )
+      )}
+      <button type="button" onClick={save} disabled={saving} className={buttonClasses("primary", "mt-6 w-full")}>
+        <Icon name="snow" className="size-5" />
+        Freeze {servings(amount)}
+      </button>
+      {entry.frozen ? (
+        <button type="button" onClick={undo} disabled={saving} className={buttonClasses("ghost", "mt-2 w-full")}>
+          Don&apos;t freeze them
+        </button>
+      ) : (
+        <button type="button" onClick={onDone} className={buttonClasses("ghost", "mt-2 w-full")}>
+          Cancel
+        </button>
+      )}
+    </Sheet>
   );
 }
 

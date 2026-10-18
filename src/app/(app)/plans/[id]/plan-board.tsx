@@ -7,6 +7,7 @@ import { categoryDotClasses, categoryLabels, categoryOf } from "@/components/ui/
 import type { PlanEntry } from "@/data";
 import { cx } from "@/lib/cx";
 import { approx } from "@/lib/format";
+import { frozenLabel } from "@/plans/freezer";
 import { leftoversFor, mealLabel, overPlanned, unplanned } from "@/plans/leftovers";
 import { dayTotals, entryLine, entryNutrition, kcal, leftOver, whole, type Totals } from "@/plans/nutrition";
 import { SLOTS, formatDay, formatPortions, planDay, slotLabels, type Slot } from "@/plans/plan";
@@ -69,6 +70,7 @@ export function PlanBoard({
       {open && (
         <EntrySheet
           key={open.id}
+          today={today}
           plan={plan}
           next={next}
           entry={open}
@@ -227,7 +229,7 @@ function DayCard({
                       <span className="block font-semibold leading-snug">{entry.recipe.name}</span>
                       <span className="sr-only">{categoryLabels[categoryOfEntry(entry)]}</span>
                       <span className="block text-sm text-ink-muted tabular-nums">{entryLine(entry)}</span>
-                      <LeftoverBadges plan={plan} entry={entry} size="h-6 px-2" />
+                      <LeftoverBadges plan={plan} entry={entry} today={today} size="h-6 px-2" />
                     </span>
                   </button>
                 </li>
@@ -278,11 +280,20 @@ function DayTotal({ totals }: { totals: Totals }) {
 
 /**
  * Where a recipe's leftovers stand (meal plans D and I, leftovers design A):
- * a leftovers meal says where it's from; a cook says where its leftovers go
- * ("2 for Wed lunch") and, in amber, what isn't planned or is over-planned.
+ * a leftovers meal says where it's from (a cook or the freezer); a cook says
+ * where its leftovers go ("2 for Wed lunch", "4 to freeze") and, in amber,
+ * what isn't planned or is over-planned.
  */
-function LeftoverBadges({ plan, entry, size }: { plan: BoardPlan; entry: PlanEntry; size: string }) {
+function LeftoverBadges({ plan, entry, today, size }: { plan: BoardPlan; entry: PlanEntry; today: string; size: string }) {
   const chip = cx("rounded-full text-xs font-semibold inline-flex items-center gap-1", size);
+  if (entry.fromFreezer) {
+    return (
+      <span className={cx("mt-1", chip, "bg-surface-2 text-ink-muted")}>
+        <Icon name="snow" className="size-3.5 shrink-0" />
+        From the freezer
+      </span>
+    );
+  }
   if (entry.leftoversOf) {
     return (
       <span className={cx("mt-1", chip, "bg-surface-2 text-ink-muted")}>
@@ -292,7 +303,7 @@ function LeftoverBadges({ plan, entry, size }: { plan: BoardPlan; entry: PlanEnt
     );
   }
   const left = unplanned(entry, plan.people);
-  if (entry.leftoversTo.length === 0 && left === 0) return null;
+  if (entry.leftoversTo.length === 0 && !entry.frozen && left === 0) return null;
   return (
     <span className="mt-1 flex flex-wrap gap-1.5">
       {entry.leftoversTo.map((meal) => (
@@ -301,6 +312,12 @@ function LeftoverBadges({ plan, entry, size }: { plan: BoardPlan; entry: PlanEnt
           {leftoversFor(meal, plan.id)}
         </span>
       ))}
+      {entry.frozen && (
+        <span className={cx(chip, "border border-line text-ink-muted")}>
+          <Icon name="snow" className="size-3.5 shrink-0" />
+          {frozenLabel(entry.frozen, today)}
+        </span>
+      )}
       {left !== 0 && (
         <span className={cx(chip, "bg-warning-soft text-warning")}>{left > 0 ? leftOver(left) : overPlanned(left)}</span>
       )}
@@ -412,7 +429,7 @@ function PlanGridView({
                               <span className="block text-xs text-ink-muted mt-1 tabular-nums">
                                 {formatPortions(entry.portionsPerPerson)} · {kcal(entryNutrition(entry))}
                               </span>
-                              <LeftoverBadges plan={plan} entry={entry} size="h-5 px-1.5" />
+                              <LeftoverBadges plan={plan} entry={entry} today={today} size="h-5 px-1.5" />
                             </span>
                           </button>
                         ))}
