@@ -1,0 +1,4 @@
+ALTER TABLE "meal_plan_entries" ADD COLUMN "leftovers_of" uuid;--> statement-breakpoint
+ALTER TABLE "meal_plan_entries" ADD CONSTRAINT "meal_plan_entries_leftovers_of_meal_plan_entries_id_fk" FOREIGN KEY ("leftovers_of") REFERENCES "public"."meal_plan_entries"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "meal_plan_entries_leftovers_of" ON "meal_plan_entries" USING btree ("leftovers_of");--> statement-breakpoint
+ALTER TABLE "meal_plan_entries" ADD CONSTRAINT "meal_plan_entries_leftovers_of" CHECK ("meal_plan_entries"."leftovers_of" <> "meal_plan_entries"."id");
