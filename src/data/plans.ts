@@ -3,6 +3,9 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
 import { mealPlanEntries, mealPlans, recipes } from "@/db/schema";
+import type { LeftoversMeal, LeftoversSource } from "@/plans/leftovers";
+import type { ProteinType } from "@/recipes/derive";
+import type { DietaryFlag } from "@/types/recipe";
 import { MAX_DAYS, MAX_PORTIONS, MIN_PORTIONS, SLOTS, planInput, portions, type PlanInput, type Slot } from "@/plans/plan";
 import type { HouseholdContext } from "./context";
 
@@ -112,19 +115,6 @@ export async function listPlans(ctx: HouseholdContext) {
 }
 
 export type PlanSummary = Awaited<ReturnType<typeof listPlans>>[number];
-
-/** Where a leftovers meal's servings come from: the cook, and what it still has left. */
-export type LeftoversSource = {
-  entryId: string;
-  planId: string;
-  date: string;
-  slot: Slot;
-  /** What the cook has left besides this and other planned leftovers. */
-  left: number;
-};
-
-/** A leftovers meal eating from a cook, in this plan or the next. */
-export type LeftoversMeal = { entryId: string; planId: string; date: string; dayIndex: number; slot: Slot; servings: number };
 
 type LinkRow = {
   leftover_id: string;
@@ -446,13 +436,24 @@ export async function addLeftovers(
   return rows<{ id: string }>(result)[0]?.id ?? null;
 }
 
+export type { LeftoversMeal, LeftoversSource };
+
 export type AvailableLeftovers = {
   cookId: string;
   planId: string;
   date: string;
   slot: Slot;
   left: number;
-  recipe: { id: string; slug: string; name: string; proteinType: string; dietary: string[]; kcal: number; proteinG: number; nutritionSource: string };
+  recipe: {
+    id: string;
+    slug: string;
+    name: string;
+    proteinType: ProteinType;
+    dietary: DietaryFlag[];
+    kcal: number;
+    proteinG: number;
+    nutritionSource: "printed" | "estimated";
+  };
 };
 
 /**
@@ -485,11 +486,11 @@ export async function availableLeftovers(
     recipe_id: string;
     slug: string;
     name: string;
-    protein_type: string;
-    dietary: string[];
+    protein_type: ProteinType;
+    dietary: DietaryFlag[];
     kcal: number;
     protein_g: number;
-    nutrition_source: string;
+    nutrition_source: "printed" | "estimated";
   };
   return rows<Row>(result).map((row) => ({
     cookId: row.cookId,

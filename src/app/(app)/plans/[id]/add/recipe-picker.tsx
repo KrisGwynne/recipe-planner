@@ -5,16 +5,19 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Icon } from "@/components/icon";
 import { FilterSheet, NothingMatches, SearchBar, SortSheet, useLibraryState } from "@/components/recipe/library-controls";
-import { categoryDotClasses, categoryLabels } from "@/components/ui/badge";
+import { categoryDotClasses, categoryLabels, categoryOf } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { ActiveFilterChip } from "@/components/ui/chip";
 import { useToast } from "@/components/ui/toast";
 import { cx } from "@/lib/cx";
 import { approx, formatMinutes } from "@/lib/format";
-import { formatDay, mealName, planDay, slotLabels, type Slot } from "@/plans/plan";
+import type { AvailableLeftovers } from "@/data";
+import { daysOld, mealLabel } from "@/plans/leftovers";
+import { formatDay, formatPortions, mealName, planDay, slotLabels, type Slot } from "@/plans/plan";
+import { browsingCategory } from "@/recipes/derive";
 import { SORTS, activeFilters, applyState, type LibraryRecipe } from "@/recipes/library-filter";
 import { toRecipeSummary } from "@/recipes/summary";
-import { addEntryAction, removeEntryAction } from "../../actions";
+import { addEntryAction, addLeftoversAction, removeEntryAction } from "../../actions";
 
 type PickerRecipe = LibraryRecipe & { id: string; serves: number };
 
@@ -24,6 +27,9 @@ type PickerRecipe = LibraryRecipe & { id: string; serves: number };
  * can be removed; search, filters and sort work as in the library, without
  * adding history entries, so back returns to the plan. Tapping a recipe adds
  * it with 1 portion each and goes back, with an Undo toast.
+ *
+ * Leftovers not yet planned come first (leftovers design D), oldest first,
+ * whatever the meal filter; while searching, only the ones that match.
  */
 export function RecipePicker({
   plan,
@@ -31,12 +37,14 @@ export function RecipePicker({
   slot,
   recipes,
   inPlan,
+  leftovers,
 }: {
-  plan: { id: string; name: string; startDate: string };
+  plan: { id: string; name: string; startDate: string; people: number };
   dayIndex: number;
   slot: Slot;
   recipes: PickerRecipe[];
   inPlan: Record<string, string[]>;
+  leftovers: AvailableLeftovers[];
 }) {
   const router = useRouter();
   const toast = useToast();
@@ -53,6 +61,21 @@ export function RecipePicker({
   function backToPlan() {
     if (window.history.length > 1) router.back();
     else router.replace(`/plans/${plan.id}#day-${dayIndex}`);
+  }
+
+  const words = state.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const waiting = leftovers.filter((l) => words.every((w) => l.recipe.name.toLowerCase().includes(w)));
+
+  function addLeftovers(from: AvailableLeftovers) {
+    startAdding(async () => {
+      const id = await addLeftoversAction(plan.id, { dayIndex, slot, cookId: from.cookId });
+      if (!id) {
+        toast("Couldn't add the leftovers. Try again.");
+        return;
+      }
+      toast(`Added to ${where}`, { undo: () => void removeEntryAction(plan.id, id) });
+      backToPlan();
+    });
   }
 
   function add(recipe: PickerRecipe) {
@@ -99,6 +122,30 @@ export function RecipePicker({
         ) : (
           <div className="px-5 pt-3">
             <SearchBar q={state.q} onSearch={search} filterCount={chips.length} onFilters={() => setSheet("filters")} />
+            {waiting.length > 0 && (
+              <section aria-labelledby="leftovers-heading" className="mt-4">
+                <h2 id="leftovers-heading" className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                  Leftovers
+                </h2>
+                <ul
+                  aria-busy={adding}
+                  className="mt-2 rounded-card bg-surface border border-line divide-y divide-line overflow-hidden"
+                >
+                  {waiting.map((from) => (
+                    <li key={from.cookId}>
+                      <LeftoversRow
+                        from={from}
+                        plan={plan}
+                        mealDate={planDay(plan, dayIndex)}
+                        disabled={adding}
+                        onAdd={() => addLeftovers(from)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+                <h2 className="mt-4 text-xs font-semibold uppercase tracking-wider text-ink-muted">Recipes</h2>
+              </section>
+            )}
             {chips.length > 0 && (
               <div className="mt-3 flex gap-2 overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0 md:flex-wrap">
                 {chips.map((chip) => (
@@ -159,6 +206,54 @@ export function RecipePicker({
       )}
       {sheet === "sort" && <SortSheet state={state} onSort={(next) => go(next)} onClose={() => setSheet(null)} />}
     </div>
+  );
+}
+
+/** Leftovers waiting to be eaten (leftovers design D): "4 left · from Tue dinner", in amber when 2 or more days old by the meal. */
+function LeftoversRow({
+  from,
+  plan,
+  mealDate,
+  disabled,
+  onAdd,
+}: {
+  from: AvailableLeftovers;
+  plan: { id: string; startDate: string };
+  mealDate: string;
+  disabled: boolean;
+  onAdd: () => void;
+}) {
+  const category = categoryOf(browsingCategory(from.recipe.proteinType, from.recipe.dietary));
+  const old = daysOld(from.date, mealDate);
+  return (
+    <button
+      type="button"
+      onClick={onAdd}
+      disabled={disabled}
+      className="w-full flex items-center gap-3 px-4 py-3 min-h-16 text-left hover:bg-surface-2 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+    >
+      <span className="w-1 self-stretch flex flex-col rounded-full overflow-hidden" aria-hidden="true">
+        {categoryDotClasses(category).map((dot) => (
+          <span key={dot} className={cx("flex-1", dot)} />
+        ))}
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="block font-semibold">{from.recipe.name}</span>
+        <span className="sr-only">{categoryLabels[category]}</span>
+        <span className="block text-sm tabular-nums">
+          <span className="text-ink-muted">
+            {formatPortions(from.left)} left · from {mealLabel(from, plan.id)}
+          </span>
+          {old !== null && (
+            <span className="text-warning font-medium">
+              {" "}
+              · {old} days old by {formatDay(mealDate).split(" ")[0]}
+            </span>
+          )}
+        </span>
+      </span>
+      <Icon name="plus" className="size-6 text-primary shrink-0" />
+    </button>
   );
 }
 

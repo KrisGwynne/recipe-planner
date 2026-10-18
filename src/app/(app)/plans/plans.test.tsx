@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen, waitFor, within } from "@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Db } from "@/db";
 import { createTestDb } from "@/db/test-db";
-import { addEntry, createPlan, getPlan, listPlans, saveRecipe } from "@/data";
+import { addEntry, addLeftovers, createPlan, getPlan, listPlans, saveRecipe } from "@/data";
 import { twoHouseholds, type TwoHouseholds } from "@/data/test-fixtures";
 import { ToastProvider } from "@/components/ui/toast";
 import type { Recipe } from "@/types/recipe";
@@ -420,11 +420,11 @@ describe("totals and leftovers (PP-172)", () => {
     await openPlan(id);
     fireEvent.click(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ }));
     const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
-    expect(sheet).toHaveTextContent("2 servings left overThe recipe makes 4; 2 are planned.");
+    expect(sheet).toHaveTextContent("2 servings left overThe recipe makes 4; 2 are eaten at this meal.2 not planned yet");
     expect(sheet).toHaveTextContent("Each person getsPrinted672 kcalProtein 29g · Carbs 83g · Fat 23g");
 
     await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "More portions each" })));
-    expect(sheet).toHaveTextContent("1 serving left overThe recipe makes 4; 3 are planned.");
+    expect(sheet).toHaveTextContent("1 serving left overThe recipe makes 4; 3 are eaten at this meal.1 not planned yet");
     expect(sheet).toHaveTextContent("1,008 kcal");
 
     // 2 people × 2 each eat it all: no leftovers box.
@@ -479,6 +479,173 @@ describe("totals and leftovers (PP-172)", () => {
     render(await PlansPage());
     expect(screen.getByRole("link", { name: /This week/ })).toHaveTextContent("3 meals · ~1,253 kcal a day each");
     expect(screen.getByRole("link", { name: /Half term/ })).not.toHaveTextContent("kcal");
+  });
+});
+
+describe("leftovers (PP-180)", () => {
+  const dayCard = (dayIndex: number) => document.getElementById(`day-${dayIndex}`)!;
+  // Tuna pasta serves 4; 2 people at 1 each leave 2.
+  let id: string;
+  let cook: string;
+
+  beforeEach(async () => {
+    id = await createPlan(h.a, thisWeek);
+    cook = (await addEntry(h.a, id, { dayIndex: 0, slot: "dinner", recipeId: tuna }))!;
+  });
+
+  it("tags leftovers meals and says where a cook's leftovers go (A)", async () => {
+    const last = await createPlan(h.a, { ...thisWeek, name: "Last week", startDate: "2026-10-05" });
+    const old = (await addEntry(h.a, last, { dayIndex: 5, slot: "dinner", recipeId: tuna }))!;
+    await addLeftovers(h.a, id, { dayIndex: 0, slot: "lunch", cookId: old });
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 });
+    await openPlan(id);
+
+    const [lunch, dinner] = within(dayCard(0)).getAllByRole("button", { name: /Lemony tuna/ });
+    expect(lunch).toHaveTextContent("1 each · 672 kcal · 29g protein" + "Leftovers from Sat 10 dinner");
+    expect(dinner).toHaveTextContent("1 for Wed lunch" + "1 left over");
+    expect(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ })).toHaveTextContent(
+      "Leftovers from Mon dinner",
+    );
+  });
+
+  it("shows leftovers planned past what's left when the plan's people go up", async () => {
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook });
+    await openPlan(await updatePlanFor(id, 3));
+    expect(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ })).toHaveTextContent(
+      // Serves 4: 3 eat at the cook and 3 more are planned for Wed.
+      "3 for Wed lunch" + "2 more planned than left over",
+    );
+  });
+
+  async function updatePlanFor(planId: string, people: number) {
+    await updatePlanAction({}, form({ planId, ...thisWeek, people }));
+    return planId;
+  }
+
+  it("plans a cook's leftovers from its sheet, after the cook (B, C)", async () => {
+    await openPlan(id);
+    fireEvent.click(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ }));
+    const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
+    expect(sheet).toHaveTextContent("2 servings left overThe recipe makes 4; 2 are eaten at this meal.2 not planned yet");
+    fireEvent.click(within(sheet).getByRole("button", { name: "Plan them" }));
+
+    const grid = screen.getByRole("dialog", { name: "Plan the leftovers" });
+    expect(grid).toHaveTextContent("Lemony tuna, tomato & caper one-pot pasta · 2 left from Mon dinner");
+    expect(within(grid).getByRole("button", { name: "Mon 12 Oct, dinner: cook" })).toBeDisabled();
+    expect(within(grid).getByRole("button", { name: "Mon 12 Oct, lunch: nothing planned" })).toBeDisabled();
+    expect(within(grid).getByRole("button", { name: "Mon 12 Oct, snack: nothing planned" })).toBeEnabled();
+    expect(grid).toHaveTextContent("2 × 1 = 2, all that's left");
+    fireEvent.click(within(grid).getByRole("button", { name: "Fewer portions each" }));
+    expect(grid).toHaveTextContent("2 × ½ = 1 · 1 still left");
+
+    fireEvent.click(within(grid).getByRole("button", { name: "Fri 16 Oct, lunch: nothing planned" }));
+    await act(async () => fireEvent.click(within(grid).getByRole("button", { name: "Add to Fri lunch" })));
+    await waitFor(() => expect(screen.getByText("Added to Fri lunch")).toBeInTheDocument());
+    expect((await getPlan(h.a, id))!.entries).toMatchObject([
+      { id: cook, leftoversTo: [{ dayIndex: 4, slot: "lunch", servings: 1 }] },
+      { dayIndex: 4, slot: "lunch", portionsPerPerson: 0.5, leftoversOf: { entryId: cook } },
+    ]);
+  });
+
+  it("offers next week's plan for leftovers too (C)", async () => {
+    await createPlan(h.a, { ...thisWeek, name: "Next week", startDate: "2026-10-19" });
+    await openPlan(id);
+    fireEvent.click(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Plan them" }));
+    const grid = screen.getByRole("dialog", { name: "Plan the leftovers" });
+    fireEvent.click(within(grid).getByRole("button", { name: /This week/ }));
+    expect(within(within(grid).getByRole("list", { name: "Plans" })).getAllByRole("button").map((b) => b.textContent)).toEqual([
+      expect.stringContaining("This week"),
+      expect.stringContaining("Next week"),
+    ]);
+  });
+
+  it("caps a leftovers meal at what's left, and links back to its cook (E)", async () => {
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook });
+    await openPlan(id);
+    fireEvent.click(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ }));
+    const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
+    expect(sheet).toHaveTextContent("Wed 14 Oct · Lunch");
+    expect(sheet).toHaveTextContent("2 people × 1 = 2, all that's left");
+    expect(within(sheet).getByRole("button", { name: "More portions each" })).toBeDisabled();
+    expect(sheet).not.toHaveTextContent("left over");
+
+    fireEvent.click(within(sheet).getByRole("button", { name: "Leftovers from Mon 12 dinner" }));
+    expect(screen.getByRole("dialog", { name: tunaPasta.name })).toHaveTextContent("Mon 12 Oct · Dinner");
+    expect(screen.getByRole("dialog", { name: tunaPasta.name })).toHaveTextContent("2 for Wed 14 lunch");
+  });
+
+  it("stops a cook's portions where its planned leftovers would be short (B)", async () => {
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook });
+    await openPlan(id);
+    fireEvent.click(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ }));
+    const sheet = screen.getByRole("dialog", { name: tunaPasta.name });
+    expect(within(sheet).getByRole("button", { name: "More portions each" })).toBeDisabled();
+    expect(sheet).toHaveTextContent("2 are planned as leftovers");
+  });
+
+  it("asks before removing a cook whose leftovers are planned, then removes both (L)", async () => {
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook });
+    await openPlan(id);
+    fireEvent.click(within(dayCard(0)).getByRole("button", { name: /Lemony tuna/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+    const confirm = screen.getByRole("dialog", { name: "Remove Mon dinner?" });
+    expect(confirm).toHaveTextContent(
+      "Its leftovers are planned for Wed 14 lunch. Removing the lemony tuna, tomato & caper one-pot pasta removes that too.",
+    );
+    await act(async () => fireEvent.click(within(confirm).getByRole("button", { name: "Remove all" })));
+    await waitFor(async () => expect((await getPlan(h.a, id))!.entries).toEqual([]));
+  });
+
+  it("removes a leftovers meal with Undo putting it back (E)", async () => {
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 });
+    await openPlan(id);
+    fireEvent.click(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ }));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Remove" })));
+    await waitFor(() => expect(screen.getByText("Removed from Wed lunch")).toBeInTheDocument());
+    expect((await getPlan(h.a, id))!.entries).toHaveLength(1);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Undo" })));
+    await waitFor(async () =>
+      expect((await getPlan(h.a, id))!.entries[1]).toMatchObject({ portionsPerPerson: 0.5, leftoversOf: { entryId: cook } }),
+    );
+  });
+
+  it("keeps Move from putting leftovers before their cook (E)", async () => {
+    await addLeftovers(h.a, id, { dayIndex: 2, slot: "lunch", cookId: cook });
+    await openPlan(id);
+    fireEvent.click(within(dayCard(2)).getByRole("button", { name: /Lemony tuna/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Move" }));
+    const sheet = screen.getByRole("dialog", { name: "Move to…" });
+    expect(within(sheet).getByRole("button", { name: "Mon 12 Oct, dinner: 1 recipe planned" })).toBeDisabled();
+    expect(within(sheet).getByRole("button", { name: "Mon 12 Oct, snack: nothing planned" })).toBeEnabled();
+  });
+
+  it("lists leftovers first in the recipe picker, warning when they'll be 2 days old (D)", async () => {
+    await openPicker(id, { day: "3", slot: "lunch", meal: "lunch" });
+    const section = screen.getByRole("region", { name: "Leftovers" });
+    const row = within(section).getByRole("button", { name: /Lemony tuna/ });
+    expect(row).toHaveTextContent("2 left · from Mon dinner · 3 days old by Thu");
+
+    await act(async () => fireEvent.click(row));
+    await waitFor(() => expect(screen.getByText("Added to Thu lunch")).toBeInTheDocument());
+    expect([...mocks.back.mock.calls, ...mocks.replace.mock.calls]).toHaveLength(1);
+    expect((await getPlan(h.a, id))!.entries[1]).toMatchObject({ dayIndex: 3, slot: "lunch", leftoversOf: { entryId: cook } });
+  });
+
+  it("leaves the Leftovers section out when nothing is waiting yet (D)", async () => {
+    await openPicker(id, { day: "0", slot: "lunch", meal: "lunch" });
+    expect(screen.queryByRole("region", { name: "Leftovers" })).not.toBeInTheDocument();
+  });
+
+  it("warns that deleting a plan removes leftovers planned from it in another plan (L)", async () => {
+    const next = await createPlan(h.a, { ...thisWeek, name: "Next week", startDate: "2026-10-19" });
+    await addLeftovers(h.a, next, { dayIndex: 0, slot: "lunch", cookId: cook });
+    await openPlan(id);
+    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    fireEvent.click(screen.getByRole("button", { name: "Delete plan" }));
+    expect(screen.getByRole("dialog", { name: 'Delete "This week"?' })).toHaveTextContent(
+      "It has 1 meal planned. 1 leftovers meal in another plan eats from it and will go too. The recipes stay in your library.",
+    );
   });
 });
 
