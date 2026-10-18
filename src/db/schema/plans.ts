@@ -1,5 +1,17 @@
 import { sql } from "drizzle-orm";
-import { check, date, doublePrecision, index, integer, pgTable, text, timestamp, uuid, type AnyPgColumn } from "drizzle-orm/pg-core";
+import {
+  check,
+  date,
+  doublePrecision,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  type AnyPgColumn,
+} from "drizzle-orm/pg-core";
 import type { Slot } from "@/plans/plan";
 import { users } from "./auth";
 import { households } from "./households";
@@ -38,7 +50,9 @@ export const mealPlans = pgTable(
 // An entry is either a cook or leftovers (PP-180, designs/leftovers.html): a
 // leftovers meal points at the earlier cook it eats from (`leftovers_of`), in
 // the same plan or the plan before, and has the cook's recipe. Removing the
-// cook removes its leftovers meals.
+// cook removes its leftovers meals. A meal can instead come from the freezer
+// (`from_freezer`, PP-189); taking that item out of the freezer turns the
+// meal back into an ordinary cook.
 export const mealPlanEntries = pgTable(
   "meal_plan_entries",
   {
@@ -53,6 +67,7 @@ export const mealPlanEntries = pgTable(
       .references(() => recipes.id, { onDelete: "cascade" }),
     portionsPerPerson: doublePrecision("portions_per_person").notNull().default(1),
     leftoversOf: uuid("leftovers_of").references((): AnyPgColumn => mealPlanEntries.id, { onDelete: "cascade" }),
+    fromFreezer: uuid("from_freezer").references((): AnyPgColumn => freezerItems.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow(),
   },
   (entry) => [
@@ -60,6 +75,8 @@ export const mealPlanEntries = pgTable(
     index("meal_plan_entries_recipe").on(entry.recipeId),
     index("meal_plan_entries_leftovers_of").on(entry.leftoversOf),
     check("meal_plan_entries_leftovers_of", sql`${entry.leftoversOf} <> ${entry.id}`),
+    index("meal_plan_entries_from_freezer").on(entry.fromFreezer),
+    check("meal_plan_entries_one_source", sql`${entry.leftoversOf} is null or ${entry.fromFreezer} is null`),
     check("meal_plan_entries_day_index", sql`${entry.dayIndex} between 0 and 13`),
     check("meal_plan_entries_slot", sql`${entry.slot} in ('breakfast', 'lunch', 'dinner', 'snack')`),
     // Halves from ½ to 4 (the entry sheet's stepper).
@@ -67,5 +84,39 @@ export const mealPlanEntries = pgTable(
       "meal_plan_entries_portions",
       sql`${entry.portionsPerPerson} between 0.5 and 4 and ${entry.portionsPerPerson} * 2 = round(${entry.portionsPerPerson} * 2)`,
     ),
+  ],
+);
+
+// The household's freezer (PP-189, designs/leftovers.html F to K): one row
+// per batch frozen. `servings` went in on `frozen_on`, either from a cook's
+// leftovers (`from_entry`, one batch per cook, its date following the cook)
+// or by hand. What's in it now is servings + adjustment (corrections by
+// hand) less the meals planned from it whose day has passed; nothing is
+// stored when a meal eats from it.
+export const freezerItems = pgTable(
+  "freezer_items",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    householdId: uuid("household_id")
+      .notNull()
+      .references(() => households.id, { onDelete: "cascade" }),
+    recipeId: uuid("recipe_id")
+      .notNull()
+      .references(() => recipes.id, { onDelete: "cascade" }),
+    servings: doublePrecision("servings").notNull(),
+    adjustment: doublePrecision("adjustment").notNull().default(0),
+    frozenOn: date("frozen_on", { mode: "string" }).notNull(),
+    fromEntry: uuid("from_entry").references((): AnyPgColumn => mealPlanEntries.id, { onDelete: "set null" }),
+    createdBy: text("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow(),
+  },
+  (item) => [
+    index("freezer_items_household").on(item.householdId, item.frozenOn),
+    uniqueIndex("freezer_items_from_entry").on(item.fromEntry),
+    check(
+      "freezer_items_servings",
+      sql`${item.servings} > 0 and ${item.servings} <= 50 and ${item.servings} * 2 = round(${item.servings} * 2)`,
+    ),
+    check("freezer_items_adjustment", sql`${item.adjustment} * 2 = round(${item.adjustment} * 2)`),
   ],
 );
