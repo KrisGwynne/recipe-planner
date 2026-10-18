@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState, type ReactNode } from "react";
 import { Avatar } from "@/components/avatar";
@@ -306,6 +307,16 @@ export function HouseholdSettings({
             </div>
           </>
         )}
+
+        <p className="mt-6 text-center text-sm text-ink-subtle">
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-ink">
+            Privacy
+          </Link>{" "}
+          ·{" "}
+          <Link href="/terms" className="underline underline-offset-2 hover:text-ink">
+            Terms
+          </Link>
+        </p>
       </div>
 
       {open?.kind === "rename" && (
