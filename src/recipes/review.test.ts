@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import type { Recipe } from "@/types/recipe";
 import { checkFile, slugsIn } from "./check-files";
-import { MAX_FILE_BYTES, PASTED, inRequests, markDuplicates, shouldRead, tooManyFiles, type ImportFile } from "./review";
+import { inRequests, markDuplicates, MAX_FILE_BYTES, PASTED, shouldRead, tooManyFiles, tooManyImports, type ImportFile } from "./review";
 
 const text = (slug: string) => readFileSync(new URL(`../../examples/${slug}.json`, import.meta.url), "utf8");
 const tunaText = text("lemony-tuna-tomato-caper-pasta");
@@ -122,5 +122,15 @@ describe("markDuplicates", () => {
       name: tuna().name,
       problems: [{ title: "Same recipe id as one.json", path: "id" }],
     });
+  });
+});
+
+describe("tooManyImports (screen I)", () => {
+  it("says when to try again, and what was saved", () => {
+    expect(tooManyImports(10).detail).toBe(
+      "You've imported a lot in the last hour. Try again in about 10 minutes. Nothing from this batch was saved.",
+    );
+    expect(tooManyImports(1).detail).toContain("Try again in about a minute.");
+    expect(tooManyImports(30, 12).detail).toBe("You've imported a lot in the last hour. 12 recipes were saved; try the rest again in about 30 minutes.");
   });
 });

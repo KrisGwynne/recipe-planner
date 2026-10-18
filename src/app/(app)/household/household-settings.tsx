@@ -264,7 +264,10 @@ export function HouseholdSettings({
 
       {/* Account, then leave or delete */}
       <div>
-        <h2 className="text-[17px] font-semibold">Your account</h2>
+        <h2 className="text-[17px] font-semibold">Recipes</h2>
+        <DownloadAll count={household.recipes} />
+
+        <h2 className="mt-6 text-[17px] font-semibold">Your account</h2>
         <div className="mt-2 rounded-card bg-surface border border-line divide-y divide-line overflow-hidden">
           {account}
           <button
@@ -444,6 +447,7 @@ export function HouseholdSettings({
               You&apos;re the only person in {household.name}, so it goes too: {counted(household.recipes, "recipe")} and{" "}
               {counted(household.plans, "meal plan")}. This can&apos;t be undone.
             </p>
+            <DownloadFirst count={household.recipes} />
             <TypeNameToConfirm
               name={household.name}
               action="Delete account and household"
@@ -484,6 +488,56 @@ export function HouseholdSettings({
           </Confirm>
         ))}
     </div>
+  );
+}
+
+/** The route that sends the household's recipes as a .zip (PP-164). A plain link, so the browser downloads it. */
+const DOWNLOAD = "/household/download";
+
+/** "Download all recipes" (design B): anyone in the household can. */
+function DownloadAll({ count }: { count: number }) {
+  const inner = (
+    <>
+      <span className="size-10 shrink-0 rounded-full bg-surface-2 grid place-items-center">
+        <Icon name="download" className="size-5" />
+      </span>
+      <span className="flex-1">
+        <span className="block font-semibold">Download all recipes</span>
+        <span className="block text-sm text-ink-muted">
+          {count === 0
+            ? "No recipes to download yet."
+            : `${counted(count, "recipe file")} in a .zip: a backup, or a way to move them to another household.`}
+        </span>
+      </span>
+    </>
+  );
+  const box = "mt-2 w-full rounded-card bg-surface border border-line p-4 flex items-center gap-3 text-left";
+  return count === 0 ? (
+    <div aria-disabled="true" className={cx(box, "opacity-60")}>
+      {inner}
+    </div>
+  ) : (
+    <a href={DOWNLOAD} download className={cx(box, "hover:bg-surface-2 focus-visible:outline-2 focus-visible:outline-primary")}>
+      {inner}
+    </a>
+  );
+}
+
+/** "Download all recipes first" on the sheets that delete them (designs J and L). The sheet stays open. */
+function DownloadFirst({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <a
+      href={DOWNLOAD}
+      download
+      className="mt-4 w-full rounded-control bg-surface-2 px-4 py-3 text-left text-sm flex items-center gap-3 hover:bg-line focus-visible:outline-2 focus-visible:outline-primary"
+    >
+      <Icon name="download" className="size-5 shrink-0" />
+      <span>
+        <span className="block font-semibold">Download all recipes first</span>
+        <span className="block text-ink-muted">Keep a copy to import somewhere else.</span>
+      </span>
+    </a>
   );
 }
 
@@ -600,6 +654,7 @@ function DeleteSheet({
             : "The household itself"}
         </li>
       </ul>
+      <DownloadFirst count={household.recipes} />
       <TypeNameToConfirm name={household.name} action="Delete household" onConfirm={remove} onClose={onClose} />
     </Sheet>
   );

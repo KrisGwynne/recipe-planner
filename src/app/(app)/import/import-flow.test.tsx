@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { checkFile } from "@/recipes/check-files";
 import type { ImportFile } from "@/recipes/review";
 import type { Recipe } from "@/types/recipe";
-import type { ImportResult } from "./actions";
+import type { ImportResponse } from "./actions";
 
 // Next keeps useSearchParams in step with history.pushState; this does the same in jsdom.
 vi.mock("next/navigation", () => {
@@ -36,10 +36,10 @@ const tuna = (): Recipe => JSON.parse(tunaText);
 // The real checks, against a pretend saved library holding the tuna pasta.
 const saved = new Map<string, Recipe>([[tuna().id, tuna()]]);
 const review = vi.fn(async (files: ImportFile[]) => files.map((f) => checkFile(f, saved)));
-const save = vi.fn(
-  async (files: ImportFile[]): Promise<ImportResult[]> =>
-    files.map((f, i) => ({ file: f.name, saved: true, id: `id-${i}`, slug: JSON.parse(f.text!).id, name: JSON.parse(f.text!).name, created: !f.name.includes("tuna") })),
-);
+const saveAll = async (files: ImportFile[]): Promise<ImportResponse> => ({
+  results: files.map((f, i) => ({ file: f.name, saved: true, id: `id-${i}`, slug: JSON.parse(f.text!).id, name: JSON.parse(f.text!).name, created: !f.name.includes("tuna") })),
+});
+const save = vi.fn(saveAll);
 
 const changedTuna = () => {
   const recipe = tuna();
@@ -56,7 +56,8 @@ function pick(files: { name: string; text: string }[]) {
 beforeEach(() => {
   window.history.replaceState(null, "", "/import");
   review.mockClear();
-  save.mockClear();
+  save.mockReset();
+  save.mockImplementation(saveAll);
 });
 
 describe("import flow", () => {
@@ -179,6 +180,17 @@ describe("import flow", () => {
     pick([{ name: "IMG_2041.jpg", text: "binary" }]);
     expect(await screen.findByText("IMG_2041.jpg isn't a recipe file")).toBeInTheDocument();
     expect(review.mock.calls[0][0][0].text).toBeNull();
+  });
+
+  it("over the hourly limit, stays on the review and saves nothing (I)", async () => {
+    save.mockResolvedValue({ results: [], limited: { retryMinutes: 10 } });
+    render(<ImportFlow review={review} save={save} />);
+    pick([{ name: "char-siu-tofoo-noodles.json", text: tofooText }]);
+    fireEvent.click(await screen.findByRole("button", { name: "Import 1 recipe" }));
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Too many imports for now");
+    expect(alert).toHaveTextContent("You've imported a lot in the last hour. Try again in about 10 minutes. Nothing from this batch was saved.");
+    expect(screen.getByRole("button", { name: "Import 1 recipe" })).toBeEnabled();
   });
 
   it("says so if the server can't be reached", async () => {

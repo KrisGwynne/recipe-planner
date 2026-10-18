@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   getRecipeBySlug: vi.fn(),
   getRecipeHousehold: vi.fn(),
   listPlans: vi.fn(),
+  recipePlanUses: vi.fn(),
   cookie: undefined as string | undefined,
   actions: {
     setFavouriteAction: vi.fn(),
@@ -18,6 +19,7 @@ const mocks = vi.hoisted(() => ({
     setNotesAction: vi.fn(),
     markCookedAction: vi.fn(),
     unmarkCookedAction: vi.fn(),
+    deleteRecipeAction: vi.fn(),
   },
 }));
 vi.mock("@/data", () => ({
@@ -26,6 +28,7 @@ vi.mock("@/data", () => ({
   getRecipeBySlug: mocks.getRecipeBySlug,
   getRecipeHousehold: mocks.getRecipeHousehold,
   listPlans: mocks.listPlans,
+  recipePlanUses: mocks.recipePlanUses,
 }));
 vi.mock("./actions", () => mocks.actions);
 vi.mock("next/headers", () => ({
@@ -92,6 +95,7 @@ beforeEach(() => {
   window.history.replaceState(null, "", "/recipes");
   mocks.requireHousehold.mockResolvedValue({ ctx, user: { name: "Kris Gwynne" } });
   mocks.listPlans.mockResolvedValue([]);
+  mocks.recipePlanUses.mockResolvedValue([]);
   mocks.getRecipeHousehold.mockResolvedValue({ favourite: false, rating: null, notes: null, cooked: [] });
   for (const action of Object.values(mocks.actions)) action.mockResolvedValue(true);
   mocks.actions.markCookedAction.mockResolvedValue("2026-10-14");
@@ -200,6 +204,47 @@ describe("the recipe page", () => {
     expect(within(menu).getByRole("link", { name: "Compare with…" })).toHaveAttribute("href", `/compare/choose?r=${tuna.id}`);
     expect(within(menu).getByRole("button", { name: "Download recipe file (.json)" })).toBeInTheDocument();
     expect(within(menu).getByRole("link", { name: /Replace with a new version/ })).toHaveAttribute("href", "/import");
+  });
+
+  describe("deleting it (PP-165, import design H)", () => {
+    const openDelete = async () => {
+      mocks.getRecipeBySlug.mockResolvedValue({ id: "r1", name: tuna.name, data: tuna });
+      render(await RecipePage(params(tuna.id)));
+      fireEvent.click(screen.getByRole("button", { name: "More" }));
+      const items = within(screen.getByRole("dialog")).getAllByRole("listitem");
+      expect(items.at(-1)).toHaveTextContent("Delete recipe…");
+      fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Delete recipe…" }));
+      expect(screen.getByRole("dialog")).toHaveAccessibleName(`Delete ${tuna.name}?`);
+      return screen.getByRole("dialog");
+    };
+
+    it("names the plans and meals it'll disappear from", async () => {
+      mocks.recipePlanUses.mockResolvedValue([
+        { id: "p1", name: "This week", startDate: "2026-10-12", meals: [{ dayIndex: 1, slot: "dinner" }] },
+        { id: "p2", name: "Half-term", startDate: "2026-10-26", meals: [{ dayIndex: 0, slot: "lunch" }, { dayIndex: 3, slot: "dinner" }] },
+      ]);
+      const sheet = await openDelete();
+      expect(mocks.recipePlanUses).toHaveBeenCalledWith(ctx, "r1");
+      expect(sheet).toHaveTextContent("It's planned in 2 meal plans and will be removed from them:");
+      const plans = within(within(sheet).getByRole("list", { name: "Meal plans it's in" })).getAllByRole("listitem");
+      expect(plans.map((p) => p.textContent)).toEqual(["This weekTue dinner", "Half-termMon lunch, Thu dinner"]);
+      await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Delete recipe" })));
+      expect(mocks.actions.deleteRecipeAction).toHaveBeenCalledWith("r1");
+    });
+
+    it("asks a simple confirm when it's in no plan", async () => {
+      const sheet = await openDelete();
+      expect(within(sheet).queryByRole("list", { name: "Meal plans it's in" })).not.toBeInTheDocument();
+      expect(sheet).toHaveTextContent("Your notes, rating and cooking history for it are deleted too.");
+    });
+
+    it("says so when it fails, and stays open", async () => {
+      mocks.actions.deleteRecipeAction.mockResolvedValue(false);
+      const sheet = await openDelete();
+      await act(async () => fireEvent.click(within(sheet).getByRole("button", { name: "Delete recipe" })));
+      expect(within(sheet).getByRole("alert")).toHaveTextContent("Couldn't delete the recipe. Try again.");
+      expect(within(sheet).getByRole("button", { name: "Delete recipe" })).toBeEnabled();
+    });
   });
 
   it("opens at the servings a meal plan asks for, within 1 to 50 (meal plans F)", async () => {

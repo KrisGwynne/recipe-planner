@@ -377,6 +377,36 @@ Made while Kris was away (he said to carry on); each is open to change in review
 
 **How it works.** `src/compare/compare.ts` (address, remembered comparison, bar widths), `src/app/(app)/compare/` (page, `compare-view.tsx`, `remember.tsx`, `choose/`). The energy split is the recipe page's `EnergySplit`, which now takes `estimated` to put the ~ on its percentages.
 
+## 2026-10-17: download all recipes (PP-164)
+
+**fflate for the zip** (Kris, 2026-10-17): small, with no dependencies, and it unzips too, so the tests open the zip they're given.
+
+**An empty library greys the row out** (Kris, 2026-10-17): "No recipes to download yet." The "Download all recipes first" link on the Delete household and "delete your account and the household" sheets only shows when there are recipes, and downloading leaves the sheet open, so you can carry on deleting.
+
+**How it works.** `GET /household/download` (a route handler, so the browser downloads it from a plain link) sends `<household> recipes <date>.zip`, the date in UK time, with one `<id>.json` per recipe: the stored file exactly, as the single download gives it (`src/recipes/file.ts`). Anyone in the household can; `listRecipeFiles(ctx)` reads only that household's recipes. Not `/household/recipes.zip`, since the proxy skips paths that end in a file extension, and with it the security headers. A test exports one household, unzips, validates and imports the files into another, and gets the same recipes.
+
+## 2026-10-17: delete a recipe (PP-165)
+
+Made while Kris was away; open to change in review.
+
+**"Delete recipe…" is last in the recipe page's ⋯ menu, in red** (as PP-168 asked), and opens import design H: the plans and meals it'll disappear from ("This week: Tue dinner"), or, in no plan, the same sheet without the list. Deleting goes to the library. Anyone in the household can delete a recipe, as before.
+
+**How it works.** `recipePlanUses(ctx, recipeId)` in `src/data/plans.ts` lists the household's plans the recipe is in and their meals, in date order. `deleteRecipeAction` uses the existing `deleteRecipe`; the database's cascades remove its plan entries, household data and cooking history (tested: nothing is left behind).
+
+## 2026-10-17: rate-limiting imports (PP-163)
+
+Made while Kris was away; open to change in review.
+
+**200 recipes per person per hour** (`IMPORTS_PER_HOUR` in `src/recipes/review.ts`, beside the other import limits). Counted per person, since the ticket says per user, and in recipes saved rather than requests or files sent. An import is at most 50 files, so moving a big library takes a few goes, not an afternoon.
+
+**The window starts with the first import** and lasts an hour; after that the count starts again. "Try again in about N minutes" is the time left in it.
+
+**Over the limit, a request saves nothing** (screen I's card, on the review). Large imports go in several requests, so if a later one goes over, what was saved stays and the Done screen shows the card saying how many were saved and when to try the rest; those files aren't listed as having problems, since they don't.
+
+**Only saving is limited.** Checking files (the review) reads but saves nothing, so it isn't counted.
+
+**How it works.** `import_counts` (migration 0007, a new table: additive) holds one row per person: when their hour started and how many recipes they've saved in it. `reserveImports(ctx, n)` in `src/data/import-limits.ts` adds `n` only if it fits, in one statement, so two imports at once can't both slip under. It runs before anything is saved. Deleting the account deletes the row.
+
 ## 2026-10-17: privacy policy and terms design approved (PP-159)
 
 **No name or email address on the privacy policy or terms** (Kris, 2026-10-17): they say "a personal project run from the UK". Rights requests are covered by what the app already does (download all recipes, change household data, delete my account or household); Google profile details are changed in Google. Design: `designs/src/legal.html`.
