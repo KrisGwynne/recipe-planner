@@ -406,3 +406,11 @@ Made while Kris was away; open to change in review.
 **Only saving is limited.** Checking files (the review) reads but saves nothing, so it isn't counted.
 
 **How it works.** `import_counts` (migration 0007, a new table: additive) holds one row per person: when their hour started and how many recipes they've saved in it. `reserveImports(ctx, n)` in `src/data/import-limits.ts` adds `n` only if it fits, in one statement, so two imports at once can't both slip under. It runs before anything is saved. Deleting the account deletes the row.
+
+## 2026-10-17: privacy policy and terms design approved (PP-159)
+
+**No name or email address on the privacy policy or terms** (Kris, 2026-10-17): they say "a personal project run from the UK". Rights requests are covered by what the app already does (download all recipes, change household data, delete my account or household); Google profile details are changed in Google. Design: `designs/src/legal.html`.
+
+**The database is with Neon in London, and there are no backups** (Kris, 2026-10-17). Both pages say so: deleted data is gone for good, so keep a download of anything you'd miss.
+
+**The landing page is onboarding A** (Kris, 2026-10-17), the existing sign-in page, at `/` for signed-out visitors; signed-in visitors go to their recipes. The terms keep the nutrition disclaimer ("a guide, not medical or dietary advice").
