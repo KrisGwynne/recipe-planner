@@ -452,3 +452,19 @@ Built from recipe design D and foundations' timer states. **The details the desi
 - **Off-screen timers get a pill each**, finished ones first and then the soonest to end, with the step number, as in design D ("Step 5 · 4:10 · Show"). A paused timer says "paused". Tapping a pill scrolls to the step.
 
 **How it works.** A running timer stores when it ends, not how long is left (`src/recipes/timers.ts`). The page redraws four times a second while one runs and catches up whenever it's shown again, so a locked phone shows the right time. Screen readers hear the time left and an announcement when a timer ends. The controls are in `src/components/recipe/step-timers.tsx`.
+
+## 2026-10-18: leftovers and freezer design approved (PP-180)
+
+**Kris asked to go with every recommendation** (2026-10-18). Design: `designs/src/leftovers.html`. PP-185 (schedule leftovers) was merged into PP-180, which now covers leftovers eaten in the same plan, in the next plan, or frozen.
+
+**A planned recipe is either cooked or leftovers.** A leftovers meal eats servings from an earlier cook or from the freezer: it counts toward nutrition like any meal, isn't cooked again, and won't add to a shopping list (PP-187). This replaces "leftovers stay per entry" (2026-10-13). A cook's servings not eaten at its meal are left over; each one can be planned for a later meal or frozen, and whatever isn't still shows the amber "N left over".
+
+**Leftovers can come from this plan or the plan just before it** (Kris, 2026-10-18), nothing older. The recipe picker lists unplanned leftovers and the freezer first, ignoring the meal filter. Leftovers that will be 2 or more days old by the meal get an amber warning, following food safety advice, but can still be planned (Kris, 2026-10-18).
+
+**A leftovers meal is for everyone in the plan** (people × portions each), capped at what's left; portions start at 1 each, or less when fewer are left. A cook's portions can't go up past what its planned leftovers need, Move can't put a cook after its leftovers, and removing a cook (or deleting or shortening its plan) with planned or frozen leftovers asks first. Copy to a new plan copies leftovers meals with their cooks in the same plan, but not ones from the plan before or from the freezer.
+
+**The freezer is a row on the Plans tab** (Kris, 2026-10-18), opening its own page: the household's frozen servings, oldest first, each batch its own row, with "Going in" for freezing on a day not reached yet.
+
+**The freezer keeps itself up to date** (Kris, 2026-10-18): frozen leftovers go in on the cook's day, and servings planned from it come out once the meal's day has passed, without anyone ticking them off. The count can be corrected by hand (not below what's planned), and an item taken out entirely. **Adding to the freezer by hand** is in (Kris, 2026-10-18), from the freezer page and the recipe page's ⋯ menu. Freezing shows the recipe's storage notes, or an amber note when `storage.freezable` is false, without stopping you.
+
+**Split into two tickets** (Kris, 2026-10-18): PP-180 builds leftovers in a plan; PP-189 (new) builds the freezer after it.

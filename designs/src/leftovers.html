@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recipe planner · Leftovers and the freezer</title>
+<!-- styles -->
+</head>
+<body class="bg-bg text-ink font-sans antialiased">
+<!-- include:icons -->
+
+<header class="border-b border-line bg-surface">
+  <div class="mx-auto max-w-[1300px] px-5 py-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <p class="text-sm font-medium text-primary">Recipe planner · PP-180</p>
+      <h1 class="font-display text-3xl font-semibold mt-1">Leftovers and the freezer</h1>
+      <p class="text-ink-muted mt-2 max-w-3xl">What happens to the servings a meal doesn't use: eaten later in the same plan, eaten in the next plan, or frozen. The freezer keeps a list of what's in it, so meals can be planned from it. Builds on the meal plans design (screens there are named "meal plans D" and so on). The example is the same plan, "This week", Mon 12 – Sun 18 Oct, for 2 people; today is Mon 12.</p>
+    </div>
+    <button id="theme" class="h-11 px-4 rounded-control border border-line bg-surface hover:bg-surface-2 font-medium">Switch light / dark</button>
+    <script>
+      document.getElementById("theme").onclick = () => {
+        const html = document.documentElement;
+        const dark = html.classList.contains("dark") ||
+          (!html.classList.contains("light") && matchMedia("(prefers-color-scheme: dark)").matches);
+        html.classList.toggle("dark", !dark);
+        html.classList.toggle("light", dark);
+      };
+    </script>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1300px] px-5 py-8 space-y-14">
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">How it works</h2>
+  <div class="mt-3 max-w-3xl space-y-2 text-ink-muted">
+    <p>A planned recipe is either <b class="text-ink">cooked</b> (as today) or <b class="text-ink">leftovers</b>, eaten from an earlier cook or from the freezer. Leftovers count toward each person's nutrition like any meal, but aren't cooked again (and won't add to a shopping list, PP-187).</p>
+    <p>A cook makes the recipe's servings. What the people at that meal don't eat is left over, and each serving left over can be <b class="text-ink">planned</b> for a later meal (this plan or the next) or <b class="text-ink">frozen</b>. Whatever isn't planned or frozen still shows the amber "N left over", so nothing is forgotten.</p>
+    <p>The <b class="text-ink">freezer</b> is the household's list of frozen servings: recipe, servings and when they went in. Servings get there from a plan ("freeze them") or by hand (batch cooking), and leave when a plan eats them or someone takes them out.</p>
+  </div>
+</section>
+
+<!-- ============ Leftovers in a plan ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">Leftovers in a plan</h2>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- A. Plan with leftovers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back to plans"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold truncate">This week</p>
+            <p class="text-sm text-ink-muted">Mon 12 – Sun 18 Oct · 2 people</p>
+          </div>
+          <button class="size-11 rounded-full grid place-items-center" aria-label="More"><svg class="size-6 fill-current"><use href="#i-more"/></svg></button>
+        </div>
+        <div class="mt-3 px-4 pb-2 grid grid-cols-7 gap-1 border-b border-line">
+          <a class="h-12 rounded-control bg-ink text-bg flex flex-col items-center justify-center"><span class="text-[11px] font-medium">Mon</span><span class="font-semibold tabular-nums leading-none">12</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Tue</span><span class="font-semibold tabular-nums leading-none">13</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Wed</span><span class="font-semibold tabular-nums leading-none">14</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Thu</span><span class="font-semibold tabular-nums leading-none">15</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Fri</span><span class="font-semibold tabular-nums leading-none">16</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center"><span class="text-[11px] font-medium text-ink-muted">Sat</span><span class="font-semibold tabular-nums leading-none">17</span></a>
+          <a class="h-12 rounded-control flex flex-col items-center justify-center text-ink-subtle"><span class="text-[11px] font-medium">Sun</span><span class="font-semibold tabular-nums leading-none">18</span></a>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-3 space-y-3">
+          <!-- Mon -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Mon 12 Oct</p>
+              <span class="h-5 px-1.5 rounded-full bg-primary-soft text-primary text-xs font-semibold inline-flex items-center">Today</span>
+              <p class="ml-auto text-sm tabular-nums"><b>1,192</b> <span class="text-ink-muted">kcal</span></p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Lunch</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-meat"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Sausage &amp; lentil ragù</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 520 kcal · 31g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-surface-2 text-ink-muted text-xs font-semibold inline-flex items-center gap-1"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-leftovers"/></svg>Leftovers from Sat 10 dinner</span>
+              </span>
+            </a>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Lemony tuna, tomato &amp; caper one-pot pasta</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 672 kcal · 29g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full border border-line text-ink-muted text-xs font-semibold inline-flex items-center gap-1"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>2 for Wed lunch</span>
+              </span>
+            </a>
+          </div>
+          <!-- Tue -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Tue 13 Oct</p>
+              <p class="ml-auto text-sm tabular-nums"><b>610</b> <span class="text-ink-muted">kcal</span></p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-meat"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Smoky beef &amp; bean chilli</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 610 kcal · 42g protein</span>
+                <span class="mt-1 flex flex-wrap gap-1.5">
+                  <span class="h-6 px-2 rounded-full border border-line text-ink-muted text-xs font-semibold inline-flex items-center gap-1"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>2 for Thu lunch</span>
+                  <span class="h-6 px-2 rounded-full border border-line text-ink-muted text-xs font-semibold inline-flex items-center gap-1"><svg class="size-3.5 fill-none stroke-current stroke-2"><use href="#i-snow"/></svg>4 to freeze</span>
+                </span>
+              </span>
+            </a>
+          </div>
+          <!-- Wed -->
+          <div class="rounded-card bg-surface border border-line px-4 pt-3 pb-3">
+            <div class="flex items-baseline gap-2">
+              <p class="font-semibold">Wed 14 Oct</p>
+              <p class="ml-auto text-sm tabular-nums"><b>1,282</b> <span class="text-ink-muted">kcal</span></p>
+            </div>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Lunch</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-fish"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Lemony tuna, tomato &amp; caper one-pot pasta</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 672 kcal · 29g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-surface-2 text-ink-muted text-xs font-semibold inline-flex items-center gap-1"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-leftovers"/></svg>Leftovers from Mon dinner</span>
+              </span>
+            </a>
+            <p class="mt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Dinner</p>
+            <a class="mt-1 flex items-center gap-3 min-h-12">
+              <span class="w-1 self-stretch rounded-full bg-meat"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold leading-snug">Sticky chicken thighs with sesame rice</span>
+                <span class="block text-sm text-ink-muted tabular-nums">1 each · 610 kcal · 38g protein</span>
+                <span class="mt-1 h-6 px-2 rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center">2 left over</span>
+              </span>
+            </a>
+          </div>
+        </div>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">A · A plan with leftovers</p><p class="text-ink-muted mt-1">A leftovers meal has a grey "Leftovers from Mon dinner" tag (or "from Sat 10 dinner" for the plan before, or "From the freezer"); tapping the row opens its sheet (E). A cook's badges say where its leftovers go: outlined "2 for Wed lunch" and "4 to freeze" when they're sorted, amber "2 left over" for what isn't (Wed's chicken). A cook whose leftovers are partly sorted shows both ("2 for Thu lunch" and "2 left over"). Day totals include leftovers meals. On wide screens the grid cells (meal plans, wider screens) carry the same tags.</p></figcaption>
+    </figure>
+
+    <!-- B. Cook sheet with leftovers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="mt-3 text-sm text-ink-muted">Tue 13 Oct · Dinner</p>
+          <p class="font-display text-[22px] leading-7 font-semibold mt-0.5">Smoky beef &amp; bean chilli</p>
+
+          <div class="mt-4 flex items-center justify-between">
+            <div><p class="font-medium">Portions each</p><p class="text-sm text-ink-muted">2 people × 1 = 2 servings</p></div>
+            <div class="flex items-center rounded-full border border-line bg-surface-2">
+              <button class="size-11 grid place-items-center" aria-label="Fewer portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="w-10 text-center text-lg font-semibold tabular-nums">1</span>
+              <button class="size-11 grid place-items-center" aria-label="More portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-card border border-line">
+            <div class="px-3 pt-3 pb-2">
+              <p class="font-semibold">6 servings left over</p>
+              <p class="text-sm text-ink-muted">The recipe makes 8; 2 are eaten at this meal.</p>
+            </div>
+            <a class="flex items-center gap-3 px-3 min-h-12 border-t border-line">
+              <svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-leftovers"/></svg>
+              <span class="flex-1"><b>2</b> for Thu 15 lunch</span>
+              <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </a>
+            <div class="px-3 py-3 border-t border-line bg-warning-soft rounded-b-card">
+              <p class="font-semibold text-warning">4 not planned yet</p>
+              <div class="mt-2 grid grid-cols-2 gap-2">
+                <button class="h-11 rounded-control bg-surface border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plan them</button>
+                <button class="h-11 rounded-control bg-surface border border-line font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-snow"/></svg>Freeze</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-card bg-surface-2 p-3">
+            <div class="flex items-center gap-2"><p class="text-xs text-ink-muted">Each person gets</p><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></div>
+            <p class="mt-1 tabular-nums"><span class="text-2xl font-semibold">610</span> <span class="text-ink-muted">kcal</span></p>
+            <p class="text-sm text-ink-muted tabular-nums">Protein <b class="text-ink">42g</b> · Carbs <b class="text-ink">58g</b> · Fat <b class="text-ink">21g</b></p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipe</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-move"/></svg>Move</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium text-danger"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Remove</button>
+          </div>
+          <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Done</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">B · A cook with leftovers</p><p class="text-ink-muted mt-1">The entry sheet (meal plans F) with the leftovers box grown into a list: each planned meal (tap to open it) and each freezing, then what isn't sorted yet, in amber, with <b>Plan them</b> (C) and <b>Freeze</b> (F). Once everything is sorted the amber part goes. Portions each can't go up past what would leave the planned leftovers short; the stepper stops and says "2 are planned for Thu lunch". Moving the cook can't put it after its leftovers (those cells are greyed in Move). Removing it asks first (L).</p></figcaption>
+    </figure>
+
+    <!-- C. Plan the leftovers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-[22px] font-semibold mt-3">Plan the leftovers</p>
+          <p class="text-sm text-ink-muted truncate">Smoky beef &amp; bean chilli · 4 left from Tue dinner</p>
+          <button class="mt-3 w-full h-12 px-4 rounded-control bg-surface-2 border border-line flex items-center justify-between"><span><b>This week</b> <span class="text-ink-muted">· 12 – 18 Oct</span></span><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-chevron-down"/></svg></button>
+
+          <table class="mt-3 w-full text-sm">
+            <thead>
+              <tr class="text-xs text-ink-muted"><th class="w-16"></th><th class="font-medium pb-1">Breakfast</th><th class="font-semibold pb-1 text-ink">Lunch</th><th class="font-medium pb-1">Dinner</th><th class="font-medium pb-1">Snack</th></tr>
+            </thead>
+            <tbody>
+              <tr class="opacity-40"><td class="font-medium py-0.5">Mon <span class="text-ink-muted font-normal">12</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg bg-surface-2"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-meat"></span></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg bg-surface-2"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Tue <span class="text-ink-muted font-normal">13</span></td>
+                <td class="p-0.5 opacity-40"><span class="block h-10 rounded-lg bg-surface-2"></span></td>
+                <td class="p-0.5 opacity-40"><span class="block h-10 rounded-lg bg-surface-2"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-ink text-bg grid place-items-center text-[11px] font-semibold">Cook</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Wed <span class="text-ink-muted font-normal">14</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-meat"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Thu <span class="text-ink-muted font-normal">15</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-meat"></span></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-meat"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Fri <span class="text-ink-muted font-normal">16</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-primary text-on-primary grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Sat <span class="text-ink-muted font-normal">17</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="h-10 rounded-lg bg-surface-2 grid place-items-center"><span class="size-2.5 rounded-full bg-fish"></span></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+              <tr><td class="font-medium py-0.5">Sun <span class="text-ink-muted font-normal">18</span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td>
+                <td class="p-0.5"><span class="block h-10 rounded-lg border border-dashed border-line"></span></td></tr>
+            </tbody>
+          </table>
+          <div class="mt-3 flex items-center justify-between">
+            <div><p class="font-medium">Portions each</p><p class="text-sm text-ink-muted">2 × 1 = 2 · <span class="text-warning font-semibold">2 still left</span></p></div>
+            <div class="flex items-center rounded-full border border-line bg-surface-2">
+              <button class="size-11 grid place-items-center" aria-label="Fewer portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="w-10 text-center text-lg font-semibold tabular-nums">1</span>
+              <button class="size-11 grid place-items-center" aria-label="More portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+          <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Add to Fri lunch</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">C · Plan the leftovers</p><p class="text-ink-muted mt-1">"Plan them" opens the Add to plan grid (meal plans G) with the cook marked and every meal up to it greyed out. The plan button also offers the next plan, for leftovers eaten next week. Portions each starts at 1, or less if fewer are left (1 serving for 2 people starts at ½), and can't go past what's left. Adding goes back to the sheet (B) with a toast. To plan it twice, plan it again.</p></figcaption>
+    </figure>
+
+    <!-- D. Picker with leftovers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold">Add lunch</p>
+            <p class="text-sm text-ink-muted">Fri 16 Oct · This week</p>
+          </div>
+        </div>
+        <div class="px-5 pt-3 pb-3">
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <svg class="size-5 absolute left-4 top-3.5 fill-none stroke-ink-subtle stroke-2"><use href="#i-search"/></svg>
+              <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface border border-line placeholder:text-ink-subtle" placeholder="Search recipes">
+            </div>
+            <button class="h-12 px-4 rounded-full bg-ink text-bg font-semibold inline-flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-sliders"/></svg>1</button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 space-y-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Leftovers</p>
+            <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+              <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+                <span class="w-1 self-stretch rounded-full bg-meat"></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block font-semibold">Smoky beef &amp; bean chilli</span>
+                  <span class="block text-sm text-ink-muted tabular-nums">4 left · from Tue dinner</span>
+                </span>
+                <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+              </a>
+              <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+                <span class="w-1 self-stretch rounded-full bg-meat"></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block font-semibold">Sticky chicken thighs with sesame rice</span>
+                  <span class="block text-sm tabular-nums"><span class="text-ink-muted">2 left · from Wed dinner ·</span> <span class="text-warning font-medium">2 days old by Fri</span></span>
+                </span>
+                <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+              </a>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">In the freezer</p>
+            <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+              <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+                <span class="w-1 self-stretch rounded-full bg-meat"></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block font-semibold">Chicken, chorizo &amp; butter bean stew</span>
+                  <span class="block text-sm text-ink-muted tabular-nums">2 free · frozen 21 Sep</span>
+                </span>
+                <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+              </a>
+              <button class="w-full h-12 text-sm font-semibold text-primary">Show 2 more</button>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Recipes</p>
+              <span class="ml-auto shrink-0 h-8 pl-3 pr-1 rounded-full bg-primary-soft text-primary text-sm font-medium inline-flex items-center gap-1">Lunch<svg class="size-6 p-1 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></span>
+            </div>
+            <div class="mt-2 rounded-card bg-surface border border-line divide-y divide-line">
+              <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+                <span class="w-1 self-stretch rounded-full bg-fish"></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block font-semibold">Tuna niçoise salad</span>
+                  <span class="block text-sm text-ink-muted tabular-nums">25 min · 450 kcal · 32g protein</span>
+                  <span class="block text-sm text-ink-subtle">Serves 2</span>
+                </span>
+                <svg class="size-6 fill-none stroke-primary stroke-2"><use href="#i-plus"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">D · Adding a meal: leftovers first</p><p class="text-ink-muted mt-1">The recipe picker (meal plans E) starts with what's waiting to be eaten: <b>Leftovers</b> not yet planned from earlier cooks in this plan and the plan before, and <b>In the freezer</b>, both oldest first (the first one, then "Show N more"). Both sections hide when empty, and while searching they show only matches. They ignore the meal filter: yesterday's dinner is a fine lunch. Fridge leftovers that will be 2 or more days old by the meal say so in amber, as food safety advice is to eat them within 2 days. Tapping one adds it as a leftovers meal (portions as in C) and goes back, with a toast and Undo.</p></figcaption>
+    </figure>
+
+    <!-- E. Leftovers entry sheet -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="mt-3 text-sm text-ink-muted">Wed 14 Oct · Lunch</p>
+          <p class="font-display text-[22px] leading-7 font-semibold mt-0.5">Lemony tuna, tomato &amp; caper one-pot pasta</p>
+          <a class="mt-3 flex items-center gap-3 rounded-control bg-surface-2 px-3 min-h-12">
+            <svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-leftovers"/></svg>
+            <span class="flex-1 text-sm">Leftovers from <b>Mon 12 dinner</b></span>
+            <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+          </a>
+
+          <div class="mt-4 flex items-center justify-between">
+            <div><p class="font-medium">Portions each</p><p class="text-sm text-ink-muted">2 people × 1 = 2, all that's left</p></div>
+            <div class="flex items-center rounded-full border border-line bg-surface-2">
+              <button class="size-11 grid place-items-center" aria-label="Fewer portions"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="w-10 text-center text-lg font-semibold tabular-nums">1</span>
+              <button class="size-11 grid place-items-center text-ink-subtle" aria-label="More portions" disabled><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-card bg-surface-2 p-3">
+            <div class="flex items-center gap-2"><p class="text-xs text-ink-muted">Each person gets</p><span class="inline-flex items-center gap-1 h-6 px-2 rounded-full bg-surface text-xs font-medium"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>Printed</span></div>
+            <p class="mt-1 tabular-nums"><span class="text-2xl font-semibold">672</span> <span class="text-ink-muted">kcal</span></p>
+            <p class="text-sm text-ink-muted tabular-nums">Protein <b class="text-ink">29g</b> · Carbs <b class="text-ink">83g</b> · Fat <b class="text-ink">23g</b></p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipe</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-move"/></svg>Move</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium text-danger"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-trash"/></svg>Remove</button>
+          </div>
+          <button class="mt-3 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Done</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">E · A leftovers meal</p><p class="text-ink-muted mt-1">The same sheet, with where it comes from in place of the leftovers box: tap it to open the cook (B) or the freezer item (I). The "+" stops at what's left. Recipe opens the recipe page as usual (useful for reheating notes). Move only offers meals after the cook. Remove puts the servings back as left over (or back in the freezer), with Undo. From the freezer it reads "From the freezer · frozen 21 Sep".</p></figcaption>
+    </figure>
+
+    <!-- F. Freeze -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-[22px] font-semibold mt-3">Freeze the leftovers</p>
+          <p class="text-sm text-ink-muted truncate">Smoky beef &amp; bean chilli · Tue 13 dinner</p>
+
+          <div class="mt-4 flex items-center justify-between">
+            <div><p class="font-medium">Servings</p><p class="text-sm text-ink-muted">4 not planned</p></div>
+            <div class="flex items-center rounded-full border border-line bg-surface-2">
+              <button class="size-11 grid place-items-center" aria-label="Fewer servings"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="w-10 text-center text-lg font-semibold tabular-nums">4</span>
+              <button class="size-11 grid place-items-center text-ink-subtle" aria-label="More servings" disabled><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <p class="mt-4 text-sm text-ink-muted">They go on the freezer list on Tue 13 Oct, after dinner.</p>
+
+          <div class="mt-3 rounded-card bg-surface-2 p-3 text-sm">
+            <p class="text-xs text-ink-muted">From the recipe</p>
+            <p class="mt-1">Freezes well for up to 3 months. Defrost overnight in the fridge and reheat until piping hot.</p>
+          </div>
+
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-snow"/></svg>Freeze 4 servings</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+
+          <div class="mt-6 pt-4 border-t border-dashed border-line">
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-subtle">If the recipe says it doesn't freeze</p>
+            <div class="mt-2 rounded-card border border-warning/40 bg-warning-soft p-3 text-sm">
+              <p class="font-semibold text-warning flex items-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-alert"/></svg>The recipe says this doesn't freeze well</p>
+              <p class="mt-0.5 text-ink">You can still freeze it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">F · Freeze the leftovers</p><p class="text-ink-muted mt-1">"Freeze" on a cook (B). Servings start at all that isn't planned, in halves down to ½. They count as in the freezer from the day of the cook, so a meal later that day or after can be planned from them (on the list before then they say "Going in Tue 13", H). The recipe's storage notes show when it has any; when its <code>storage.freezable</code> is false the amber note shows instead, without stopping you. Freezing adds "4 to freeze" to the cook (A); its row in B opens this sheet again to change or undo it.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ The freezer ============ -->
+<section>
+  <h2 class="font-display text-2xl font-semibold">The freezer</h2>
+  <p class="text-ink-muted mt-1 max-w-3xl">The freezer lives on the Plans tab, since that's where it's used. It's the household's: anyone in it sees and changes the same list.</p>
+  <div class="mt-5 flex flex-wrap gap-8">
+
+    <!-- G. Plan list with freezer -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="px-5 pt-5 pb-3">
+          <h1 class="font-display text-[28px] font-semibold">Plans</h1>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 space-y-3">
+          <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">This week</p>
+          <a class="block rounded-card bg-surface border border-line p-4">
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <h3 class="font-display text-xl font-semibold leading-snug">This week</h3>
+                <p class="text-sm text-ink-muted mt-0.5">Mon 12 – Sun 18 Oct · 2 people</p>
+              </div>
+              <svg class="size-5 mt-1 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </div>
+            <div class="mt-3 grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-ink-muted">
+              <div><span class="block h-7 rounded-md bg-primary text-on-primary grid place-items-center text-xs font-semibold">2</span>M</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">1</span>T</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">2</span>W</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">2</span>T</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">1</span>F</div>
+              <div><span class="block h-7 rounded-md bg-primary-soft text-primary grid place-items-center text-xs font-semibold">1</span>S</div>
+              <div><span class="block h-7 rounded-md border border-dashed border-line"></span>S</div>
+            </div>
+            <p class="mt-3 text-sm text-ink-muted tabular-nums"><span class="text-ink font-medium">9 meals</span> · ~1,010 kcal a day each</p>
+          </a>
+
+          <a class="flex items-center gap-3 rounded-card bg-surface border border-line px-4 min-h-16 py-3">
+            <span class="size-10 rounded-full bg-surface-2 grid place-items-center"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-snow"/></svg></span>
+            <span class="flex-1 min-w-0">
+              <span class="block font-semibold">Freezer</span>
+              <span class="block text-sm text-ink-muted tabular-nums">7 servings · 4 going in Tue</span>
+            </span>
+            <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+          </a>
+
+          <p class="pt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Coming up</p>
+          <a class="block rounded-card bg-surface border border-line p-4">
+            <div class="flex items-start gap-3">
+              <div class="flex-1">
+                <h3 class="font-display text-xl font-semibold leading-snug">Half term with Grandma</h3>
+                <p class="text-sm text-ink-muted mt-0.5">Mon 19 – Sun 25 Oct · 3 people</p>
+              </div>
+              <svg class="size-5 mt-1 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </div>
+            <p class="mt-2 text-sm text-ink-muted"><span class="text-ink font-medium">2 meals</span> · 5 days empty</p>
+          </a>
+
+          <p class="pt-2 text-xs font-semibold uppercase tracking-wider text-ink-muted">Past</p>
+          <div class="rounded-card bg-surface border border-line divide-y divide-line">
+            <a class="flex items-center gap-3 px-4 min-h-14 py-2.5"><span class="flex-1"><span class="block font-semibold">Week of 5 Oct</span><span class="block text-sm text-ink-muted">5 – 11 Oct · 11 meals</span></span><svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg></a>
+          </div>
+        </div>
+        <button class="absolute right-5 bottom-28 h-12 pl-4 pr-5 rounded-full bg-ink text-bg font-semibold inline-flex items-center gap-2 shadow-xl"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg>New plan</button>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">G · The Plans tab with the freezer</p><p class="text-ink-muted mt-1">A Freezer row sits under the current plans (meal plans A), saying what's in it now and what's on its way. It's always there, so it can be found to add something by hand; empty, it says "Nothing in the freezer". On wide screens it's the same row above the plan list.</p></figcaption>
+    </figure>
+
+    <!-- H. Freezer list -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl relative">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back to plans"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold">Freezer</p>
+            <p class="text-sm text-ink-muted">7 servings of 2 recipes</p>
+          </div>
+        </div>
+        <div class="flex-1 overflow-hidden px-5 pt-4 space-y-4">
+          <div class="rounded-card bg-surface border border-line divide-y divide-line">
+            <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+              <span class="w-1 self-stretch rounded-full bg-meat"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Chicken, chorizo &amp; butter bean stew</span>
+                <span class="block text-sm text-ink-muted tabular-nums">Frozen 21 Sep · 3 weeks ago</span>
+                <span class="mt-1 h-6 px-2 rounded-full border border-line text-ink-muted text-xs font-semibold inline-flex items-center gap-1"><svg class="size-3.5 fill-none stroke-current stroke-[2.5]"><use href="#i-check"/></svg>2 for Thu 15 dinner</span>
+              </span>
+              <span class="text-right shrink-0"><span class="block text-xl font-semibold tabular-nums">4</span><span class="block text-xs text-ink-muted">servings</span></span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+              <span class="w-1 self-stretch rounded-full bg-veg"></span>
+              <span class="flex-1 min-w-0">
+                <span class="block font-semibold">Leek &amp; potato soup</span>
+                <span class="block text-sm text-ink-muted tabular-nums">Frozen 4 Oct · 1 week ago</span>
+              </span>
+              <span class="text-right shrink-0"><span class="block text-xl font-semibold tabular-nums">3</span><span class="block text-xs text-ink-muted">servings</span></span>
+            </a>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-ink-muted">Going in</p>
+            <div class="mt-2 rounded-card border border-dashed border-line divide-y divide-line">
+              <a class="flex items-center gap-3 px-4 py-3 min-h-16">
+                <span class="w-1 self-stretch rounded-full bg-meat"></span>
+                <span class="flex-1 min-w-0">
+                  <span class="block font-semibold">Smoky beef &amp; bean chilli</span>
+                  <span class="block text-sm text-ink-muted tabular-nums">Tue 13 Oct · from This week's dinner</span>
+                </span>
+                <span class="text-right shrink-0"><span class="block text-xl font-semibold tabular-nums text-ink-muted">4</span><span class="block text-xs text-ink-muted">servings</span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <button class="absolute right-5 bottom-28 h-12 pl-4 pr-5 rounded-full bg-ink text-bg font-semibold inline-flex items-center gap-2 shadow-xl"><svg class="size-5 fill-none stroke-current stroke-[2.5]"><use href="#i-plus"/></svg>Add to freezer</button>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">H · The freezer</p><p class="text-ink-muted mt-1">What's in it, oldest first, so the oldest gets eaten first: the recipe, when it went in, how many servings and any planned meals eating them. Servings frozen from a plan that hasn't reached that day yet are under "Going in", dashed. Planned servings leave the freezer once the meal's day has passed; if they weren't eaten, change the count (I). Each frozen batch is its own row, so two chillis frozen a month apart stay apart. "Add to freezer" adds by hand (J). On wide screens the list is capped at <code>max-w-3xl</code>, as the library.</p></figcaption>
+    </figure>
+
+    <!-- I. Freezer item sheet -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="mt-3 text-sm text-ink-muted">Frozen Mon 21 Sep · from Week of 21 Sep, Mon dinner</p>
+          <p class="font-display text-[22px] leading-7 font-semibold mt-0.5">Chicken, chorizo &amp; butter bean stew</p>
+
+          <div class="mt-4 flex items-center justify-between">
+            <div><p class="font-medium">In the freezer</p><p class="text-sm text-ink-muted">Fix the count if it's wrong</p></div>
+            <div class="flex items-center rounded-full border border-line bg-surface-2">
+              <button class="size-11 grid place-items-center" aria-label="Fewer servings"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+              <span class="w-10 text-center text-lg font-semibold tabular-nums">4</span>
+              <button class="size-11 grid place-items-center" aria-label="More servings"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+
+          <div class="mt-4 rounded-card border border-line">
+            <a class="flex items-center gap-3 px-3 min-h-12">
+              <svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-calendar"/></svg>
+              <span class="flex-1"><b>2</b> for Thu 15 dinner</span>
+              <svg class="size-5 fill-none stroke-ink-subtle stroke-2"><use href="#i-chevron-right"/></svg>
+            </a>
+            <p class="px-3 py-2.5 border-t border-line text-sm text-ink-muted">2 not planned</p>
+          </div>
+
+          <div class="mt-3 rounded-card bg-surface-2 p-3 text-sm">
+            <p class="text-xs text-ink-muted">From the recipe</p>
+            <p class="mt-1">Freeze for up to 3 months. Defrost in the fridge overnight.</p>
+          </div>
+
+          <div class="mt-4 grid grid-cols-2 gap-2">
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-calendar"/></svg>Plan it</button>
+            <button class="h-14 rounded-control border border-line flex flex-col items-center justify-center text-sm font-medium"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-book"/></svg>Recipe</button>
+          </div>
+          <button class="mt-2 w-full h-12 rounded-control text-danger font-semibold">Take it all out</button>
+          <button class="mt-2 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Done</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">I · Something in the freezer</p><p class="text-ink-muted mt-1">Tapping a freezer row. The count is a stepper that saves as you tap, in halves: lower it when some were eaten outside a plan or thrown away, raise it to correct. It can't go below what's planned (it says so). <b>Plan it</b> opens the Add to plan grid (C) for any current or coming plan. <b>Take it all out</b> removes the row, with Undo; if any servings are planned it asks first, and those meals become ordinary cooks. Where it came from is shown when it came from a plan.</p></figcaption>
+    </figure>
+
+    <!-- J. Add by hand -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface px-5 pt-3 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <div class="mt-3 flex items-center justify-between">
+            <p class="font-display text-[22px] font-semibold">Add to freezer</p>
+            <button class="size-11 -mr-2 rounded-full grid place-items-center" aria-label="Close"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="mt-3 space-y-5">
+            <div>
+              <span class="text-sm font-medium">Recipe</span>
+              <button class="mt-1.5 w-full min-h-12 px-4 py-2 rounded-control bg-surface-2 border border-line text-[17px] flex items-center gap-3 text-left">
+                <span class="w-1 self-stretch rounded-full bg-veg"></span>
+                <span class="flex-1">Leek &amp; potato soup</span>
+                <svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-chevron-right"/></svg>
+              </button>
+            </div>
+            <div class="flex items-center justify-between">
+              <div><p class="font-medium">Servings</p><p class="text-sm text-ink-muted">The recipe makes 6</p></div>
+              <div class="flex items-center rounded-full border border-line bg-surface-2">
+                <button class="size-11 grid place-items-center" aria-label="Fewer servings"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-minus"/></svg></button>
+                <span class="w-10 text-center text-lg font-semibold tabular-nums">3</span>
+                <button class="size-11 grid place-items-center" aria-label="More servings"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg></button>
+              </div>
+            </div>
+            <label class="block">
+              <span class="text-sm font-medium">Frozen on</span>
+              <span class="mt-1.5 w-full h-12 px-4 rounded-control bg-surface-2 border border-line text-[17px] flex items-center justify-between">Today, Monday 12 October<svg class="size-5 fill-none stroke-ink-muted stroke-2"><use href="#i-calendar"/></svg></span>
+            </label>
+          </div>
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold">Add 3 servings</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">J · Add to freezer by hand</p><p class="text-ink-muted mt-1">For batch cooking outside a plan, or what was already in the freezer when you started. Recipe opens the recipe picker (meal plans E, without the meal chip); it's filled in when opened from the recipe page's ⋯ menu ("Add to freezer…"). Servings start at the recipe's own and go from ½ to 50 in halves. Frozen on is today unless changed, and can't be in the future. It's added as its own row in H with a toast.</p></figcaption>
+    </figure>
+
+    <!-- K. Empty freezer -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[800px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-bg flex flex-col shadow-xl">
+        <div class="px-3 pt-3 flex items-center gap-1">
+          <button class="size-11 rounded-full grid place-items-center" aria-label="Back to plans"><svg class="size-6 fill-none stroke-current stroke-2"><use href="#i-arrow-left"/></svg></button>
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-[22px] leading-7 font-semibold">Freezer</p>
+          </div>
+        </div>
+        <div class="flex-1 px-8 pt-24 text-center">
+          <span class="mx-auto size-16 rounded-full bg-surface-2 grid place-items-center"><svg class="size-8 fill-none stroke-current stroke-2"><use href="#i-snow"/></svg></span>
+          <p class="font-display text-[22px] font-semibold mt-5">Nothing in the freezer</p>
+          <p class="text-ink-muted mt-2">Freeze leftovers from a plan, or add something you've batch-cooked. Then plan meals from it.</p>
+          <button class="mt-6 w-full h-12 rounded-control bg-primary text-on-primary font-semibold inline-flex items-center justify-center gap-2"><svg class="size-5 fill-none stroke-current stroke-2"><use href="#i-plus"/></svg>Add to freezer</button>
+        </div>
+        <!-- include:plans-tabbar -->
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">K · Empty freezer</p><p class="text-ink-muted mt-1">As the other empty states: one clear action. The snowflake stays neutral (no tomato), since there's no freezer colour in foundations and the category blues mean fish.</p></figcaption>
+    </figure>
+
+    <!-- L. Remove a cook with leftovers -->
+    <figure class="w-[390px] max-w-full">
+      <div class="h-[560px] rounded-[2.5rem] border-[10px] border-ink overflow-hidden bg-ink/40 flex flex-col justify-end shadow-xl">
+        <div class="rounded-t-3xl bg-surface p-5 pb-6">
+          <div class="mx-auto w-10 h-1.5 rounded-full bg-line"></div>
+          <p class="font-display text-xl font-semibold mt-4">Remove Tue dinner?</p>
+          <p class="text-ink-muted mt-1">Its leftovers are planned for Thu 15 lunch, and 4 servings are going in the freezer. Removing the chilli removes those too.</p>
+          <button class="mt-5 w-full h-12 rounded-control bg-danger text-on-danger font-semibold">Remove all</button>
+          <button class="mt-2 w-full h-12 rounded-control font-semibold">Cancel</button>
+        </div>
+      </div>
+      <figcaption class="mt-4 text-sm"><p class="font-semibold text-base">L · Removing a cook whose leftovers are planned</p><p class="text-ink-muted mt-1">Foundations' confirmation sheet. Without planned or frozen leftovers, Remove works as now (straight away, with Undo). The same applies when a plan is deleted, shortened or has its dates changed: the confirmations (meal plans K and L) add "and the leftovers planned from it" when that would leave a leftovers meal without its cook. Servings already in the freezer (the day has passed) stay there, since they really are.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2 class="font-display text-2xl font-semibold">Other details settled here</h2>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li><b class="text-ink">A leftovers meal is for everyone in the plan</b>, like any meal: people × portions each. Half portions cover one serving shared or a light lunch; a meal for just one person isn't covered here.</li>
+    <li><b class="text-ink">Leftovers can come from this plan or the plan just before it</b> (the latest plan that started earlier). Nothing older: anything that old should be in the freezer.</li>
+    <li><b class="text-ink">Copy to a new plan</b> (meal plans J) copies leftovers meals along with their cooks in the same plan. Leftovers from the plan before and meals from the freezer aren't copied, and the toast says how many were left out.</li>
+    <li><b class="text-ink">Nutrition</b> (meal plans H) counts leftovers meals like any other, including ones from the freezer or last week. The plan list's "N meals" counts them too.</li>
+    <li><b class="text-ink">"Cooked today"</b> on the recipe page isn't touched by any of this; the cooking history stays what people mark.</li>
+  </ul>
+</section>
+
+<section class="pb-10">
+  <h2 class="font-display text-2xl font-semibold">Decisions</h2>
+  <p class="text-sm text-ink-muted mt-1">Approved by Kris on 18 October 2026, going with every recommendation.</p>
+  <ul class="mt-3 list-disc pl-5 space-y-2 text-ink-muted max-w-3xl">
+    <li>The freezer is a row on the Plans tab that opens its own page (G, H), not a sixth tab.</li>
+    <li>The freezer keeps itself up to date: servings go in on the cook's day and come out once the planned meal's day has passed, with no ticking off. When real life differs, fix the count (I).</li>
+    <li>Fridge leftovers that will be 2 or more days old by the meal get an amber warning in the picker (D), but can still be planned.</li>
+    <li>Leftovers can come from this plan or the plan just before it, nothing older.</li>
+    <li>Adding to the freezer by hand (J) is in, from the freezer page and the recipe page's ⋯ menu.</li>
+    <li>Split in two: PP-180 builds leftovers in a plan (A to E and L, without the freezer parts); PP-189 builds the freezer (F to K, and the freezer parts of B, D, E and L), after it.</li>
+  </ul>
+</section>
+</main>
+</body>
+</html>
