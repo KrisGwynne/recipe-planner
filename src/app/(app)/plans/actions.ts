@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import {
   addEntry,
+  addLeftovers,
   copyPlan,
   createPlan,
   deletePlan,
@@ -89,9 +90,9 @@ export async function deletePlanAction(planId: string): Promise<void> {
   redirect("/plans");
 }
 
-function changed(planId: string) {
-  revalidatePath("/plans");
-  revalidatePath(`/plans/${planId}`);
+// A change to one plan can change another's leftovers (PP-180), so every plan page is refreshed.
+function changed() {
+  revalidatePath("/plans", "layout");
 }
 
 /** Adds a recipe to a day and meal (design E and G), 1 portion each unless given. The new entry's id, or null. */
@@ -101,7 +102,22 @@ export async function addEntryAction(
 ): Promise<string | null> {
   const { ctx } = await requireHousehold();
   const id = await addEntry(ctx, planId, entry);
-  if (id) changed(planId);
+  if (id) changed();
+  return id;
+}
+
+/**
+ * Leftovers from an earlier cook for a day and meal (leftovers design C and
+ * D), 1 portion each or less unless given. The new entry's id, or null when
+ * it isn't allowed.
+ */
+export async function addLeftoversAction(
+  planId: string,
+  entry: { dayIndex: number; slot: Slot; cookId: string; portionsPerPerson?: number },
+): Promise<string | null> {
+  const { ctx } = await requireHousehold();
+  const id = await addLeftovers(ctx, planId, entry);
+  if (id) changed();
   return id;
 }
 
@@ -109,7 +125,7 @@ export async function addEntryAction(
 export async function setPortionsAction(planId: string, entryId: string, portionsPerPerson: number): Promise<boolean> {
   const { ctx } = await requireHousehold();
   const done = await setEntryPortions(ctx, entryId, portionsPerPerson);
-  if (done) changed(planId);
+  if (done) changed();
   return done;
 }
 
@@ -117,7 +133,7 @@ export async function setPortionsAction(planId: string, entryId: string, portion
 export async function moveEntryAction(planId: string, entryId: string, to: { dayIndex: number; slot: Slot }): Promise<boolean> {
   const { ctx } = await requireHousehold();
   const done = await moveEntry(ctx, entryId, to);
-  if (done) changed(planId);
+  if (done) changed();
   return done;
 }
 
@@ -125,7 +141,7 @@ export async function moveEntryAction(planId: string, entryId: string, to: { day
 export async function removeEntryAction(planId: string, entryId: string): Promise<boolean> {
   const { ctx } = await requireHousehold();
   const done = await removeEntry(ctx, entryId);
-  if (done) changed(planId);
+  if (done) changed();
   return done;
 }
 

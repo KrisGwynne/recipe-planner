@@ -6,7 +6,7 @@ import { buttonClasses } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import { formatDay, meals } from "@/plans/plan";
 import { deletePlanAction } from "../actions";
-import { PlanSheet, type PlanDetails } from "../plan-sheet";
+import { PlanSheet, leftoversMeals, type PlanDetails } from "../plan-sheet";
 
 type Open = "menu" | "edit" | "copy" | "delete" | null;
 
@@ -14,22 +14,28 @@ const row = "w-full min-h-13 py-3 flex items-center gap-3 text-left font-medium"
 
 /**
  * The plan's ⋯ (design J): edit (K), copy to a new plan (C, filled in) and
- * delete (L). "Compare with another plan" waits for PP-174.
+ * delete (L). "Compare with another plan" waits for PP-174. Both edit and
+ * delete warn when leftovers meals in another plan would go too (leftovers
+ * design L).
  */
 export function PlanMenu({
   plan,
   mealsByDay,
+  leftoversElsewhere,
   copyStart,
   today,
 }: {
   plan: PlanDetails & { id: string };
   mealsByDay: number[];
+  /** Per day, leftovers meals in other plans eating from that day's cooks. */
+  leftoversElsewhere: number[];
   copyStart: string;
   today: string;
 }) {
   const [open, setOpen] = useState<Open>(null);
   const [deleting, startDelete] = useTransition();
   const mealCount = mealsByDay.reduce((sum, n) => sum + n, 0);
+  const leftoverCount = leftoversElsewhere.reduce((sum, n) => sum + n, 0);
   const close = () => setOpen(null);
 
   function remove() {
@@ -87,7 +93,7 @@ export function PlanMenu({
       )}
 
       {open === "edit" && (
-        <PlanSheet mode={{ kind: "edit", planId: plan.id, mealsByDay }} initial={plan} today={today} onClose={close} />
+        <PlanSheet mode={{ kind: "edit", planId: plan.id, mealsByDay, leftoversElsewhere }} initial={plan} today={today} onClose={close} />
       )}
 
       {open === "copy" && (
@@ -101,7 +107,12 @@ export function PlanMenu({
 
       {open === "delete" && (
         <Sheet title={`Delete "${plan.name}"?`} onClose={close}>
-          <p className="text-ink-muted">It has {meals(mealCount)} planned. The recipes stay in your library.</p>
+          <p className="text-ink-muted">
+            It has {meals(mealCount)} planned.
+            {leftoverCount > 0 &&
+              ` ${leftoversMeals(leftoverCount)} in another plan ${leftoverCount === 1 ? "eats" : "eat"} from it and will go too.`}{" "}
+            The recipes stay in your library.
+          </p>
           <button
             type="button"
             onClick={remove}

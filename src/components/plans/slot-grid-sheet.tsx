@@ -6,19 +6,36 @@ import { categoryDotClasses } from "@/components/ui/badge";
 import { buttonClasses } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import { cx } from "@/lib/cx";
+import { Stepper } from "@/components/ui/stepper";
+import { mostPortions, startingPortions } from "@/plans/leftovers";
 import { leftOver, leftovers } from "@/plans/nutrition";
-import { SLOTS, formatDay, formatPortions, formatRange, mealName, planDay, servingsPlanned, slotLabels, type Slot } from "@/plans/plan";
+import {
+  MIN_PORTIONS,
+  SLOTS,
+  formatDay,
+  formatPortions,
+  formatRange,
+  mealName,
+  planDay,
+  servingsPlanned,
+  slotLabels,
+  type Slot,
+} from "@/plans/plan";
 import type { PlanGrid } from "@/plans/plan-grid";
 import { planGridAction } from "@/app/(app)/plans/actions";
 
 export type PlanOption = { id: string; name: string; startDate: string; days: number };
-type Cell = { dayIndex: number; slot: Slot };
+export type Cell = { dayIndex: number; slot: Slot };
 
 /**
  * "Add to plan" from a recipe page and "Move to…" from a planned recipe
  * (meal plans design G): a grid of the plan's days and meals with a dot per
  * recipe already there. Tap a cell, then the button. With `plans`, the plan
  * button switches between them, loading each plan's grid.
+ *
+ * "Plan the leftovers" (leftovers design C) uses it too: `blocked` greys out
+ * the meals up to the cook, `marker` labels the cook's cell, and with
+ * `leftovers` a portions-each stepper replaces the servings line.
  */
 export function SlotGridSheet({
   title,
@@ -29,6 +46,9 @@ export function SlotGridSheet({
   boldSlots = [],
   current,
   portions,
+  blocked,
+  marker,
+  leftovers: fromLeftovers,
   onChoose,
   onClose,
 }: {
@@ -44,7 +64,13 @@ export function SlotGridSheet({
   current?: Cell;
   /** What the recipe serves and the portions each it's (or will be) planned at, for the leftovers line. */
   portions: { serves: number; each: number };
-  onChoose: (grid: PlanGrid, cell: Cell) => Promise<void>;
+  /** Meals that can't be chosen (before a leftovers meal's cook, or after a cook's leftovers). */
+  blocked?: (grid: PlanGrid, cell: Cell) => boolean;
+  /** A word in a cell, such as "Cook". */
+  marker?: (grid: PlanGrid, cell: Cell) => string | undefined;
+  /** Planning leftovers: the servings the cook has left, shared out by portions each. */
+  leftovers?: { left: number };
+  onChoose: (grid: PlanGrid, cell: Cell, portionsEach: number) => Promise<void>;
   onClose: () => void;
 }) {
   const [grid, setGrid] = useState(initialGrid);
@@ -53,6 +79,10 @@ export function SlotGridSheet({
   const [loading, startLoading] = useTransition();
   const [saving, startSaving] = useTransition();
   const [failed, setFailed] = useState(false);
+  // Portions each for leftovers, starting afresh for each plan's people.
+  const [each, setEach] = useState<{ planId: string; value: number } | null>(null);
+  const start = grid && fromLeftovers ? startingPortions(fromLeftovers.left, grid.people) : null;
+  const portionsEach = fromLeftovers ? (each && each.planId === grid?.id ? each.value : start) : portions.each;
 
   function fetchGrid(planId: string) {
     startLoading(async () => {
@@ -77,8 +107,8 @@ export function SlotGridSheet({
   }, [first]);
 
   function choose() {
-    if (!grid || !selected) return;
-    startSaving(() => onChoose(grid, selected));
+    if (!grid || !selected || portionsEach === null) return;
+    startSaving(() => onChoose(grid, selected, portionsEach));
   }
 
   return (
@@ -90,7 +120,7 @@ export function SlotGridSheet({
           <button
             type="button"
             onClick={choose}
-            disabled={!selected || saving}
+            disabled={!selected || saving || portionsEach === null}
             className={buttonClasses("primary", "w-full")}
           >
             {selected ? `${verb} ${mealName(grid, selected.dayIndex, selected.slot)}` : "Choose a day and meal"}
@@ -146,8 +176,25 @@ export function SlotGridSheet({
         <p className="mt-6 text-center text-ink-muted">That plan no longer exists.</p>
       ) : (
         <>
-          <Grid grid={grid} boldSlots={boldSlots} current={current} selected={selected} onSelect={setSelected} />
-          <ServingsLine serves={portions.serves} people={grid.people} each={portions.each} />
+          <Grid
+            grid={grid}
+            boldSlots={boldSlots}
+            current={current}
+            selected={selected}
+            blocked={blocked}
+            marker={marker}
+            onSelect={setSelected}
+          />
+          {fromLeftovers ? (
+            <LeftoversPortions
+              left={fromLeftovers.left}
+              people={grid.people}
+              each={portionsEach}
+              onChange={(value) => setEach({ planId: grid.id, value })}
+            />
+          ) : (
+            <ServingsLine serves={portions.serves} people={grid.people} each={portions.each} />
+          )}
         </>
       )}
     </Sheet>
@@ -159,12 +206,16 @@ function Grid({
   boldSlots,
   current,
   selected,
+  blocked,
+  marker,
   onSelect,
 }: {
   grid: PlanGrid;
   boldSlots: readonly string[];
   current?: Cell;
   selected: Cell | null;
+  blocked?: (grid: PlanGrid, cell: Cell) => boolean;
+  marker?: (grid: PlanGrid, cell: Cell) => string | undefined;
   onSelect: (cell: Cell) => void;
 }) {
   return (
@@ -194,25 +245,34 @@ function Grid({
                 const dots = grid.cells.filter((c) => c.dayIndex === dayIndex && c.slot === slot);
                 const isSelected = selected?.dayIndex === dayIndex && selected.slot === slot;
                 const isCurrent = current?.dayIndex === dayIndex && current.slot === slot;
+                const isBlocked = blocked?.(grid, { dayIndex, slot }) ?? false;
+                const label = marker?.(grid, { dayIndex, slot });
                 const planned = dots.length === 0 ? "nothing planned" : dots.length === 1 ? "1 recipe planned" : `${dots.length} recipes planned`;
                 return (
                   <td key={slot} className="p-0.5">
                     <button
                       type="button"
                       onClick={() => onSelect({ dayIndex, slot })}
+                      disabled={isBlocked}
                       aria-pressed={isSelected}
-                      aria-label={`${formatDay(date)}, ${slot}: ${isCurrent ? "here now" : planned}`}
+                      aria-label={`${formatDay(date)}, ${slot}: ${label ? label.toLowerCase() : isCurrent ? "here now" : planned}`}
                       className={cx(
                         "w-full h-10 rounded-lg grid place-items-center focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-primary",
-                        isSelected
-                          ? "bg-primary text-on-primary"
-                          : dots.length > 0
-                            ? "bg-surface-2"
-                            : "border border-dashed border-line",
-                        isCurrent && !isSelected && "ring-2 ring-ink-subtle ring-inset",
+                        label
+                          ? "bg-ink text-bg text-[11px] font-semibold"
+                          : isSelected
+                            ? "bg-primary text-on-primary"
+                            : isBlocked
+                              ? "bg-surface-2 opacity-40"
+                              : dots.length > 0
+                                ? "bg-surface-2"
+                                : "border border-dashed border-line",
+                        isCurrent && !isSelected && !label && "ring-2 ring-ink-subtle ring-inset",
                       )}
                     >
-                      {isSelected ? (
+                      {label ? (
+                        label
+                      ) : isSelected ? (
                         <Icon name="check" className="size-5" strokeWidth={2.5} />
                       ) : (
                         <span className="flex gap-1" aria-hidden="true">
@@ -247,6 +307,58 @@ function ServingsLine({ serves, people, each }: { serves: number; people: number
         </>
       )}
     </p>
+  );
+}
+
+/**
+ * Portions each for leftovers (leftovers design C): "2 × 1 = 2 · 2 still
+ * left", up to what's left. When there isn't ½ each for this plan's people,
+ * it says so instead.
+ */
+function LeftoversPortions({
+  left,
+  people,
+  each,
+  onChange,
+}: {
+  left: number;
+  people: number;
+  each: number | null;
+  onChange: (value: number) => void;
+}) {
+  if (each === null) {
+    return (
+      <p className="mt-3 text-sm text-ink-muted" role="status">
+        {formatPortions(left)} left isn&apos;t enough for {people === 1 ? "1 person" : `${people} people`} to have ½ each.
+      </p>
+    );
+  }
+  const rest = left - servingsPlanned(people, each);
+  return (
+    <div className="mt-3">
+      <Stepper
+        label="Portions each"
+        hint={
+          <>
+            {people} × {formatPortions(each)} = {formatPortions(servingsPlanned(people, each))}
+            {rest > 0 ? (
+              <>
+                {" · "}
+                <span className="text-warning font-semibold">{formatPortions(rest)} still left</span>
+              </>
+            ) : (
+              ", all that's left"
+            )}
+          </>
+        }
+        value={each}
+        min={MIN_PORTIONS}
+        max={mostPortions(left, people)}
+        step={0.5}
+        format={formatPortions}
+        onChange={onChange}
+      />
+    </div>
   );
 }
 

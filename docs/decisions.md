@@ -468,3 +468,17 @@ Built from recipe design D and foundations' timer states. **The details the desi
 **The freezer keeps itself up to date** (Kris, 2026-10-18): frozen leftovers go in on the cook's day, and servings planned from it come out once the meal's day has passed, without anyone ticking them off. The count can be corrected by hand (not below what's planned), and an item taken out entirely. **Adding to the freezer by hand** is in (Kris, 2026-10-18), from the freezer page and the recipe page's ⋯ menu. Freezing shows the recipe's storage notes, or an amber note when `storage.freezable` is false, without stopping you.
 
 **Split into two tickets** (Kris, 2026-10-18): PP-180 builds leftovers in a plan; PP-189 (new) builds the freezer after it.
+
+## 2026-10-18: building leftovers in a plan (PP-180)
+
+**Decided on Claude's recommendations** (Kris, 2026-10-18: "go with your recommendations").
+
+**More people can leave leftovers over-planned.** Raising a plan's people (or copying it with more) isn't blocked when its cooks' leftovers are already planned: the cook shows an amber "1 more planned than left over" instead, until portions or plans are changed.
+
+**"Plan them" offers this plan and the plan that starts next**, matching "from this plan or the plan just before it".
+
+**A leftovers meal has no leftovers of its own**: it never shows a "left over" badge and can't be eaten from again.
+
+**"Cooked today" is unchanged**: the recipe page still offers it from a leftovers meal, and it's still up to you.
+
+**How it works.** `meal_plan_entries.leftovers_of` points a leftovers meal at its cook (migration 0008, additive); it keeps the cook's recipe, so nutrition and the plan list need no changes, and deleting the cook (or its plan, or the days it's on) deletes its leftovers meals by cascade. Each rule (earlier cook, this plan or the one before, never more than is left, a cook's portions and moves) is checked inside the one SQL statement that makes the change, since the Neon HTTP driver has no transactions (`src/data/plans.ts`). What a cook has left is the recipe's servings less its own and its leftovers meals', each counted with its own plan's people. `getPlan` gives each cook its `leftoversTo` and each leftovers meal its `leftoversOf`; `availableLeftovers` feeds the picker and `nextPlan` the Plan them sheet. The sums and labels are in `src/plans/leftovers.ts`. Copy to a new plan doesn't yet say how many leftovers meals it left out (the copy opens straight away).

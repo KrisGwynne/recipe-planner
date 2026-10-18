@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { Icon } from "@/components/icon";
-import { getPlan, requireHousehold } from "@/data";
+import { getPlan, nextPlan, requireHousehold } from "@/data";
 import { planAverage } from "@/plans/nutrition";
 import { addDays, formatRange, planEnd, today } from "@/plans/plan";
 import { PlanAverage } from "./plan-average";
@@ -26,13 +26,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PlanPage({ params }: Props) {
-  const plan = await findPlan((await params).id);
+  const { id } = await params;
+  const plan = await findPlan(id);
   if (!plan) notFound();
+  // For planning leftovers next week (leftovers design C).
+  const { ctx } = await requireHousehold();
+  const next = await nextPlan(ctx, plan.id);
   const todayDate = today();
   const average = planAverage(plan.entries, plan.days);
 
   const mealsByDay = Array.from({ length: plan.days }, (_, day) =>
     new Set(plan.entries.filter((e) => e.dayIndex === day).map((e) => e.slot)).size,
+  );
+
+  // Leftovers meals in other plans eating from each day's cooks, for the edit and delete warnings.
+  const leftoversElsewhere = Array.from({ length: plan.days }, (_, day) =>
+    plan.entries
+      .filter((e) => e.dayIndex === day)
+      .reduce((sum, e) => sum + e.leftoversTo.filter((m) => m.planId !== plan.id).length, 0),
   );
 
   return (
@@ -59,6 +70,7 @@ export default async function PlanPage({ params }: Props) {
         <PlanMenu
           plan={{ id: plan.id, name: plan.name, startDate: plan.startDate, days: plan.days, people: plan.people }}
           mealsByDay={mealsByDay}
+          leftoversElsewhere={leftoversElsewhere}
           copyStart={addDays(planEnd(plan), 1)}
           today={todayDate}
         />
@@ -72,6 +84,7 @@ export default async function PlanPage({ params }: Props) {
 
       <PlanBoard
         plan={{ id: plan.id, name: plan.name, startDate: plan.startDate, days: plan.days, people: plan.people }}
+        next={next}
         entries={plan.entries}
         today={todayDate}
       />

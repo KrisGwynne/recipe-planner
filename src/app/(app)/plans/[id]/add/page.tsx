@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPlan, listRecipes, requireHousehold } from "@/data";
+import { availableLeftovers, getPlan, listRecipes, requireHousehold } from "@/data";
 import { SLOTS, mealName, type Slot } from "@/plans/plan";
 import { RecipePicker } from "./recipe-picker";
 
@@ -14,7 +14,8 @@ export const metadata: Metadata = { title: "Add a recipe" };
 /**
  * Choosing a recipe for a day and meal (meal plans design E):
  * /plans/<id>/add?day=2&slot=lunch. The plan is found within the household,
- * and a day outside it or an unknown meal is a 404.
+ * and a day outside it or an unknown meal is a 404. Leftovers waiting to be
+ * eaten come first (leftovers design D).
  */
 export default async function AddRecipePage({ params, searchParams }: Props) {
   const { ctx } = await requireHousehold();
@@ -27,6 +28,8 @@ export default async function AddRecipePage({ params, searchParams }: Props) {
   if (!Number.isInteger(dayIndex) || dayIndex < 0 || dayIndex >= plan.days) notFound();
   if (typeof slot !== "string" || !(SLOTS as readonly string[]).includes(slot)) notFound();
 
+  const leftovers = await availableLeftovers(ctx, plan.id, { dayIndex, slot: slot as Slot });
+
   // "In this plan: Thu dinner" on each recipe already planned.
   const inPlan: Record<string, string[]> = {};
   for (const entry of plan.entries) {
@@ -37,11 +40,12 @@ export default async function AddRecipePage({ params, searchParams }: Props) {
 
   return (
     <RecipePicker
-      plan={{ id: plan.id, name: plan.name, startDate: plan.startDate }}
+      plan={{ id: plan.id, name: plan.name, startDate: plan.startDate, people: plan.people }}
       dayIndex={dayIndex}
       slot={slot as Slot}
       recipes={recipes}
       inPlan={inPlan}
+      leftovers={leftovers}
     />
   );
 }

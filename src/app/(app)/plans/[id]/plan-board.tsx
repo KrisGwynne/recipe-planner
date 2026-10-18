@@ -7,13 +7,17 @@ import { categoryDotClasses, categoryLabels, categoryOf } from "@/components/ui/
 import type { PlanEntry } from "@/data";
 import { cx } from "@/lib/cx";
 import { approx } from "@/lib/format";
-import { dayTotals, entryLine, entryNutrition, kcal, leftOver, leftovers, whole, type Totals } from "@/plans/nutrition";
+import { leftoversFor, mealLabel, overPlanned, unplanned } from "@/plans/leftovers";
+import { dayTotals, entryLine, entryNutrition, kcal, leftOver, whole, type Totals } from "@/plans/nutrition";
 import { SLOTS, formatDay, formatPortions, planDay, slotLabels, type Slot } from "@/plans/plan";
 import { browsingCategory } from "@/recipes/derive";
 import type { DietaryFlag } from "@/types/recipe";
 import { EntrySheet } from "./entry-sheet";
 
 export type BoardPlan = { id: string; name: string; startDate: string; days: number; people: number };
+
+/** The plan that starts next, for planning leftovers next week (leftovers design C). */
+export type NextPlan = BoardPlan | null;
 
 const focus = "focus-visible:outline-2 focus-visible:outline-primary";
 
@@ -29,7 +33,17 @@ export function addHref(planId: string, dayIndex: number, slot: Slot): string {
  * person's total, and each recipe its nutrition per person and any
  * leftovers (PP-172).
  */
-export function PlanBoard({ plan, entries, today }: { plan: BoardPlan; entries: PlanEntry[]; today: string }) {
+export function PlanBoard({
+  plan,
+  next,
+  entries,
+  today,
+}: {
+  plan: BoardPlan;
+  next: NextPlan;
+  entries: PlanEntry[];
+  today: string;
+}) {
   const [openId, setOpenId] = useState<string | null>(null);
   const open = entries.find((e) => e.id === openId);
   const days = Array.from({ length: plan.days }, (_, dayIndex) => ({
@@ -52,7 +66,17 @@ export function PlanBoard({ plan, entries, today }: { plan: BoardPlan; entries: 
       <div className="hidden md:block">
         <PlanGridView plan={plan} days={days} today={today} onOpen={setOpenId} />
       </div>
-      {open && <EntrySheet plan={plan} entry={open} entries={entries} onClose={() => setOpenId(null)} />}
+      {open && (
+        <EntrySheet
+          key={open.id}
+          plan={plan}
+          next={next}
+          entry={open}
+          entries={entries}
+          onOpen={setOpenId}
+          onClose={() => setOpenId(null)}
+        />
+      )}
     </>
   );
 }
@@ -203,7 +227,7 @@ function DayCard({
                       <span className="block font-semibold leading-snug">{entry.recipe.name}</span>
                       <span className="sr-only">{categoryLabels[categoryOfEntry(entry)]}</span>
                       <span className="block text-sm text-ink-muted tabular-nums">{entryLine(entry)}</span>
-                      <LeftOver plan={plan} entry={entry} className="mt-1 h-6 px-2" />
+                      <LeftoverBadges plan={plan} entry={entry} size="h-6 px-2" />
                     </span>
                   </button>
                 </li>
@@ -252,15 +276,34 @@ function DayTotal({ totals }: { totals: Totals }) {
   );
 }
 
-/** The amber "2 left over" when the people eating a recipe don't finish it (designs D and I). */
-function LeftOver({ plan, entry, className }: { plan: BoardPlan; entry: PlanEntry; className: string }) {
-  const n = leftovers(entry.recipe.serves, plan.people, entry.portionsPerPerson);
-  if (n === 0) return null;
+/**
+ * Where a recipe's leftovers stand (meal plans D and I, leftovers design A):
+ * a leftovers meal says where it's from; a cook says where its leftovers go
+ * ("2 for Wed lunch") and, in amber, what isn't planned or is over-planned.
+ */
+function LeftoverBadges({ plan, entry, size }: { plan: BoardPlan; entry: PlanEntry; size: string }) {
+  const chip = cx("rounded-full text-xs font-semibold inline-flex items-center gap-1", size);
+  if (entry.leftoversOf) {
+    return (
+      <span className={cx("mt-1", chip, "bg-surface-2 text-ink-muted")}>
+        <Icon name="leftovers" className="size-3.5 shrink-0" strokeWidth={2.5} />
+        Leftovers from {mealLabel(entry.leftoversOf, plan.id)}
+      </span>
+    );
+  }
+  const left = unplanned(entry, plan.people);
+  if (entry.leftoversTo.length === 0 && left === 0) return null;
   return (
-    <span
-      className={cx("rounded-full bg-warning-soft text-warning text-xs font-semibold inline-flex items-center", className)}
-    >
-      {leftOver(n)}
+    <span className="mt-1 flex flex-wrap gap-1.5">
+      {entry.leftoversTo.map((meal) => (
+        <span key={meal.entryId} className={cx(chip, "border border-line text-ink-muted")}>
+          <Icon name="check" className="size-3.5 shrink-0" strokeWidth={2.5} />
+          {leftoversFor(meal, plan.id)}
+        </span>
+      ))}
+      {left !== 0 && (
+        <span className={cx(chip, "bg-warning-soft text-warning")}>{left > 0 ? leftOver(left) : overPlanned(left)}</span>
+      )}
     </span>
   );
 }
@@ -369,7 +412,7 @@ function PlanGridView({
                               <span className="block text-xs text-ink-muted mt-1 tabular-nums">
                                 {formatPortions(entry.portionsPerPerson)} · {kcal(entryNutrition(entry))}
                               </span>
-                              <LeftOver plan={plan} entry={entry} className="mt-1 h-5 px-1.5" />
+                              <LeftoverBadges plan={plan} entry={entry} size="h-5 px-1.5" />
                             </span>
                           </button>
                         ))}

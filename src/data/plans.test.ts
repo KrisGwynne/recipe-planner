@@ -7,12 +7,15 @@ import type { PlanInput } from "@/plans/plan";
 import type { Recipe } from "@/types/recipe";
 import {
   addEntry,
+  addLeftovers,
+  availableLeftovers,
   copyPlan,
   createPlan,
   deletePlan,
   getPlan,
   listPlans,
   moveEntry,
+  nextPlan,
   recipePlanUses,
   removeEntry,
   setEntryPortions,
@@ -231,6 +234,171 @@ describe("entries", () => {
 
 // Acting as household A, nothing of household B's can be read, changed or
 // deleted by id, and B's recipes can't go into A's plans (PP-155, PP-170).
+describe("leftovers (PP-180)", () => {
+  // Tuna pasta serves 4: 2 people × 1 each leaves 2.
+  let plan: string;
+  let cook: string;
+
+  beforeEach(async () => {
+    plan = await createPlan(h.a, thisWeek);
+    cook = (await addEntry(h.a, plan, { dayIndex: 0, slot: "dinner", recipeId: tuna }))!;
+  });
+
+  async function entry(planId: string, id: string) {
+    return (await getPlan(h.a, planId))!.entries.find((e) => e.id === id)!;
+  }
+
+  it("plans leftovers from an earlier cook, 1 each, with the cook's recipe", async () => {
+    const meal = await addLeftovers(h.a, plan, { dayIndex: 2, slot: "lunch", cookId: cook });
+    expect(meal).not.toBeNull();
+    const eaten = await entry(plan, meal!);
+    expect(eaten).toMatchObject({
+      dayIndex: 2,
+      slot: "lunch",
+      portionsPerPerson: 1,
+      recipe: { id: tuna },
+      leftoversOf: { entryId: cook, planId: plan, date: "2026-10-12", slot: "dinner", left: 0 },
+      leftoversTo: [],
+    });
+    expect((await entry(plan, cook)).leftoversTo).toEqual([
+      { entryId: meal, planId: plan, date: "2026-10-14", dayIndex: 2, slot: "lunch", servings: 2 },
+    ]);
+    expect((await entry(plan, cook)).leftoversOf).toBeNull();
+  });
+
+  it("can't plan more than is left", async () => {
+    await addLeftovers(h.a, plan, { dayIndex: 1, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 });
+    // 1 left: everyone gets ½.
+    const second = await addLeftovers(h.a, plan, { dayIndex: 2, slot: "lunch", cookId: cook });
+    expect((await entry(plan, second!)).portionsPerPerson).toBe(0.5);
+    // Nothing left.
+    expect(await addLeftovers(h.a, plan, { dayIndex: 3, slot: "lunch", cookId: cook })).toBeNull();
+    expect(await addLeftovers(h.a, plan, { dayIndex: 3, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 })).toBeNull();
+  });
+
+  it("refuses a cook that isn't earlier, a leftovers meal as the cook, and a day outside the plan", async () => {
+    expect(await addLeftovers(h.a, plan, { dayIndex: 0, slot: "dinner", cookId: cook })).toBeNull();
+    expect(await addLeftovers(h.a, plan, { dayIndex: 0, slot: "lunch", cookId: cook })).toBeNull();
+    expect(await addLeftovers(h.a, plan, { dayIndex: 7, slot: "lunch", cookId: cook })).toBeNull();
+    const meal = await addLeftovers(h.a, plan, { dayIndex: 0, slot: "snack", cookId: cook, portionsPerPerson: 0.5 });
+    expect(meal).not.toBeNull();
+    expect(await addLeftovers(h.a, plan, { dayIndex: 1, slot: "lunch", cookId: meal!, portionsPerPerson: 0.5 })).toBeNull();
+  });
+
+  it("comes from this plan or the plan just before, not older or later ones", async () => {
+    const next = await createPlan(h.a, { ...thisWeek, name: "Next week", startDate: "2026-10-19" });
+    const after = await createPlan(h.a, { ...thisWeek, name: "Week after", startDate: "2026-10-26" });
+    expect(await nextPlan(h.a, plan)).toMatchObject({ id: next, name: "Next week", startDate: "2026-10-19", days: 7, people: 2 });
+    expect(await nextPlan(h.a, after)).toBeNull();
+
+    expect(await addLeftovers(h.a, after, { dayIndex: 0, slot: "lunch", cookId: cook })).toBeNull();
+    const meal = await addLeftovers(h.a, next, { dayIndex: 0, slot: "lunch", cookId: cook });
+    expect((await entry(next, meal!)).leftoversOf).toMatchObject({ entryId: cook, planId: plan, date: "2026-10-12" });
+    // The cook's plan lists it too, by its own date.
+    expect((await entry(plan, cook)).leftoversTo).toEqual([
+      { entryId: meal, planId: next, date: "2026-10-19", dayIndex: 0, slot: "lunch", servings: 2 },
+    ]);
+
+    // A later plan's cook can't feed an earlier plan.
+    const later = (await addEntry(h.a, next, { dayIndex: 0, slot: "breakfast", recipeId: tuna }))!;
+    expect(await addLeftovers(h.a, plan, { dayIndex: 6, slot: "dinner", cookId: later })).toBeNull();
+  });
+
+  it("counts each plan's own people", async () => {
+    // A 1-person plan next week takes 1 serving at 1 each, leaving 1.
+    const next = await createPlan(h.a, { ...thisWeek, startDate: "2026-10-19", people: 1 });
+    const meal = await addLeftovers(h.a, next, { dayIndex: 0, slot: "lunch", cookId: cook });
+    expect((await entry(next, meal!)).leftoversOf?.left).toBe(1);
+  });
+
+  it("lists what's left to plan before a meal, oldest first", async () => {
+    const tofu = (await addEntry(h.a, plan, { dayIndex: 1, slot: "dinner", recipeId: tofoo }))!; // serves 2: none left
+    const later = (await addEntry(h.a, plan, { dayIndex: 3, slot: "dinner", recipeId: tuna }))!;
+    const before = await createPlan(h.a, { ...thisWeek, name: "Last week", startDate: "2026-10-05" });
+    const old = (await addEntry(h.a, before, { dayIndex: 5, slot: "dinner", recipeId: tuna }))!;
+    const older = await createPlan(h.a, { ...thisWeek, name: "Long ago", startDate: "2026-09-28" });
+    await addEntry(h.a, older, { dayIndex: 0, slot: "dinner", recipeId: tuna });
+
+    const found = await availableLeftovers(h.a, plan, { dayIndex: 2, slot: "lunch" });
+    expect(found.map((f) => [f.cookId, f.date, f.slot, f.left])).toEqual([
+      [old, "2026-10-10", "dinner", 2],
+      [cook, "2026-10-12", "dinner", 2],
+    ]);
+    expect(found[0].recipe).toMatchObject({ id: tuna, slug: "lemony-tuna-tomato-caper-pasta", kcal: expect.any(Number) });
+    expect(found.map((f) => f.cookId)).not.toContain(tofu);
+    expect(found.map((f) => f.cookId)).not.toContain(later);
+
+    // Once planned, it's gone.
+    await addLeftovers(h.a, plan, { dayIndex: 1, slot: "lunch", cookId: cook });
+    expect((await availableLeftovers(h.a, plan, { dayIndex: 2, slot: "lunch" })).map((f) => f.cookId)).toEqual([old]);
+  });
+
+  it("caps a leftovers meal's portions at what's left, and a cook's at what its leftovers need", async () => {
+    const meal = (await addLeftovers(h.a, plan, { dayIndex: 1, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 }))!;
+    expect(await setEntryPortions(h.a, meal, 1.5)).toBe(false);
+    expect(await setEntryPortions(h.a, meal, 1)).toBe(true);
+    // The cook can't eat into the planned 2, but can go down.
+    expect(await setEntryPortions(h.a, cook, 1.5)).toBe(false);
+    expect(await setEntryPortions(h.a, cook, 0.5)).toBe(true);
+    expect(await setEntryPortions(h.a, cook, 1)).toBe(true);
+    // Without leftovers planned, a cook can be planned past what it makes, as before.
+    await removeEntry(h.a, meal);
+    expect(await setEntryPortions(h.a, cook, 3)).toBe(true);
+  });
+
+  it("shows over-planned leftovers when the plan's people go up", async () => {
+    const meal = (await addLeftovers(h.a, plan, { dayIndex: 1, slot: "lunch", cookId: cook }))!;
+    await updatePlan(h.a, plan, { ...thisWeek, people: 3 });
+    // Serves 4, 3 eat 1 each at the cook, 3 planned as leftovers: 2 over.
+    expect((await entry(plan, meal)).leftoversOf?.left).toBe(-2);
+    // A cook already over can still go down.
+    expect(await setEntryPortions(h.a, cook, 0.5)).toBe(true);
+  });
+
+  it("keeps a leftovers meal after its cook, and a cook before its leftovers, when moving", async () => {
+    const meal = (await addLeftovers(h.a, plan, { dayIndex: 2, slot: "lunch", cookId: cook }))!;
+    expect(await moveEntry(h.a, meal, { dayIndex: 0, slot: "lunch" })).toBe(false);
+    expect(await moveEntry(h.a, meal, { dayIndex: 0, slot: "dinner" })).toBe(false);
+    expect(await moveEntry(h.a, meal, { dayIndex: 0, slot: "snack" })).toBe(true);
+    expect(await moveEntry(h.a, cook, { dayIndex: 1, slot: "dinner" })).toBe(false);
+    expect(await moveEntry(h.a, cook, { dayIndex: 0, slot: "lunch" })).toBe(true);
+  });
+
+  it("removes leftovers meals with their cook, in any plan", async () => {
+    const next = await createPlan(h.a, { ...thisWeek, startDate: "2026-10-19" });
+    await addLeftovers(h.a, plan, { dayIndex: 1, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 });
+    await addLeftovers(h.a, next, { dayIndex: 0, slot: "lunch", cookId: cook, portionsPerPerson: 0.5 });
+    expect(await removeEntry(h.a, cook)).toBe(true);
+    expect((await getPlan(h.a, plan))?.entries).toEqual([]);
+    expect((await getPlan(h.a, next))?.entries).toEqual([]);
+  });
+
+  it("removes next week's leftovers meals when the cook's plan is deleted or shortened", async () => {
+    const next = await createPlan(h.a, { ...thisWeek, startDate: "2026-10-19" });
+    const late = (await addEntry(h.a, plan, { dayIndex: 6, slot: "dinner", recipeId: tuna }))!;
+    await addLeftovers(h.a, next, { dayIndex: 0, slot: "lunch", cookId: late });
+    await updatePlan(h.a, plan, { ...thisWeek, days: 6 });
+    expect((await getPlan(h.a, next))?.entries).toEqual([]);
+    await addLeftovers(h.a, next, { dayIndex: 0, slot: "lunch", cookId: cook });
+    await deletePlan(h.a, plan);
+    expect((await getPlan(h.a, next))?.entries).toEqual([]);
+  });
+
+  it("copies leftovers meals with their cooks, but not ones from the plan before", async () => {
+    const before = await createPlan(h.a, { ...thisWeek, startDate: "2026-10-05" });
+    const old = (await addEntry(h.a, before, { dayIndex: 6, slot: "dinner", recipeId: tuna }))!;
+    await addLeftovers(h.a, plan, { dayIndex: 2, slot: "lunch", cookId: cook });
+    await addLeftovers(h.a, plan, { dayIndex: 0, slot: "lunch", cookId: old });
+    const copy = await copyPlan(h.a, plan, { ...thisWeek, startDate: "2026-10-19" });
+    const entries = (await getPlan(h.a, copy!))!.entries;
+    expect(entries.map((e) => [e.dayIndex, e.slot, e.leftoversOf?.entryId ?? null])).toEqual([
+      [0, "dinner", null],
+      [2, "lunch", entries[0].id],
+    ]);
+    expect(entries[0].leftoversTo).toHaveLength(1);
+  });
+});
+
 describe("recipePlanUses (import design H)", () => {
   it("lists the plans a recipe is in, by date, with its meals in order", async () => {
     const later = await createPlan(h.a, { ...thisWeek, name: "Half-term", startDate: "2026-10-26" });
@@ -331,5 +499,23 @@ describe("household isolation", () => {
   it("doesn't put B's recipe in A's plan", async () => {
     expect(await addEntry(h.a, aPlan, { dayIndex: 0, slot: "dinner", recipeId: bRecipe })).toBeNull();
     expect((await getPlan(h.a, aPlan))?.entries).toEqual([]);
+  });
+  it("doesn't plan, list or see leftovers across households", async () => {
+    const aCook = (await addEntry(h.a, aPlan, { dayIndex: 0, slot: "dinner", recipeId: tuna }))!;
+    // A can't eat B's leftovers, or put leftovers in B's plan.
+    expect(await addLeftovers(h.a, aPlan, { dayIndex: 1, slot: "lunch", cookId: bEntry })).toBeNull();
+    expect(await addLeftovers(h.a, bPlan, { dayIndex: 1, slot: "lunch", cookId: bEntry })).toBeNull();
+    expect(await addLeftovers(h.a, bPlan, { dayIndex: 1, slot: "lunch", cookId: aCook })).toBeNull();
+    expect(await addLeftovers(h.b, bPlan, { dayIndex: 1, slot: "lunch", cookId: aCook })).toBeNull();
+    expect(await availableLeftovers(h.a, bPlan, { dayIndex: 1, slot: "lunch" })).toEqual([]);
+    expect((await availableLeftovers(h.a, aPlan, { dayIndex: 1, slot: "lunch" })).map((f) => f.cookId)).toEqual([aCook]);
+    expect(await nextPlan(h.a, bPlan)).toBeNull();
+    // B's own leftovers are untouched by A, and don't show in A's plan.
+    const bMeal = (await addLeftovers(h.b, bPlan, { dayIndex: 1, slot: "lunch", cookId: bEntry }))!;
+    expect(await setEntryPortions(h.a, bMeal, 0.5)).toBe(false);
+    expect(await moveEntry(h.a, bMeal, { dayIndex: 2, slot: "lunch" })).toBe(false);
+    expect(await removeEntry(h.a, bMeal)).toBe(false);
+    expect((await getPlan(h.a, aPlan))?.entries.map((e) => e.leftoversTo)).toEqual([[]]);
+    expect((await getPlan(h.b, bPlan))?.entries.map((e) => e.leftoversOf?.entryId ?? null)).toEqual([null, bEntry]);
   });
 });

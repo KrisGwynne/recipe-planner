@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { check, date, doublePrecision, index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { check, date, doublePrecision, index, integer, pgTable, text, timestamp, uuid, type AnyPgColumn } from "drizzle-orm/pg-core";
 import type { Slot } from "@/plans/plan";
 import { users } from "./auth";
 import { households } from "./households";
@@ -34,6 +34,11 @@ export const mealPlans = pgTable(
 // One recipe in one meal of one day. A meal can hold several recipes (a curry
 // and a side), kept in the order they were added. Deleting the recipe or the
 // plan deletes its entries.
+//
+// An entry is either a cook or leftovers (PP-180, designs/leftovers.html): a
+// leftovers meal points at the earlier cook it eats from (`leftovers_of`), in
+// the same plan or the plan before, and has the cook's recipe. Removing the
+// cook removes its leftovers meals.
 export const mealPlanEntries = pgTable(
   "meal_plan_entries",
   {
@@ -47,11 +52,14 @@ export const mealPlanEntries = pgTable(
       .notNull()
       .references(() => recipes.id, { onDelete: "cascade" }),
     portionsPerPerson: doublePrecision("portions_per_person").notNull().default(1),
+    leftoversOf: uuid("leftovers_of").references((): AnyPgColumn => mealPlanEntries.id, { onDelete: "cascade" }),
     createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow(),
   },
   (entry) => [
     index("meal_plan_entries_plan_day").on(entry.planId, entry.dayIndex),
     index("meal_plan_entries_recipe").on(entry.recipeId),
+    index("meal_plan_entries_leftovers_of").on(entry.leftoversOf),
+    check("meal_plan_entries_leftovers_of", sql`${entry.leftoversOf} <> ${entry.id}`),
     check("meal_plan_entries_day_index", sql`${entry.dayIndex} between 0 and 13`),
     check("meal_plan_entries_slot", sql`${entry.slot} in ('breakfast', 'lunch', 'dinner', 'snack')`),
     // Halves from ½ to 4 (the entry sheet's stepper).

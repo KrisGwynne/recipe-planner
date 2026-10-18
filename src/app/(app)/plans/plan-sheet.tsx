@@ -14,7 +14,7 @@ export type PlanDetails = { name: string; startDate: string; days: number; peopl
 type Mode =
   | { kind: "create"; startHint?: string }
   | { kind: "copy"; planId: string }
-  | { kind: "edit"; planId: string; mealsByDay: number[] };
+  | { kind: "edit"; planId: string; mealsByDay: number[]; leftoversElsewhere?: number[] };
 
 const actions = { create: createPlanAction, copy: copyPlanAction, edit: updatePlanAction };
 const titles = { create: "New plan", copy: "Copy to a new plan", edit: "Edit plan" };
@@ -54,7 +54,7 @@ export function PlanSheet({
     if (!nameEdited) setName(defaultPlanName(value));
   }
 
-  const cut = mode.kind === "edit" ? cutDays(mode.mealsByDay, days, startDate) : null;
+  const cut = mode.kind === "edit" ? cutDays(mode.mealsByDay, days, startDate, mode.leftoversElsewhere) : null;
 
   return (
     <Sheet title={titles[mode.kind]} onClose={onClose}>
@@ -164,9 +164,11 @@ export function PlanSheet({
 
 /**
  * The meals on days a shorter plan cuts off, for the edit sheet's warning
- * (design K): "Sat 17 Oct has 2 meals planned."
+ * (design K): "Sat 17 Oct has 2 meals planned." With `leftoversElsewhere`
+ * (leftovers meals in other plans eating from each day's cooks), it adds
+ * that those go too (leftovers design L).
  */
-export function cutDays(mealsByDay: number[], days: number, startDate: string) {
+export function cutDays(mealsByDay: number[], days: number, startDate: string, leftoversElsewhere: number[] = []) {
   const cut = mealsByDay
     .map((count, dayIndex) => ({ count, dayIndex }))
     .filter(({ count, dayIndex }) => dayIndex >= days && count > 0);
@@ -174,5 +176,12 @@ export function cutDays(mealsByDay: number[], days: number, startDate: string) {
   const total = cut.reduce((sum, { count }) => sum + count, 0);
   const names = cut.map(({ dayIndex }) => formatDay(planDay({ startDate }, dayIndex)));
   const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
-  return { meals: total, detail: `${list} ${names.length === 1 ? "has" : "have"} ${meals(total)} planned.` };
+  const elsewhere = cut.reduce((sum, { dayIndex }) => sum + (leftoversElsewhere[dayIndex] ?? 0), 0);
+  const leftovers = elsewhere === 0 ? "" : ` ${leftoversMeals(elsewhere)} in another plan ${elsewhere === 1 ? "eats" : "eat"} from them and will go too.`;
+  return { meals: total, detail: `${list} ${names.length === 1 ? "has" : "have"} ${meals(total)} planned.${leftovers}` };
+}
+
+/** "1 leftovers meal", "2 leftovers meals". */
+export function leftoversMeals(count: number): string {
+  return count === 1 ? "1 leftovers meal" : `${count} leftovers meals`;
 }
